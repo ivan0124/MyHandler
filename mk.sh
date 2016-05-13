@@ -19,7 +19,7 @@ case "$1" in
    	     make clean
 	fi ;;
 	install)
-	cp -rf ./MyHandler.so.3.1.30.531 ../../Release/AgentService/module
+	sudo cp -rf ./MyHandler.so.3.1.30.5318 ../../Release/AgentService/module/
 	cd .. ;;
 	test)
 	cd ../../Release/AgentService/
