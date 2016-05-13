@@ -13,19 +13,12 @@ case "$1" in
              make clean
    	     make
 	fi ;;
-	clean)
-	echo "make cleaning..."
-	if [ "$VERBOSE" == "0" ] ; then
-   	     make clean >> make.log 2>&1
-	else
-   	     make clean
-	fi ;;
 	install)
 	sudo cp -rf ./MyHandler.so.3.1.30.5318 ../../Release/AgentService/module/
 	cd .. ;;
 	test)
 	cd ../../Release/AgentService/
-	sudo ./cagent 
+	sudo ./cagent &
         cd ../../Modules/MyHandler/
         sleep 1
         ps aux | grep cagent
@@ -35,11 +28,10 @@ case "$1" in
         sleep 2
         ps aux | grep cagent;;
 	*)
-	echo "step1: 'mk.sh build' to build code. 'mk.sh clean to clean build result'"
+	echo "step1: 'mk.sh rebuild' to rebuild code."
 	echo "step2: 'mk.sh install' to install the driver. type 'demsg' to see logs"
 	echo "step3: 'mk.sh test' to test."
-	echo "step4: 'mk.sh uninstall' to uninstall the driver. type 'dmesg' to see logs"
-	echo "step5: 'mk.sh clean to clean build result'"
+	echo "step3: 'mk.sh stop' to kill all cagent process"
 	exit -1 ;;
 esac
 
@@ -48,7 +40,9 @@ if [ "$?" != "0" ] ; then
     echo "please check the make.log to debug"
 else
     echo "make $1 OK."
-    sudo cp -rf ./MyHandler.so.3.1.30.5318 ../../Release/AgentService/module/
+    if [ "$1" = "rebuild" ] ; then
+       sudo cp -rf ./MyHandler.so.3.1.30.5318 ../../Release/AgentService/module/
+    fi
 fi
 
 MAKE_END_TIME=`date +%s`
