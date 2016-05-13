@@ -29,7 +29,7 @@ case "$1" in
         ps aux | grep cagent;;
 	*)
 	echo "step1: 'mk.sh rebuild' to rebuild code."
-	echo "step2: 'mk.sh install' to install the driver. type 'demsg' to see logs"
+	echo "step2: 'mk.sh install' to install the MyHandler.so.3.1.30"
 	echo "step3: 'mk.sh test' to test."
 	echo "step3: 'mk.sh stop' to kill all cagent process"
 	exit -1 ;;
