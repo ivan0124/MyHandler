@@ -246,6 +246,7 @@ int HANDLER_API Handler_Initialize( HANDLER_INFO *pluginfo )
 		return handler_fail;
 
         // 0.[ivan test] initalize mqtt function
+        int iRet = 0;
         char moudlePath[MAX_PATH] = {0}; 
         susiaccess_agent_conf_body_t config;
         susiaccess_agent_profile_body_t profile;
@@ -306,6 +307,8 @@ int HANDLER_API Handler_Initialize( HANDLER_INFO *pluginfo )
 	strcpy(profile.account,"anonymous");
 	strcpy(profile.passwd,"");
 	strcpy(profile.workdir, moudlePath);
+
+        //iRet = saclient_initialize(&config, &profile, SUSIAccessAgentLogHandle);
          
 	// 1. Topic of this handler
 	snprintf( pluginfo->Name, sizeof(pluginfo->Name), "%s", strPluginName );
