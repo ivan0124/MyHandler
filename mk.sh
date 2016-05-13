@@ -4,11 +4,13 @@ VERBOSE=0
 MAKE_START_TIME=`date +%s`
 
 case "$1" in
-	build)
+	rebuild)
 	echo "make building..."
 	if [ "$VERBOSE" == "0" ] ; then
+             make clean
    	     make > make.log 2>&1
 	else
+             make clean
    	     make
 	fi ;;
 	clean)
@@ -23,7 +25,7 @@ case "$1" in
 	cd .. ;;
 	test)
 	cd ../../Release/AgentService/
-	sudo ./cagent& 
+	sudo ./cagent 
         cd ../../Modules/MyHandler/
         sleep 1
         ps aux | grep cagent
@@ -46,6 +48,7 @@ if [ "$?" != "0" ] ; then
     echo "please check the make.log to debug"
 else
     echo "make $1 OK."
+    sudo cp -rf ./MyHandler.so.3.1.30.5318 ../../Release/AgentService/module/
 fi
 
 MAKE_END_TIME=`date +%s`
