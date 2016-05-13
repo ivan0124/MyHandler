@@ -17,6 +17,7 @@
 #include "DeviceMessageGenerate.h"
 #include "SAClient.h"
 #include "IoTMessageGenerate.h"
+#include "Log.h"
 
 //-----------------------------------------------------------------------------
 // Types and defines:
@@ -51,6 +52,7 @@ static HandlerSubscribeCustCbf g_subscribecustcbf = NULL;
 static HandlerAutoReportCbf g_sendreportcbf = NULL;				// Client Send report (in JSON format) to Cloud Server with AutoReport topic
 static HandlerSendCapabilityCbf g_sendcapabilitycbf = NULL;		
 static HandlerSendEventCbf g_sendeventcbf = NULL;
+LOGHANDLE SUSIAccessAgentLogHandle;
 //-----------------------------------------------------------------------------
 // Function:
 //-----------------------------------------------------------------------------
@@ -229,12 +231,73 @@ static CAGENT_PTHREAD_ENTRY(SampleHandlerThreadStart, args)
  * ***************************************************************************************/
 int HANDLER_API Handler_Initialize( HANDLER_INFO *pluginfo )
 {
-        susiaccess_agent_conf_body_t config;
-        susiaccess_agent_profile_body_t profile;
+
         printf("[MyHandler]: Handler_Initialize [*******************************]\n");
 	if( pluginfo == NULL )
 		return handler_fail;
 
+        // 0.initalize mqtt function
+        char moudlePath[MAX_PATH] = {0}; 
+        susiaccess_agent_conf_body_t config;
+        susiaccess_agent_profile_body_t profile;
+
+        memset(moudlePath, 0 , sizeof(moudlePath));
+	util_module_path_get(moudlePath);
+
+        SUSIAccessAgentLogHandle = InitLog(moudlePath);
+	SUSIAccessAgentLog(Normal, "Current path: %s", moudlePath);
+
+        memset(&config, 0 , sizeof(susiaccess_agent_conf_body_t));
+	strcpy(config.runMode,"remote");
+	strcpy(config.autoStart,"True");
+	strcpy(config.serverIP,"172.22.12.6");
+	strcpy(config.serverPort,"1883");
+	strcpy(config.serverAuth,"F0PE1/aaU8o=");
+	config.tlstype = tls_type_none;
+        
+        switch(config.tlstype)
+	{
+	case tls_type_none:
+		break;
+	case tls_type_tls:
+		{
+			strcpy(config.cafile, "ca.crt");
+			strcpy(config.capath, "");
+			strcpy(config.certfile, "server.crt");
+			strcpy(config.keyfile, "server.key");
+			strcpy(config.cerpasswd, "123456");
+		}
+		break;
+	case tls_type_psk:
+		{
+			strcpy(config.psk, "");
+			strcpy(config.identity, "SAClientSample");
+			strcpy(config.ciphers, "");
+		}
+		break;
+	}
+
+	memset(&profile, 0 , sizeof(susiaccess_agent_profile_body_t));
+	snprintf(profile.version, DEF_VERSION_LENGTH, "%d.%d.%d.%d", 3, 1, 0, 0);
+	strcpy(profile.hostname,"SAClientSample");
+	strcpy(profile.devId,"000014DAE996BE04");
+	strcpy(profile.sn,"14DAE996BE04");
+	strcpy(profile.mac,"14DAE996BE04");
+	strcpy(profile.type,"IPC");
+	strcpy(profile.product,"Sample Agent");
+	strcpy(profile.manufacture,"test");
+	strcpy(profile.osversion,"NA");
+	strcpy(profile.biosversion,"NA");
+	strcpy(profile.platformname,"NA");
+	strcpy(profile.processorname,"NA");
+	strcpy(profile.osarchitect,"NA");
+	profile.totalmemsize = 40832;
+	strcpy(profile.maclist,"14DAE996BE04");
+	strcpy(profile.localip,"172.21.73.151");
+	strcpy(profile.account,"anonymous");
+	strcpy(profile.passwd,"");
+	strcpy(profile.workdir, moudlePath);
+         
 	// 1. Topic of this handler
 	snprintf( pluginfo->Name, sizeof(pluginfo->Name), "%s", strPluginName );
 	pluginfo->RequestID = iRequestID;
