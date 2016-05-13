@@ -15,6 +15,7 @@
 #include "susiaccess_handler_api.h"
 #include "common.h"
 #include "DeviceMessageGenerate.h"
+#include "SAClient.h"
 #include "IoTMessageGenerate.h"
 
 //-----------------------------------------------------------------------------
@@ -228,7 +229,9 @@ static CAGENT_PTHREAD_ENTRY(SampleHandlerThreadStart, args)
  * ***************************************************************************************/
 int HANDLER_API Handler_Initialize( HANDLER_INFO *pluginfo )
 {
-        printf("[MyHandler]: Handler_Initialize\n");
+        susiaccess_agent_conf_body_t config;
+        susiaccess_agent_profile_body_t profile;
+        printf("[MyHandler]: Handler_Initialize [*******************************]\n");
 	if( pluginfo == NULL )
 		return handler_fail;
 
