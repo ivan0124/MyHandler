@@ -18,7 +18,7 @@ case "$1" in
 	cd .. ;;
 	test)
 	cd ../../Release/AgentService/
-	sudo ./cagent &
+	sudo ./cagent
         cd ../../Modules/MyHandler/
         sleep 1
         ps aux | grep cagent
