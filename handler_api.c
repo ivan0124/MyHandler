@@ -52,7 +52,16 @@ static HandlerSubscribeCustCbf g_subscribecustcbf = NULL;
 static HandlerAutoReportCbf g_sendreportcbf = NULL;				// Client Send report (in JSON format) to Cloud Server with AutoReport topic
 static HandlerSendCapabilityCbf g_sendcapabilitycbf = NULL;		
 static HandlerSendEventCbf g_sendeventcbf = NULL;
+//-----------------------------------------------------------------------------
+//ivan test
+//-----------------------------------------------------------------------------
 LOGHANDLE SUSIAccessAgentLogHandle;
+#ifdef SUSIACCESSAGENT_LOG_ENABLE
+#define SUSIAccessAgentLog(level, fmt, ...)  do { if (SUSIAccessAgentLogHandle != NULL)   \
+	WriteLog(SUSIAccessAgentLogHandle, DEF_SUSIACCESSAGENT_LOG_MODE, level, fmt, ##__VA_ARGS__); } while(0)
+#else
+#define SUSIAccessAgentLog(level, fmt, ...)
+#endif
 //-----------------------------------------------------------------------------
 // Function:
 //-----------------------------------------------------------------------------
@@ -232,11 +241,11 @@ static CAGENT_PTHREAD_ENTRY(SampleHandlerThreadStart, args)
 int HANDLER_API Handler_Initialize( HANDLER_INFO *pluginfo )
 {
 
-        printf("[MyHandler]: Handler_Initialize [*******************************]\n");
+        printf("[MyHandler]: Handler_Initialize [zzzzzzzzzzzzzzzzzzzzzzzzzzzz]\n");
 	if( pluginfo == NULL )
 		return handler_fail;
 
-        // 0.initalize mqtt function
+        // 0.[ivan test] initalize mqtt function
         char moudlePath[MAX_PATH] = {0}; 
         susiaccess_agent_conf_body_t config;
         susiaccess_agent_profile_body_t profile;
