@@ -1,9 +1,0 @@
-[IoTGW] MoteSimulator
-
-Date            : 2015/08/21
-Bug #           : N/A
-Description     : Fix a bug that there is a unexcepted space in the output data.
-Files           :
-Reviewer        :
-Commit by       : Fred Chang
-
