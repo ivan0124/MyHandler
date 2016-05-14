@@ -15,7 +15,7 @@ program_SUBDIRS :=
 CFLAGS += -Wall 
 CPPFLAGS += -D_LINUX
 LDFLAGS += -Wl,-rpath,./,-lrt -lm -ldl
-program_INCLUDE_DIRS := $(LIB_DIR)/MessageGenerator $(LIB_DIR)/Log $(LIB_DIR)/SAClient $(LIB_DIR)/MQTTHelper $(PLATFORM_LINUX_DIR) $(LIB_CJSON_DIR) $(INCLUDE_DIR)
+program_INCLUDE_DIRS := $(LIB_DIR)/MessageGenerator $(LIB_DIR)/Log $(LIB_DIR)/SAClient $(LIB_DIR)/MQTTHelper $(PLATFORM_LINUX_DIR) $(LIB_CJSON_DIR) $(INCLUDE_DIR) ../MyHandler/WISE_IOT/inc
 program_LIBRARY_DIRS := $(LIB_CJSON_DIR) $(INSTALL_OUTPUT_DIR)/ $(LIB_DIR)/MessageGenerator/ $(LIB_DIR)/SAClient/ $(LIB_DIR)/MQTTHelper/
 program_LIBRARIES := cJSON pthread SAClient mqtthelper Log
 ############################################################################

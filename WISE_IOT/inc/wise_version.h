@@ -1,0 +1,3 @@
+#define RELEASE_VERSION "1.3.00"
+#define WISE_VERSION "1.3.00.0309"
+#define WISE_MODEL "wise_3310"

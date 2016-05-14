@@ -18,6 +18,8 @@
 #include "SAClient.h"
 #include "IoTMessageGenerate.h"
 #include "Log.h"
+/*ivan test*/
+#include "SensorNetwork_API.h"
 
 //-----------------------------------------------------------------------------
 // Types and defines:
@@ -55,6 +57,10 @@ static HandlerSendEventCbf g_sendeventcbf = NULL;
 //-----------------------------------------------------------------------------
 //ivan test
 //-----------------------------------------------------------------------------
+#define LIB_NAME		"./libMqttDrv.so"
+#define SW_VERSION_LEN	16
+#define MAX_SENDATA_LEN	256
+
 LOGHANDLE SUSIAccessAgentLogHandle;
 #ifdef SUSIACCESSAGENT_LOG_ENABLE
 #define SUSIAccessAgentLog(level, fmt, ...)  do { if (SUSIAccessAgentLogHandle != NULL)   \
@@ -62,6 +68,14 @@ LOGHANDLE SUSIAccessAgentLogHandle;
 #else
 #define SUSIAccessAgentLog(level, fmt, ...)
 #endif
+
+SN_Initialize_API g_pFunc_SNInit;
+SN_Uninitialize_API g_pFunc_SNUninit;
+SN_GetVersion_API g_pFunc_SNGetSWVersion;
+SN_SetUpdateDataCbf_API g_pFunc_SNSetUpdateCbf;
+SN_GetCapability_API g_pFunc_SNGetCapability;
+SN_GetData_API g_pFunc_SNGetData;
+SN_SetData_API g_pFunc_SNSetData;
 //-----------------------------------------------------------------------------
 // Function:
 //-----------------------------------------------------------------------------
@@ -230,6 +244,114 @@ static CAGENT_PTHREAD_ENTRY(SampleHandlerThreadStart, args)
    return 0;
 }
 
+/****************************************************************************************
+ *[ivan test]
+ *Function Name: Start
+ ****************************************************************************************/
+UpdateSNDataCbf printSNcallbackData(const int cmdId, const void *pInData, const int InDatalen, void *pUserData,	void *pOutParam, void *pRev1, void *pRev2)
+{
+    return 0;
+}
+
+int printSNInfInfos(SNInfInfos *pSNInfos)
+{
+	int i;
+	printf("# Main - Got SNInfInfos: #\n\t sComType=%s\n\t iNum=%d\n", pSNInfos->sComType, pSNInfos->iNum);
+	for (i=0; i<pSNInfos->iNum; i++) {
+		printf("\t SNInfs[%d].sInfName=%s\n", i, pSNInfos->SNInfs[i].sInfName);
+		printf("\t SNInfs[%d].sInfID=%s\n", i, pSNInfos->SNInfs[i].sInfID);
+	}
+	printf("##########\n");
+	
+	return 0;
+}
+
+int Start()
+{
+	void *pLibHandle = NULL;	
+	char *pSWVersion = NULL;
+	SNInfInfos outSNInfInfo;
+        
+        printf("[MyHandler]My MQTT test Start  =================================>\n");
+	pLibHandle = dlopen(LIB_NAME, RTLD_LAZY);
+	if (NULL == pLibHandle) {
+		printf("Error: Failed to load %s\n", LIB_NAME);
+		return -1;
+	}
+	g_pFunc_SNInit			= (SN_Initialize_API) dlsym(pLibHandle, "SN_Initialize");
+	g_pFunc_SNUninit		= (SN_Uninitialize_API) dlsym(pLibHandle, "SN_Uninitialize");
+	g_pFunc_SNGetCapability	= (SN_GetCapability_API) dlsym(pLibHandle, "SN_GetCapability");
+	g_pFunc_SNSetUpdateCbf	= (SN_SetUpdateDataCbf_API) dlsym(pLibHandle, "SN_SetUpdateDataCbf");
+	g_pFunc_SNGetSWVersion	= (SN_GetVersion_API) dlsym(pLibHandle, "SN_GetVersion");
+	g_pFunc_SNGetData	= (SN_GetData_API) dlsym(pLibHandle, "SN_GetData");
+	g_pFunc_SNSetData	= (SN_SetData_API) dlsym(pLibHandle, "SN_SetData");
+
+	if (NULL==g_pFunc_SNInit || NULL==g_pFunc_SNUninit || 
+		NULL==g_pFunc_SNGetCapability || NULL==g_pFunc_SNSetUpdateCbf ||
+		NULL==g_pFunc_SNGetSWVersion || NULL== g_pFunc_SNGetData || NULL==g_pFunc_SNSetData) {
+		printf("Error: Function load error from %s\n", LIB_NAME);
+		return -1;
+	}
+
+	if (g_pFunc_SNInit(NULL) == -1) {
+		printf("Error: Lib init\n");
+		return -1;
+	}
+
+	pSWVersion = malloc(sizeof(char)*SW_VERSION_LEN);
+	if (g_pFunc_SNGetSWVersion(pSWVersion, sizeof(char)*SW_VERSION_LEN) == -1) {
+		printf("Error: Lib get sw version\n");
+		return -1;
+	}
+
+	printf("%s: SW Version=%s\n", __func__, pSWVersion);
+
+	if (g_pFunc_SNSetUpdateCbf((UpdateSNDataCbf) printSNcallbackData) == -1) {
+		printf("Error: Lib set CBF\n");
+		return -1;
+	}
+
+	//sleep(1);
+	outSNInfInfo.iNum = 2;
+	outSNInfInfo.SNInfs[0].outDataClass.iTypeCount = 1;
+	outSNInfInfo.SNInfs[0].outDataClass.pOutBaseDataArray = (OutBaseData *)malloc(sizeof(OutBaseData));
+	outSNInfInfo.SNInfs[0].outDataClass.pOutBaseDataArray->iSizeType = 256;
+	outSNInfInfo.SNInfs[0].outDataClass.pOutBaseDataArray->psType = (char *)malloc(256);
+	outSNInfInfo.SNInfs[0].outDataClass.pOutBaseDataArray->iSizeData = (int *)malloc(sizeof(int));
+	*(outSNInfInfo.SNInfs[0].outDataClass.pOutBaseDataArray->iSizeData) = 256;
+	outSNInfInfo.SNInfs[0].outDataClass.pOutBaseDataArray->psData = (char *)malloc(256);
+	outSNInfInfo.SNInfs[1].outDataClass.iTypeCount = 1;
+	outSNInfInfo.SNInfs[1].outDataClass.pOutBaseDataArray = (OutBaseData *)malloc(sizeof(OutBaseData));
+	outSNInfInfo.SNInfs[1].outDataClass.pOutBaseDataArray->iSizeType = 256;
+	outSNInfInfo.SNInfs[1].outDataClass.pOutBaseDataArray->psType = (char *)malloc(256);
+	outSNInfInfo.SNInfs[1].outDataClass.pOutBaseDataArray->iSizeData = (int *)malloc(sizeof(int));
+	*(outSNInfInfo.SNInfs[1].outDataClass.pOutBaseDataArray->iSizeData) = 256;
+	outSNInfInfo.SNInfs[1].outDataClass.pOutBaseDataArray->psData = (char *)malloc(256);
+
+	if (g_pFunc_SNGetCapability(&outSNInfInfo) == -1) {
+		printf("Error: Lib get capability\n");
+	} else {
+		printSNInfInfos(&outSNInfInfo);
+		usleep(1000);
+	}
+
+	free(outSNInfInfo.SNInfs[0].outDataClass.pOutBaseDataArray->psType);
+	free(outSNInfInfo.SNInfs[0].outDataClass.pOutBaseDataArray->iSizeData);
+	free(outSNInfInfo.SNInfs[0].outDataClass.pOutBaseDataArray->psData);
+	free(outSNInfInfo.SNInfs[0].outDataClass.pOutBaseDataArray);
+	
+	free(outSNInfInfo.SNInfs[1].outDataClass.pOutBaseDataArray->psType);
+	free(outSNInfInfo.SNInfs[1].outDataClass.pOutBaseDataArray->iSizeData);
+	free(outSNInfInfo.SNInfs[1].outDataClass.pOutBaseDataArray->psData);
+	free(outSNInfInfo.SNInfs[1].outDataClass.pOutBaseDataArray);
+
+	if(pSWVersion != NULL)
+		free(pSWVersion);
+
+        printf("ivan test: Start() exit <========================\n");
+	return 0;
+}
+
 /* **************************************************************************************
  *  Function Name: Handler_Initialize
  *  Description: Init any objects or variables of this handler
@@ -241,73 +363,12 @@ static CAGENT_PTHREAD_ENTRY(SampleHandlerThreadStart, args)
 int HANDLER_API Handler_Initialize( HANDLER_INFO *pluginfo )
 {
 
-        printf("[MyHandler]: Handler_Initialize [zzzzzzzzzzzzzzzzzzzzzzzzzzzz]\n");
+        printf("[MyHandler]: Handler_Initialize sssssssssssssssssssssss]\n");
 	if( pluginfo == NULL )
 		return handler_fail;
 
         // 0.[ivan test] initalize mqtt function
-        int iRet = 0;
-        char moudlePath[MAX_PATH] = {0}; 
-        susiaccess_agent_conf_body_t config;
-        susiaccess_agent_profile_body_t profile;
-
-        memset(moudlePath, 0 , sizeof(moudlePath));
-	util_module_path_get(moudlePath);
-
-        SUSIAccessAgentLogHandle = InitLog(moudlePath);
-	SUSIAccessAgentLog(Normal, "Current path: %s", moudlePath);
-
-        memset(&config, 0 , sizeof(susiaccess_agent_conf_body_t));
-	strcpy(config.runMode,"remote");
-	strcpy(config.autoStart,"True");
-	strcpy(config.serverIP,"172.22.12.6");
-	strcpy(config.serverPort,"1883");
-	strcpy(config.serverAuth,"F0PE1/aaU8o=");
-	config.tlstype = tls_type_none;
-        
-        switch(config.tlstype)
-	{
-	case tls_type_none:
-		break;
-	case tls_type_tls:
-		{
-			strcpy(config.cafile, "ca.crt");
-			strcpy(config.capath, "");
-			strcpy(config.certfile, "server.crt");
-			strcpy(config.keyfile, "server.key");
-			strcpy(config.cerpasswd, "123456");
-		}
-		break;
-	case tls_type_psk:
-		{
-			strcpy(config.psk, "");
-			strcpy(config.identity, "SAClientSample");
-			strcpy(config.ciphers, "");
-		}
-		break;
-	}
-
-	memset(&profile, 0 , sizeof(susiaccess_agent_profile_body_t));
-	snprintf(profile.version, DEF_VERSION_LENGTH, "%d.%d.%d.%d", 3, 1, 0, 0);
-	strcpy(profile.hostname,"SAClientSample");
-	strcpy(profile.devId,"000014DAE996BE04");
-	strcpy(profile.sn,"14DAE996BE04");
-	strcpy(profile.mac,"14DAE996BE04");
-	strcpy(profile.type,"IPC");
-	strcpy(profile.product,"Sample Agent");
-	strcpy(profile.manufacture,"test");
-	strcpy(profile.osversion,"NA");
-	strcpy(profile.biosversion,"NA");
-	strcpy(profile.platformname,"NA");
-	strcpy(profile.processorname,"NA");
-	strcpy(profile.osarchitect,"NA");
-	profile.totalmemsize = 40832;
-	strcpy(profile.maclist,"14DAE996BE04");
-	strcpy(profile.localip,"172.21.73.151");
-	strcpy(profile.account,"anonymous");
-	strcpy(profile.passwd,"");
-	strcpy(profile.workdir, moudlePath);
-
+        Start();
         //iRet = saclient_initialize(&config, &profile, SUSIAccessAgentLogHandle);
          
 	// 1. Topic of this handler
@@ -330,7 +391,7 @@ int HANDLER_API Handler_Initialize( HANDLER_INFO *pluginfo )
 	g_HandlerContex.threadHandler = NULL;
 	g_HandlerContex.isThreadRunning = false;
 	g_status = handler_status_init;
-	
+
 	return handler_success;
 }
 
