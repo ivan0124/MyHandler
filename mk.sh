@@ -42,6 +42,10 @@ else
     echo "make $1 OK."
     if [ "$1" = "rebuild" ] ; then
        sudo cp -rf ./MyHandler.so.3.1.30.5318 ../../Release/AgentService/module/
+       cd ../../Library/MQTTDrv/
+       sudo make
+       sudo cp ./src/.libs/libMqttDrv.so ../../Release/AgentService/
+       cd ../../Modules/MyHandler
     fi
 fi
 
