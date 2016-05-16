@@ -141,6 +141,7 @@ AC_CONFIG_FILES([Makefile
 		 Library/SAManager/Makefile
 		 Library/SAHandlerLoader/Makefile
 		 Library/SAGeneralHandler/Makefile
+	         Library/MQTTDrv/Makefile
 		 Application/AgentEncrypt/Makefile
 		 Application/ScreenshotHelperL/Makefile
 		 Application/CAgent/Makefile

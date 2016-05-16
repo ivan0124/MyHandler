@@ -35,7 +35,8 @@ application_LIBSDIR := $(LIB_DIR)/Log \
                        $(LIB_DIR)/SAGeneralHandler \
                        $(LIB_DIR)/SQLite \
 		       $(LIB_DIR)/MessageGenerator \
-		       $(LIB_DIR)/ReadINI
+		       $(LIB_DIR)/ReadINI \
+                       $(LIB_DIR)/MQTTDrv
                  
 MODULE_DIR := $(PROJECT_ROOT_DIR)/Modules
 module_LIBDIR := $(MODULE_DIR)/MonitoringHandler \

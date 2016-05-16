@@ -16,6 +16,7 @@ SUBDIRS = Library/Log \
 	  Library/SAManager \
 	  Library/SAHandlerLoader \
 	  Library/SAGeneralHandler \
+          Library/MQTTDrv \
 	  Application/AgentEncrypt \
 	  Application/ScreenshotHelperL \
 	  Application/CAgent \
