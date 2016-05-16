@@ -1,11 +1,11 @@
 iotgwdir = $(prefix)/lib/Advantech/iotgw
 iotgw_LTLIBRARIES = libMqttDrv.la
 
-libMqttDrv_la_CFLAGS = -I../include -I../../../inc -I../../../Tools/AdvLog/include -I../../../Tools/AdvJSON/inc -fPIC -Wall -ggdb -O2 -DWITH_TLS -DWITH_TLS_PSK -DWITH_SOCKS -DWITH_SRV -DWITH_THREADING
+libMqttDrv_la_CFLAGS = -I../include -I../../Log/inc -I../../Log/AdvLog/Tools/AdvLog/include -I../../Log/AdvLog/Tools/AdvJSON/inc -fPIC -Wall -ggdb -O2 -DWITH_TLS -DWITH_TLS_PSK -DWITH_SOCKS -DWITH_SRV -DWITH_THREADING
 
-libMqttDrv_la_CPPFLAGS = -I../include -I../../../inc -I../../../Tools/AdvLog/include -I../../../Tools/AdvJSON/inc -fPIC -Wall -ggdb -O2 -DWITH_TLS -DWITH_TLS_PSK -DWITH_SOCKS -DWITH_SRV -DWITH_THREADING
+libMqttDrv_la_CPPFLAGS = -I../include -I../../Log/inc -I../../Log/AdvLog/Tools/AdvLog/include -I../../Log/AdvLog/Tools/AdvJSON/inc -fPIC -Wall -ggdb -O2 -DWITH_TLS -DWITH_TLS_PSK -DWITH_SOCKS -DWITH_SRV -DWITH_THREADING
 
-libMqttDrv_la_LIBADD = ../../../Tools/AdvLog/src/libAdvLog.la ../../../Tools/AdvJSON/src/libAdvJSON.la ../../../Tools/AdvJSON/src/libAdvCJSON.la
+libMqttDrv_la_LIBADD = ../../Log/AdvLog/Tools/AdvLog/src/.libs/libAdvLog.la ../../Log/AdvLog/Tools/AdvJSON/src/.libs/libAdvJSON.la ../../Log/AdvLog/Tools/AdvJSON/src/libAdvCJSON.la
 
 libMqttDrv_la_SOURCES = mqtt_client_shared.c \
 						list.c \
