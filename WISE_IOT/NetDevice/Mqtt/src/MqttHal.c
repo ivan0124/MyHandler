@@ -112,7 +112,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	char nodeContent[MAX_JSON_NODE_SIZE];
 	senhub_info_t *pshinfo;
 	int ret = 0;
-
+        printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 	if((json = JSON_Parser(message->payload)) == NULL) {
 		printf("json parse err!\n");
 		return -1;
