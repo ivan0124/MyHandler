@@ -78,3 +78,4 @@ install:
 	@- mkdir -p $(INSTALL_OUTPUT_DIR)
 	cp -d $(library_CLEANTARGET) $(INSTALL_OUTPUT_DIR)
 	cp -d ../../Library/MQTTDrv/src/.libs/libMqttDrv.so* ../../Release/AgentService/
+	cp -f ./mqtt_sub.conf /usr/lib/Advantech/iotgw/
