@@ -4,7 +4,7 @@ echo "install config file..."
 cp -f ./common_config.mk configure.ac Makefile.am ../../../
 cp -f ./module_config.xml ../../../build/Standard/config/module/linux/
 cp -f ./agent_config.xml ../../../build/Standard/config/
- 
+cp -f ./mqtt_sub.conf /usr/lib/Advantech/iotgw/ 
 cp -rf ../WISE_IOT/NetDevice/Mqtt/ ../../../Library/MQTTDrv
 
 #echo "install libAdvCJSON.la, libAdvCJSON.so..."
