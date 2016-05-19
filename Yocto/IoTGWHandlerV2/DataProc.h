@@ -9,7 +9,7 @@
 #ifndef _DATA_PROC_H
 #define _DATA_PROC_H
 
-#include "SensorNetwork_API.h"
+#include "inc/SensorNetwork_API.h"
 
 void freeSNInfData(SNInterfaceData *pSNInfData);
 void freeSenInfoSpec(InSenData *pSenInfo);
