@@ -6,7 +6,7 @@ include ../../Makefile.common
 # for building program
 application_NAME :=
 # for building library
-lib_NAME := IoTSensorHandler
+lib_NAME := IoTSensorHandlerV2
 SOVERSION := 
 include ../../common_version.mk
 
