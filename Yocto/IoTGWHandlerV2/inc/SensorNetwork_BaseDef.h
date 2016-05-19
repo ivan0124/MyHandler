@@ -32,11 +32,11 @@ typedef enum {
 		SN_Set_ReportSNManagerDataCbf  = 3000,
 
 		// Get / Set
-		SN_Inf_Get_Info									= 6000,
-		SN_Inf_Set_Info									= 6001,
+		SN_Inf_Get									= 6000,
+		SN_Inf_Set									= 6001,
 
-		SN_SenHub_Get_Info							= 6020,  
-		SN_SenHub_Set_Info							= 6021,
+		SN_SenHub_Get							= 6020,  
+		SN_SenHub_Set							= 6021,
 
 		SN_SenHub_Get_SenData					= 6022,
 		SN_SenHub_Set_SenData					= 6023,
