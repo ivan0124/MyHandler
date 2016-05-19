@@ -15,7 +15,7 @@ program_SUBDIRS :=
 CFLAGS += -Wall 
 CPPFLAGS += -D_LINUX -fPIC
 LDFLAGS += -Wl,-rpath,./lib/,-lrt -lm -ldl
-program_INCLUDE_DIRS := $(PLATFORM_LINUX_DIR) $(LIB_LOG_DIR) $(LIB_CJSON_DIR) $(INCLUDE_DIR) 
+program_INCLUDE_DIRS := $(PLATFORM_LINUX_DIR) $(LIB_LOG_DIR) $(LIB_CJSON_DIR) $(INCLUDE_DIR) ../../Library/Log/AdvLog/Tools/AdvJSON/inc/ 
 program_LIBRARY_DIRS := $(LIB_LOG_DIR) $(LIB_CJSON_DIR) $(INSTALL_OUTPUT_DIR)/lib
 program_LIBRARIES := Log cJSON pthread
 ############################################################################
