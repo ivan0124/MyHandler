@@ -400,11 +400,14 @@ void MqttHal_Publish_Callback(struct mosquitto *mosq, void *obj, int mid)
 static void *MqttHal_Thread(void *arg) {
 	//int tmp = (int *)arg;
 	int rc;
-	
+/*ivan del start 20160521*/
+#if 0	
 	while(UpdateCbf_IsSet() != 0) {
 		//ADV_WARN("Callback function is not registered.\n");
 		sleep(1);
 	}
+#endif
+/*ivan del end*/
 	ADV_INFO("Callback function registered.\n");
 	
 	MqttHal_Init();

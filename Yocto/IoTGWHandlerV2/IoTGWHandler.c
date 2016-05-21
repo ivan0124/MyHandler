@@ -224,10 +224,19 @@ int HANDLER_API Handler_Initialize( HANDLER_INFO *pluginfo )
 	g_HandlerContex.isThreadRunning = false;
 	//g_status = handler_init;
 
-
+/*ivan del start 20160521*/
+#if 0
 	// <Eric>
 	if( InitSNGWHandler() < 0 )
 		return handler_fail;
+#endif
+/*ivan del end*/
+ 
+/*ivan add start 20160521*/ 
+    printf("[%s][%s]SN_Initialize() --------------------------->\n",__FILE__, __func__);
+    SN_Initialize(NULL);
+    
+/*ivan add end*/
 
 	return handler_success;
 }
