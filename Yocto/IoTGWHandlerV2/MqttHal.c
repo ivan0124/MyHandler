@@ -203,12 +203,13 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		JSON_Get(json, OBJ_SENHUB_DATA, nodeContent, sizeof(nodeContent));
 		if(strcmp(nodeContent, "NULL") != 0) {
 			// CmdID=2002
-			//printf("device type: SenHub\n");
+			printf("device type: SenHub\n");
 			memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 			JSON_Get(json, OBJ_AGENT_ID, nodeContent, sizeof(nodeContent));
-			//printf("AgentId : %s\n",nodeContent);
+			printf("AgentId : %s\n",nodeContent);
 			pshinfo = (senhub_info_t *)senhub_list_find_by_mac(g_SensorHubList, nodeContent);
 			if(NULL == pshinfo) {
+                                printf("[%s][%s] pshinfo == NULL\n", __FILE__, __func__);
 				JSON_Destory(&json);
 				return -3;
 			}
@@ -283,9 +284,45 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 				//printf("productName: %s\n", nodeContent);
 				strcpy(pshinfo->productName, nodeContent);
 				pshinfo->state = Mote_Report_CMD2000;
-
+/*ivan del start 20160521*/
+#if 0
 				SensorHub_Register(pshinfo);
+#endif
+/*ivan del end*/
 			}
+/*ivan add start 20160521*/
+#if 1 
+                        else{
+
+			        char macAddr[MAX_MACADDRESS_LEN];
+			        memset(macAddr, 0, MAX_MACADDRESS_LEN);
+			        //memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+			        sprintf(macAddr, "%s", nodeContent);
+
+		                printf("\033[33m #Connect Topic+5# \033[0m\n");
+				pshinfo = malloc(sizeof(senhub_info_t));
+				memset(pshinfo, 0, sizeof(senhub_info_t));
+
+				strcpy(pshinfo->macAddress, macAddr);
+
+				memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+				JSON_Get(json, OBJ_DEVICE_PRODUCTNAME, nodeContent, sizeof(nodeContent));
+				printf("productName: %s\n", nodeContent);
+				strcpy(pshinfo->productName, nodeContent);
+				pshinfo->state = Mote_Report_CMD2000;
+
+				pshinfo->jsonNode = NULL;
+
+				pshinfo->id = senhub_list_newId(g_SensorHubList);
+				printf("%s: list add id=%d\n", __func__, pshinfo->id);
+                                
+		                printf("type:SenHub, SENHUB_LIST_ADD(mac=%s)==========================================================>\n",pshinfo->macAddress);
+				g_SensorHubList = SENHUB_LIST_ADD(g_SensorHubList, pshinfo);
+                        }
+                        
+		        SensorHub_Register(pshinfo);
+#endif
+/*ivan add end*/
 		}
 	} else if(strcmp(topicType, WA_PUB_WILL_TOPIC) == 0) {
 		// CmdID=2003

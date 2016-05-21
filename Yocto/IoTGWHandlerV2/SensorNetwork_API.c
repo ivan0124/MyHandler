@@ -18,6 +18,7 @@
 #include "MqttHal.h" // protocol handler
 #include "inc/SensorNetwork_API.h"
 #include "SensorNetwork_APIex.h"
+#include "SensorNetwork_Manager.h"
 #include "DataProc.h" // fill/free data for report
 
 //-----------------------------------------------------------------------------
@@ -401,7 +402,8 @@ SN_CODE SN_Initialize(void *_pInUserData)
 {
 	g_UserData = _pInUserData;
 	g_UpdateDataCbf = NULL;
-
+	SN_Manager_Initialize();
+    SN_SetUpdateDataCbf(&ProcUpdateSNDataCbf);
 	// Your protocol handler 
 	MqttHal_Proc();
 
@@ -425,6 +427,8 @@ SN_CODE SN_GetVersion(char *_psVersion, int _iBufLen)
 	strcpy(_psVersion, VERSION);
 	return SN_OK;
 }
+
+
 
 void SN_SetUpdateDataCbf(UpdateSNDataCbf _UpdateSNDataCbf) 
 {
