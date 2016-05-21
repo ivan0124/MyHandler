@@ -16,7 +16,7 @@
 #include "SensorNetwork_Manager.h"
 
 // Advantech JSON Sensor Format
-#include "./DataFormat/AdvJSON.h"
+#include "AdvJSONx.h"
 #include "SnMJSONParser.h"
 #include "LoadSNAPI.h"
 // include lib Header Files
