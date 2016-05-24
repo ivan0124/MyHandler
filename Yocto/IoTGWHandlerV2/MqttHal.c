@@ -112,7 +112,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	char nodeContent[MAX_JSON_NODE_SIZE];
 	senhub_info_t *pshinfo;
 	int ret = 0;
-        printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+        //printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 	if((json = JSON_Parser(message->payload)) == NULL) {
 		printf("json parse err!\n");
 		return -1;
@@ -122,9 +122,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	ADV_TRACE("Topic type: %s \n", topicType);
 	//printf("Topic type: %s \n", topicType);
 	if(strcmp(topicType, WA_PUB_ACTION_TOPIC) == 0) {
-		//printf("\033[33m #Action Topic# \033[0m\n");
+		printf("\033[33m #Action Topic# \033[0m\n");
 		//JSON_Print(json);
-
+#if 0
 		// Check Publish response about SenHub
 		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		JSON_Get(json, OBJ_STATUS_CODE, nodeContent, sizeof(nodeContent));
@@ -189,8 +189,10 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 
 			SensorHub_InfoSpec(pshinfo);
 		}
+#endif
 	} else if(strcmp(topicType, WA_PUB_DEVINFO_TOPIC) == 0) {
-		//printf("\033[33m #Devinfo Topic# \033[0m\n");
+		printf("\033[33m #Devinfo Topic# \033[0m\n");
+#if 0
 		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		JSON_Get(json, OBJ_IOTGW_DATA, nodeContent, sizeof(nodeContent));
 		//JSON_Print(json);
@@ -235,8 +237,21 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 				SensorHub_Data(pshinfo);
 			}
 		}
+#endif
 	} else if(strcmp(topicType, WA_PUB_CONNECT_TOPIC) == 0) {
-		//printf("\033[33m #Connect Topic# \033[0m\n");
+		printf("\033[33m #Connect Topic# \033[0m\n");
+
+                g_doUpdateInterface = 1;
+		senhub_info_t shinfo;
+                memset(&shinfo,0,sizeof(senhub_info_t));
+                strcpy(shinfo.macAddress, "000E40000005");
+                strcpy(shinfo.hostName, "AA1");
+                strcpy(shinfo.productName, "BB1");
+                strcpy(shinfo.softwareVersion, "BC1");
+                shinfo.jsonNode = NULL;
+                shinfo.id=1;
+		SensorHub_Register(&shinfo);
+#if 0
 		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		JSON_Get(json, OBJ_DEVICE_TYPE, nodeContent, sizeof(nodeContent));
 		//printf("device type : %s\n",nodeContent);
@@ -324,6 +339,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #endif
 /*ivan add end*/
 		}
+#endif
 	} else if(strcmp(topicType, WA_PUB_WILL_TOPIC) == 0) {
 		// CmdID=2003
 		//ADV_TRACE("%s: Receive messages from will topic!!\n", __func__);
@@ -345,10 +361,12 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	}
 	
 	// CmdID=1000
+#if 1
 	if(g_doUpdateInterface) {
 		GatewayIntf_Update();
 		g_doUpdateInterface = 0;
 	}
+#endif
 
 	JSON_Destory(&json);
 
@@ -577,6 +595,8 @@ int MqttHal_Init()
     mosquitto_disconnect_callback_set(g_mosq, MqttHal_Disconnect_Callback);
     mosquitto_publish_callback_set(g_mosq, MqttHal_Publish_Callback);
 
+/*ivan del*/
+#if 0
 	// Create senhub root
 	pshinfo = malloc(sizeof(senhub_info_t));
 	memset(pshinfo, 0, sizeof(senhub_info_t));
@@ -585,7 +605,7 @@ int MqttHal_Init()
 	pshinfo->id = senhub_list_newId(g_SensorHubList);
 	//printf("%s: list add id=%d\n", __func__, pshinfo->id);
 	g_SensorHubList = SENHUB_LIST_ADD(g_SensorHubList, pshinfo);
-
+#endif 
 	return rc;
 }
 

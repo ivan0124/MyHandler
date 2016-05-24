@@ -194,13 +194,14 @@ int fillSNInfData(SNInterfaceData *pSNInfData)
 	pSNInfData->inDataClass.pInBaseDataArray[0].psType = strdup("Info");
 	pSNInfData->inDataClass.pInBaseDataArray[0].iSizeType = sizeof(pSNInfData->inDataClass.pInBaseDataArray[0].psType);
 
+#if 0
 	// Sensor Hub List
 	memset(macList, 0, sizeof(macList));
 	MqttHal_GetMacAddrList(macList, sizeof(macList), 1);
 	// Neighbors
 	memset(neighborList, 0, sizeof(neighborList));
 	MqttHal_GetMacAddrList(neighborList, sizeof(neighborList), 0);
-
+#endif
 	bufSize = 512;
 	pSNInfData->inDataClass.pInBaseDataArray[0].psData = malloc(bufSize);
 	if (NULL == pSNInfData->inDataClass.pInBaseDataArray[0].psData)
@@ -209,7 +210,7 @@ int fillSNInfData(SNInterfaceData *pSNInfData)
 
 	sprintf(pSNInfData->inDataClass.pInBaseDataArray[0].psData,
 			IFACE_INFO_DATA_JSON,
-			macList, neighborList, 100, VERSION, 0);
+			"000E40000005"/*macList*/, ""/*neighborList*/, 100, VERSION, 0);
 
 	pSNInfData->inDataClass.pInBaseDataArray[0].iSizeData = strlen(pSNInfData->inDataClass.pInBaseDataArray[0].psData);
 
