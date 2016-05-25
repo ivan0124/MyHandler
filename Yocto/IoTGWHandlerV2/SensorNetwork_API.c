@@ -336,7 +336,7 @@ int SensorHub_InfoSpec(senhub_info_t *pMote)
 	memset(&SenInfoSpec, 0, sizeof(InSenData));
 	if(fillSenInfoSpec(&SenInfoSpec, pMote) == 0) {
 	//ADV_INFO("%s: 2001 --------------------------\n", __func__);
-		g_UpdateDataCbf(SN_SenHub_SendInfoSpec, &SenInfoSpec, sizeof(InSenData), g_UserData, NULL, NULL, NULL);
+		ProcUpdateSNDataCbf(SN_SenHub_SendInfoSpec, &SenInfoSpec, sizeof(InSenData), g_UserData, NULL, NULL, NULL);
 	}
 	freeSenInfoSpec(&SenInfoSpec);
 
@@ -346,21 +346,24 @@ int SensorHub_InfoSpec(senhub_info_t *pMote)
 // CmdID = 2002, Sensor Hub Data
 int SensorHub_Data(senhub_info_t *pMote)
 {
+        PRINTF("[ivan][%s][%s] =====>\n",__FILE__, __func__);
 	InSenData       SenData;
 
 	if(pMote == NULL) {
 		ADV_TRACE("pMote is NULL\n");
 		return -1;
 	}
+#if 0
 	if(g_UpdateDataCbf == NULL) {
 		ADV_ERROR("%s: g_UpdateDataCbf is NULL\n", __func__);
 		return -2;
 	}
+#endif
 	memset(&SenData, 0, sizeof(InSenData));
 	if(fillSenData(&SenData, pMote) == 0) {
 	//ADV_INFO("%s: 2002 --------------------------\n", __func__);
 		//ADV_INFO("%s: mote mac=%s\n", __func__, pMote->macAddress);
-		g_UpdateDataCbf(SN_SenHub_AutoReportData, &SenData, sizeof(InSenData), g_UserData, NULL, NULL, NULL);
+		ProcUpdateSNDataCbf(SN_SenHub_AutoReportData, &SenData, sizeof(InSenData), g_UserData, NULL, NULL, NULL);
 	}
 	freeSenData(&SenData);
 

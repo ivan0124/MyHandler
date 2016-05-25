@@ -633,7 +633,7 @@ SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int 
 	case SN_SenHub_AutoReportData:
 		{
                         printf("[ivan][%s][%s] SN_SenHub_AutoReportData======================>\n",__FILE__, __func__);
-			rc = AutoReportSenData_SenHub( pInJson, InDatalen, *pOutParam, pRev1 );
+			rc = AutoReportSenData_SenHub( 0, 0, 0, 0 );
 		}
 		break;
 	case SN_SetResult:
@@ -697,6 +697,7 @@ static void HandlerCustMessageRecv(char * const topic, void* const data, const s
 		return;
 	}
 
+        PRINTF("[ivan][%s][%s] g_SenPluginInfo[index] index = %d\n", __FILE__, __func__, index);
 	pSenHander = &g_SenPluginInfo[index];
 
 	if( pSenHander ) {
@@ -712,16 +713,23 @@ static void HandlerCustMessageRecv(char * const topic, void* const data, const s
 		
 	PRINTF("[%s][%s] HandlerCustMessageRecv Cmd =%d\r\n",__FILE__, __func__, cmdID);
 
-#if 0
+/*ivan del*/
+#if 1
+
+#if 1
+        char mydata[2024]={"{\"infoSpec\":{\"SenHub\":{\"SenData\":{\"e\":[{\"n\":\"Temperature\",\"u\":\"Cel\",\"v\":0.000000,\"min\":-100.000000,\"max\":200.000000,\"asm\":\"r\",\"type\":\"d\",\"rt\":\"ucum.Cel\",\"st\":\"ipso\",\"exten\":\"\"},{\"n\":\"Humidity\",\"u\":\"%\",\"v\":0.000000,\"min\":0.000000,\"max\":100.000000,\"asm\":\"r\",\"type\":\"d\",\"rt\":\"ucum.%\",\"st\":\"ipso\",\"exten\":\"\"},{\"n\":\"GPIO1\",\"u\":\"\",\"bv\":0,\"min\":0.000000,\"max\":1.000000,\"asm\":\"rw\",\"type\":\"b\",\"rt\":\"\",\"st\":\"ipso\",\"exten\":\"\"},{\"n\":\"GPIO2\",\"u\":\"\",\"bv\":0,\"min\":0.000000,\"max\":1.000000,\"asm\":\"rw\",\"type\":\"b\",\"rt\":\"\",\"st\":\"ipso\",\"exten\":\"\"}],\"bn\":\"SenData\"},\"Info\":{\"e\":[{\"n\":\"Name\",\"sv\":\"AAA\",\"asm\":\"rw\"},{\"n\":\"sw\",\"sv\":\"1.0.00\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"Net\":{\"e\":[{\"n\":\"sw\",\"sv\":\"1.0.00\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"}],\"bn\":\"Net\"},\"Action\":{\"e\":[{\"n\":\"AutoReport\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Action\"},\"ver\":1}}}"};
+#endif
+
 	switch (cmdID)
 	{
 	case IOTGW_HANDLER_GET_CAPABILITY_REQUEST:
 		{
 			// { "sessionID":"XXX", "StatusCode":200, "SenHub": { xxxx_JSON_Object } }
 			PRINTF("[%s][%s] IOTGW_GET_CAPABILITY_REQUEST: %s\r\n",__FILE__, __func__, SenHubUID);
-			len = ProcGetSenHubCapability(SenHubUID, data, buffer, sizeof(buffer));
+#if 1
+			//len = ProcGetSenHubCapability(SenHubUID, data, buffer, sizeof(buffer));
 			//PRINTF("len=%d Ret=%s\n",len,buffer);
-			if( len > 0 )
+			//if( len > 0 )
 			{
 				Handler_info tmpHandler;
 				memcpy(&tmpHandler, pSenHander, sizeof(Handler_info));
@@ -729,27 +737,32 @@ static void HandlerCustMessageRecv(char * const topic, void* const data, const s
 				tmpHandler.RequestID=1001;
 				tmpHandler.ActionID=2001;
 				//PRINTF("Handler Name=%s RequestID=%d ActionID=%d\n",tmpHandler.Name ,tmpHandler.RequestID,tmpHandler.ActionID);
-				g_sendcustcbf(&tmpHandler,IOTGW_HANDLER_GET_CAPABILITY_REPLY, Topic, buffer, len+1 , NULL, NULL);
+				g_sendcustcbf(&tmpHandler,IOTGW_HANDLER_GET_CAPABILITY_REPLY, Topic, mydata, strlen(mydata)+1 , NULL, NULL);
 			}
+#endif
 		}
 	case IOTGW_GET_CAPABILITY_REQUEST:
 		{
 			// { "sessionID":"XXX", "StatusCode":200, "SenHub": { xxxx_JSON_Object } }
 			PRINTF("[%s][%s] IOTGW_GET_CAPABILITY_REQUEST\r\n", __FILE__, __func__ );
-			len = ProcGetSenHubCapability(SenHubUID, data, buffer, sizeof(buffer));
+#if 1
+			//len = ProcGetSenHubCapability(SenHubUID, data, buffer, sizeof(buffer));
 			//PRINTF("len=%d Ret=%s\n",len,buffer);
-			if( len > 0 )
-				g_sendcustcbf(pSenHander,IOTGW_GET_CAPABILITY_REPLY, Topic, buffer, len+1 , NULL, NULL);
+			//if( len > 0 )
+				g_sendcustcbf(pSenHander,IOTGW_GET_CAPABILITY_REPLY, Topic, mydata, strlen(mydata)+1 , NULL, NULL);
+#endif
 		}
 		break;
 	case IOTGW_GET_SENSOR_REQUEST:
 		{
 			// { "sessionID":"XXX", "sensorInfoList":{"e":[{"n":"SenData/dout","bv":1,"StatusCode":200}]} }
-			PRINTF("[%s][%s]IOTGW_GET_SENSOR_REQUEST data=%s\r\n",__FILE__, __func__, data );			
+			PRINTF("[%s][%s]IOTGW_GET_SENSOR_REQUEST data=%s\r\n",__FILE__, __func__, data );
+#if 0			
 			len = ProcGetSenHubValue(SenHubUID, szSessionId, data, buffer, sizeof(buffer));
 			//PRINTF("len=%d Ret=%s\n",len,buffer);
 			if( len > 0 )
 				g_sendcustcbf(pSenHander,IOTGW_GET_SENSOR_REPLY, Topic, buffer, len+1 , NULL, NULL);
+#endif
 		}
 		break;
 	case IOTGW_SET_SENSOR_REQUEST:
@@ -757,21 +770,25 @@ static void HandlerCustMessageRecv(char * const topic, void* const data, const s
 			// { "sessionID":"XXX", "sensorInfoList":{"e":[ {"n":"SenData/dout", "sv":"Setting", "StatusCode": 202 } ] } }
 			// { "sessionID":"XXX", "sensorInfoList":{"e":[{"n":"SenData/din","sv":"Read Only","StatusCode":405} ] } }
 			PRINTF("[%s][%s]IOTGW_SET_SENSOR_REQUEST data=%s\r\n",__FILE__, __func__, data );
+#if 0
 			len = ProcSetSenHubValue(SenHubUID, szSessionId, data, index, Topic, buffer, sizeof(buffer));
 			//PRINTF("len=%d Ret=%s\n",len,buffer);
 			if( len > 0 )
 				g_sendcustcbf(pSenHander,IOTGW_SET_SENSOR_REPLY, Topic, buffer, len+1 , NULL, NULL);
+#endif
 		}
 		break;
 	default:
 		{
 			PRINTF("[%s][%s]Unknow CMD ID=%d\r\n", __FILE__, __func__, cmdID );
+#if 0
 			/*  {"sessionID":"1234","errorRep":"Unknown cmd!"}  */
 			if(strlen(szSessionId)>0)
 				snprintf(buffer, sizeof(buffer), "{\"%s\":\"%s\",\"sessionID\":\"%s\"}", SN_ERROR_REP, "Unknown cmd!", szSessionId);
 			else
 				snprintf(buffer, sizeof(buffer), "{\"%s\":\"%s\"}", SN_ERROR_REP, "Unknown cmd!");
 			g_sendcustcbf(pSenHander,IOTGW_ERROR_REPLY, Topic, buffer, strlen(buffer)+1 , NULL, NULL);
+#endif
 		}
 		break;
 	}
@@ -917,17 +934,30 @@ static int SendInfoSpec_SenHub( const char *pInJson, const int InDataLen, void *
 
 static int AutoReportSenData_SenHub( const char *pInJson, const int InDataLen, void *pInParam, void *pRev1 )
 {
+        PRINTF("[ivan][%s][%s] =====>\n", __FILE__, __func__);
 	int rc = 0;
+#if 1
+        int index = -1;
+        char SenHubUID[MAX_SN_UID]={"000E40000005"};
+	if( ( index = GetSenHubAgentInfobyUID(&g_SenHubAgentInfo, 256, SenHubUID) ) == -1 ) {
+		PRINTF(" Can't find SenHub UID in Table =%s\r\n","000E40000005" );
+		return 0;
+	}
 
-	Handler_info *pHandler_info = (Handler_info*)pInParam;
+        PRINTF(" find SenHub UID in Table =%s, index=%d\r\n","000E40000005", index );
+#endif 
+#if 1
+	//Handler_info *pHandler_info = (Handler_info*)pInParam;
+        char mydata[1024]={"{\"SenHub\":{\"SenData\":{\"e\":[{\"n\":\"Temperature\",\"v\":8.000000},{\"n\":\"Humidity\",\"v\":64.000000},{\"n\":\"GPIO1\",\"bv\":0},{\"n\":\"GPIO2\",\"bv\":0}],\"bn\":\"SenData\"},\"Info\":{\"e\":[{\"n\":\"Name\",\"sv\":\"123456789012345678901234567890\",\"asm\":\"rw\"},{\"n\":\"sw\",\"sv\":\"1.0.00\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"Net\":{\"e\":[{\"n\":\"sw\",\"sv\":\"1.0.00\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"}],\"bn\":\"Net\"},\"Action\":{\"e\":[{\"n\":\"AutoReport\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Action\"},\"ver\":1}}"};
+        Handler_info *pHandler_info = (Handler_info*)&g_SenPluginInfo[index];
 
 	if( pHandler_info == NULL ) return rc;
 
 	if( g_sendreportcbf ) {
-		g_sendreportcbf( pHandler_info, pInJson, InDataLen, NULL, NULL );
+		g_sendreportcbf( pHandler_info, mydata, strlen(mydata), NULL, NULL );
 		rc = 1;
 	}
-
+#endif
 	return rc;
 }
 

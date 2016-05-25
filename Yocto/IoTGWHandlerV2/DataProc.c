@@ -376,6 +376,8 @@ int fillSenInfoSpec(InSenData *pSenData, senhub_info_t *pMote)
 // CmdID = 2002
 int fillSenData(InSenData *pSenData, senhub_info_t *pMote)
 {
+        PRINTF("[ivan][%s][%s] =====>\n", __FILE__, __func__);
+#if 0
 	int bufSize;
 	char nodeContent[MAX_JSON_NODE_SIZE];
 	char health[4];
@@ -435,6 +437,6 @@ int fillSenData(InSenData *pSenData, senhub_info_t *pMote)
             health, neighborList);
 
 	pSenData->inDataClass.pInBaseDataArray[1].iSizeData = strlen(pSenData->inDataClass.pInBaseDataArray[1].psData);
-
+#endif
 	return 0;
 }

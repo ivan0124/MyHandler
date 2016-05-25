@@ -192,6 +192,15 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #endif
 	} else if(strcmp(topicType, WA_PUB_DEVINFO_TOPIC) == 0) {
 		PRINTF("[%s][%s]\033[33m #Devinfo Topic# \033[0m\n", __FILE__, __func__);
+		senhub_info_t shinfo;
+                memset(&shinfo,0,sizeof(senhub_info_t));
+                strcpy(shinfo.macAddress, "000E40000005");
+                strcpy(shinfo.hostName, "AA1");
+                strcpy(shinfo.productName, "BB1");
+                strcpy(shinfo.softwareVersion, "BC1");
+                shinfo.jsonNode = NULL;
+                shinfo.id=1;
+		SensorHub_Data(&shinfo);
 #if 0
 		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		JSON_Get(json, OBJ_IOTGW_DATA, nodeContent, sizeof(nodeContent));

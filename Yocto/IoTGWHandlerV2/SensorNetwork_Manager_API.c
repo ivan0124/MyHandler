@@ -228,6 +228,8 @@ SN_CODE ProcUpdateSNDataCbf( const int cmdId, const void *pInData, const int InD
 	case SN_SenHub_Register:  // Ok
 		{
                         printf("[%s][%s]SN_SenHub_Register****************************************>>>> \n", __FILE__, __func__);
+			
+#if 1
 			void *pOutAddres = NULL;
 			SenHubCache *pSenHubCache = NULL;
 			static int SenHubCacheSize = sizeof( SenHubCache );
@@ -268,6 +270,7 @@ SN_CODE ProcUpdateSNDataCbf( const int cmdId, const void *pInData, const int InD
 				}
 				
 			} // End of  If ( pSenHubInfo != NULL )
+#endif
 		}
 		break;
 	case SN_SenHub_SendInfoSpec:  // Ok
@@ -309,6 +312,7 @@ SN_CODE ProcUpdateSNDataCbf( const int cmdId, const void *pInData, const int InD
 	case SN_SenHub_AutoReportData: // Ok
 		{
                         printf("[%s][%s]SN_SenHub_AutoReportData****************************************>>>> \n", __FILE__, __func__);
+#if 0
 			InSenData *pSenData = (InSenData*)pInData;
 			SenHubCache *pSenHubCache = NULL;
 
@@ -323,11 +327,14 @@ SN_CODE ProcUpdateSNDataCbf( const int cmdId, const void *pInData, const int InD
 					SaveSenHubDataInCache( pSenData->sUID, pSenData, pSenHubCache, g_snmSystem.pDataBuffer, len+1 );
 
 					if( g_ReportSNManagerCbf != NULL )
-						rc = g_ReportSNManagerCbf(cmdId, g_snmSystem.pDataBuffer, len, &pSenHubCache->pUserData, (void *)pInData, NULL );					
+#endif
+						rc = ProceSNManagerDataCbf(cmdId, 0, 100, 0, 0, NULL );					
 
 					rc = SN_OK;
+#if 0
 				} // End of  PackageSenHubData
 			} // End of pSenData != NULL
+#endif
 		}
 		break;
 	case SN_SenHub_Disconnect:  // Ok

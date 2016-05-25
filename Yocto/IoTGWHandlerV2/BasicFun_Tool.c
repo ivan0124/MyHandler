@@ -1,5 +1,5 @@
 /****************************************************************************/
-/* Copyright(C) : Advantech Technologies, Inc.(ï¿½ï¿½ï¿½Ø¬ï¿½ï¿½ÞªÑ¥í½›í³­ï¿½ï¿½ï¿½ï¿½q)				 */
+/* Copyright(C) : Advantech Technologies, Inc.(ï¿½ï¿½ï¿½Ø¬ï¿½ï¿½ÞªÑ¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½q)				 */
 /* Create Date  : 2013/05/20 by Eric Liang															     */
 /* Modified Date: 2013/07/26 by Eric Liang															 */
 /* Abstract     : Basic Function Tool Programs                   										*/
@@ -22,7 +22,7 @@
 
 char  g_szWorkinPath[MAXPATH] = {0};
 char  g_szLibaryPath[MAXPATH] = {0};
-int     g_DebugType = 1; // 0: None output 1: standard output , 2: write to default log
+int     g_DebugType = 0; // 0: None output 1: standard output , 2: write to default log
 
 //-----------------------------------------------------------------------------
 // function:
