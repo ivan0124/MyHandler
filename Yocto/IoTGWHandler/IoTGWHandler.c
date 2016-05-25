@@ -502,6 +502,7 @@ int HANDLER_API Handler_Get_Capability( char ** pOutReply ) // JSON Format
 
 	if( pSNManagerAPI ) {
 		pBuffer = pSNManagerAPI->SN_Manager_GetCapability( );
+                printf("pBuffer=%s\n",pBuffer);
 		if( pBuffer ) {
 			len = strlen( pBuffer );
 			*pOutReply = (char *)malloc(len + 1);
@@ -576,12 +577,13 @@ static SN_CODE SNManagerAPI ProceSNManagerDataCbf ( const int cmdId, const char 
 	{
 	case SN_Inf_UpdateInterface_Data:
 		{
+                        printf("[ivan]%s -> SN_Inf_UpdateInterface_Data ===============================>>>\n", __func__);
 			rc = UpdateInterfaceData( pInJson, InDatalen );
 		}
 		break;
 	case SN_SenHub_Register:
 		{
-                        printf("[ivan]%s ===============================>>>\n", __func__);
+                        printf("[ivan]%s SN_SenHub_Register ===============================>>>\n", __func__);
                         printf("[ivan]%s pInJson = %s\n", __func__, pInJson);
                         printf("[ivan]%s <<<===============================\n", __func__);
 			rc = Register_SenHub( pInJson, InDatalen, pOutParam, pRev1, pRev2 );
@@ -589,21 +591,25 @@ static SN_CODE SNManagerAPI ProceSNManagerDataCbf ( const int cmdId, const char 
 		break;
 	case SN_SenHub_SendInfoSpec:
 		{
+                        printf("[ivan]%s -> SN_SenHub_SendInfoSpec ===============================>>>\n", __func__);
 			rc = SendInfoSpec_SenHub( pInJson, InDatalen, *pOutParam, pRev1 );
 		}
 		break;
 	case SN_SenHub_AutoReportData:
 		{
+                        printf("[ivan]%s -> SN_SenHub_AutoReportData ===============================>>>\n", __func__);
 			rc = AutoReportSenData_SenHub( pInJson, InDatalen, *pOutParam, pRev1 );
 		}
 		break;
 	case SN_SetResult:
 		{
+                        printf("[ivan]%s -> SN_SetResult ===============================>>>\n", __func__);
 			rc = ProcSet_Result( pInJson, InDatalen, *pOutParam, pRev1 );
 		}
 		break;
 	case SN_SenHub_Disconnect:
 		{
+                        printf("[ivan]%s -> SN_SenHub_Disconnect ===============================>>>\n", __func__);
 			rc = Disconnect_SenHub( *pOutParam );
 		}
 		break;	
@@ -788,7 +794,8 @@ int SenHubDisconnectWISECloud( Handler_info *pSenHubHandler)
 }
 
 static int UpdateInterfaceData(  const char *pInJson, const int InDatalen )
-{
+{ 
+        printf("[ivan]%s   :%s\n", __func__, pInJson);
 	return SendMsgToSUSIAccess( pInJson, InDatalen, NULL, NULL );
 }
 

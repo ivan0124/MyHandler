@@ -184,6 +184,7 @@ SN_CODE ProcUpdateSNDataCbf( const int cmdId, const void *pInData, const int InD
 	{
 	case SN_Inf_SendInfoSpec:
 		{
+                        printf("[%s][%s] SN_Inf_SendInfoSpec****************************************>>>> \n", __FILE__, __func__);
 			ADV_TRACE("Cmd = SN_Inf_SendInfoSpec\n");
 			SN_NET_DRIVER* pSN_NET_DRIVER = (SN_NET_DRIVER*) pUserData;
 			SaveInterfaceInfoSpecInNetDriver( pSN_NET_DRIVER, pInData );
@@ -191,7 +192,13 @@ SN_CODE ProcUpdateSNDataCbf( const int cmdId, const void *pInData, const int InD
 		}
 		break;
 	case SN_Inf_UpdateInterface_Data: // Ok
-		{			
+		{	
+                        printf("[ivan][%s][%s]SN_Inf_UpdateInterface_Data****************************************>>>> \n", __FILE__, __func__);
+                        char aa[128]={"1234567890"};
+                        char bb[128]={"7788990011223344"};
+
+			ProceSNManagerDataCbf(cmdId, &aa, strlen(aa), (void **)NULL, (void *)&bb, NULL );
+#if 0                        		
 			ADV_TRACE("Cmd  UpdateInterface_Data \n");
 
 			SNInterfaceData *pSNInterfaceData = (SNInterfaceData*)pInData;
@@ -209,15 +216,18 @@ SN_CODE ProcUpdateSNDataCbf( const int cmdId, const void *pInData, const int InD
 
 				SaveInfCapabilityDataInCache( pInData, g_snmSystem.pDataHashTable, pCacheBuf->SetInfo.szSetBuf  /*Name (WSN0)*/, g_snmSystem.pDataBuffer,len+1);
 
-				if( g_ReportSNManagerCbf != NULL ) {
-					g_ReportSNManagerCbf(cmdId, g_snmSystem.pDataBuffer, len, (void **)NULL, (void *)pInData, NULL );
+				//if( g_ReportSNManagerCbf != NULL ) {
+                                        /*ivan add*/
+					ProceSNManagerDataCbf(cmdId, g_snmSystem.pDataBuffer, len, (void **)NULL, (void *)pInData, NULL );
 					rc = SN_OK;
-				}
+				//}
 			}
+#endif
 		}
 		break;
 	case SN_SenHub_Register:  // Ok
 		{
+                        printf("[%s][%s]SN_SenHub_Register****************************************>>>> \n", __FILE__, __func__);
 			void *pOutAddres = NULL;
 			SenHubCache *pSenHubCache = NULL;
 			static int SenHubCacheSize = sizeof( SenHubCache );
@@ -231,8 +241,11 @@ SN_CODE ProcUpdateSNDataCbf( const int cmdId, const void *pInData, const int InD
 				// To Prevent Register twice
 				pSenHubCache = (SenHubCache*)HashTableGet( g_snmSystem.pSenHubHashTable,pSenHubInfo->sUID );
 
-				if( pSenHubCache == NULL && g_ReportSNManagerCbf ) {
-					rc = g_ReportSNManagerCbf(cmdId, NULL, 0, &pOutAddres, (void *)pInData, NULL );
+				if( pSenHubCache == NULL) {
+                                   
+					//rc = g_ReportSNManagerCbf(cmdId, NULL, 0, &pOutAddres, (void *)pInData, NULL );
+                                        /*ivan add*/
+					rc = ProceSNManagerDataCbf(cmdId, NULL, 0, &pOutAddres, (void *)pInData, NULL );
 				}
 
 
@@ -257,6 +270,7 @@ SN_CODE ProcUpdateSNDataCbf( const int cmdId, const void *pInData, const int InD
 		break;
 	case SN_SenHub_SendInfoSpec:  // Ok
 		{
+                        printf("[%s][%s]SN_SenHub_SendInfoSpec****************************************>>>> \n", __FILE__, __func__);
 			InSenData *pSenInfoSpec = (InSenData*) pInData;
 			SenHubCache *pSenHubCache = NULL;
 			SN_NET_DRIVER *pSNDriverInfo = (SN_NET_DRIVER*) pUserData;
@@ -292,6 +306,7 @@ SN_CODE ProcUpdateSNDataCbf( const int cmdId, const void *pInData, const int InD
 		break;
 	case SN_SenHub_AutoReportData: // Ok
 		{
+                        printf("[%s][%s]SN_SenHub_AutoReportData****************************************>>>> \n", __FILE__, __func__);
 			InSenData *pSenData = (InSenData*)pInData;
 			SenHubCache *pSenHubCache = NULL;
 
@@ -315,6 +330,7 @@ SN_CODE ProcUpdateSNDataCbf( const int cmdId, const void *pInData, const int InD
 		break;
 	case SN_SenHub_Disconnect:  // Ok
 		{
+                        printf("[%s][%s]SN_SenHub_Disconnect****************************************>>>> \n", __FILE__, __func__);
 			InSenData *pInSenData = (InSenData*)pInData;
 			SenHubCache *pSenHubCache = NULL;
 

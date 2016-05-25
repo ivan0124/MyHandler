@@ -182,11 +182,11 @@ int fillSNInfData(SNInterfaceData *pSNInfData)
 	char neighborList[2048];
 	
 	//ADV_INFO("%s: \n", __func__);
-
+/*ivan hard code*/
 	snprintf(pSNInfData->sComType, sizeof(pSNInfData->sComType), "%s", CONTYPE);
 	snprintf(pSNInfData->sInfID, sizeof(pSNInfData->sInfID),
 			"%02x%02x%s",
-			0, 0, g_GatewayMAC
+			0, 0, "080027549737"
 			);
 
 	pSNInfData->inDataClass.iTypeCount = 2;

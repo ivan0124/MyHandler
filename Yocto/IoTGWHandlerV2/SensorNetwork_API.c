@@ -274,6 +274,7 @@ int SetSenData(char *_sUID, InBaseData *_input, OutBaseData *output)
 //-----------------------------------------------------------------------------
 int GatewayIntf_Update()
 {
+        printf("GatewayIntf_Update ---------->\n");
 	SNInterfaceData SNInfData;
 
 	if(g_UpdateDataCbf == NULL) {
