@@ -31,7 +31,7 @@
 //-----------------------------------------------------------------------------
 #define cagent_request_custom 2002
 #define cagent_custom_action 30002
-const char strPluginName[MAX_TOPIC_LEN] = {"IoTGW"};
+const char strPluginName[MAX_TOPIC_LEN] = {"IoTGWv2"};
 const int iRequestID = cagent_request_custom;
 const int iActionID = cagent_custom_action;
 
@@ -154,9 +154,11 @@ static CAGENT_PTHREAD_ENTRY(ThreadSendSenHubConnect, args)
 	char buffer[MAX_BUFFER_SIZE]={0};
 	//cagent_agent_info_body_t *pSenAgentInfo = NULL;
 
-	PRINTF("Start send SenHub list message \r\n" );
+	PRINTF("[ivan][%s][%s] Start send SenHub list message \r\n", __FILE__, __func__ );
         strcpy(buffer,"{\"IoTGW\":{\"LAN\":{\"LAN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":-1,\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"LAN0\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.4.5\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":0,\"asm\":\"r\"}],\"bn\":\"Info\"},\"bn\":\"0000080027549737\",\"ver\":1},\"bn\":\"LAN\",\"ver\":1},\"ver\":1}}");	
 
+        PRINTF("[ivan][%s][%s] Start send SenHub list message \r\n", __FILE__, __func__ );
+        PRINTF("[ivan][%s][%s] SenHub list message: %s\r\n", __FILE__, __func__, buffer );	
         SendMsgToSUSIAccess(buffer, sizeof(buffer), NULL, NULL);
 #if 0		
 	len = ProcGetTotalInterface(buffer, sizeof(buffer));
@@ -168,7 +170,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadSendSenHubConnect, args)
 #endif
 
 #if 1
-	PRINTF("Start send SenHub connect message\r\n");
+	PRINTF("[%s][%s] Start send SenHub connect message\r\n", __FILE__, __func__);
 	for( i = 0; i< MAX_SENNODES ; i ++ ) {
 		if(g_SenHubAgentInfo[i].status == 1)
 		{
@@ -183,7 +185,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadSendSenHubConnect, args)
 			SenHubConnectToWISECloud( pSenHander );
 		}
 	}
-	PRINTF("Finish send SenHub connect message\r\n");
+	PRINTF("[%s][%s] Finish send SenHub connect message\r\n", __FILE__, __func__);
 #endif
 	app_os_thread_exit(0);
 	return 0;
@@ -231,7 +233,7 @@ int HANDLER_API Handler_Initialize( HANDLER_INFO *pluginfo )
 	//g_status = handler_init;
 
 /*ivan del start 20160521*/
-#if 0
+#if 1
 	// <Eric>
 	if( InitSNGWHandler() < 0 )
 		return handler_fail;
@@ -513,13 +515,14 @@ int HANDLER_API Handler_Get_Capability( char ** pOutReply ) // JSON Format
 	//char result[MAX_DATA_SIZE]={0};
         char capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"LAN\":{\"LAN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":-1,\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"LAN0\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.4.5\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":0,\"asm\":\"r\"}],\"bn\":\"Info\"},\"bn\":\"0000080027549737\",\"ver\":1},\"bn\":\"LAN\",\"ver\":1},\"ver\":1}}"};
 	PRINTF("\r\n\r\n");
-	PRINTF("IoTGW Handler_Get_Capability\r\n");
+	PRINTF("[%s][%s]IoTGW Handler_Get_Capability\r\n", __FILE__, __func__);
+        
 			
         len = strlen( capability );
 	*pOutReply = (char *)malloc(len + 1);
 	memset(*pOutReply, 0, len + 1);
 	strcpy(*pOutReply, capability);
-        printf("capability=%s\n", capability);
+        PRINTF("[%s][%s]capability data=%s\n", __FILE__, __func__, capability);
 	{
 	       void* threadHandler;
 	       if (app_os_thread_create(&threadHandler, ThreadSendSenHubConnect, NULL) == 0)
@@ -598,49 +601,50 @@ static int ProcSet_Result( const char *pInJson, const int InDataLen, void *pInPa
 
 SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int InDatalen, void **pOutParam, void *pRev1, void *pRev2 )
 {
-        printf("[ivan]%s ======================>\n",__func__);
+        printf("[ivan][%s][%s] ======================>\n",__FILE__, __func__);
 	int rc = 0;
 
 	switch( cmdId)
 	{
 	case SN_Inf_UpdateInterface_Data:
 		{
-                        printf("[ivan]%s xxxx SN_Inf_UpdateInterface_Data======================>\n",__func__);
 #if 1
                         char mydata[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000005\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549737\",\"ver\": 1},\"bn\": \"LAN\"},\"ver\": 1}}"};
-                        printf("[ivan]%s SN_Inf_UpdateInterface_Data======================>\n",__func__);
+                        PRINTF("[ivan][%s][%s] SN_Inf_UpdateInterface_Data======================>\n",__FILE__, __func__);
 
+                        PRINTF("[ivan][%s][%s]Interface Data=%s\n",__FILE__, __func__, mydata);
 			rc = UpdateInterfaceData( mydata/*pInJson*/, strlen(mydata)/*InDatalen*/ );
 #endif
 		}
 		break;
 	case SN_SenHub_Register:
 		{
-                        printf("[ivan]%s xxxx SN_SenHub_Register======================>\n",__func__);
+                        SenHubInfo *pSenHubInfo = (SenHubInfo*)pRev1;
+                        printf("[ivan][%s][%s] ****************************************\n",__FILE__, __func__);
 			rc = Register_SenHub( pInJson, InDatalen, pOutParam, pRev1, pRev2 );
 		}
 		break;
 	case SN_SenHub_SendInfoSpec:
 		{
-                        printf("[ivan]%s SN_SenHub_SendInfoSpec======================>\n",__func__);
+                        printf("[ivan][%s][%s] SN_SenHub_SendInfoSpec======================>\n",__FILE__, __func__);
 			rc = SendInfoSpec_SenHub( pInJson, InDatalen, *pOutParam, pRev1 );
 		}
 		break;
 	case SN_SenHub_AutoReportData:
 		{
-                        printf("[ivan]%s SN_SenHub_AutoReportData======================>\n",__func__);
+                        printf("[ivan][%s][%s] SN_SenHub_AutoReportData======================>\n",__FILE__, __func__);
 			rc = AutoReportSenData_SenHub( pInJson, InDatalen, *pOutParam, pRev1 );
 		}
 		break;
 	case SN_SetResult:
 		{
-                        printf("[ivan]%s SN_SetResult======================>\n",__func__);
+                        printf("[ivan][%s][%s] SN_SetResult======================>\n",__FILE__, __func__);
 			rc = ProcSet_Result( pInJson, InDatalen, *pOutParam, pRev1 );
 		}
 		break;
 	case SN_SenHub_Disconnect:
 		{
-                        printf("[ivan]%s SN_SenHub_Disconnect======================>\n",__func__);
+                        printf("[ivan][%s][%s] SN_SenHub_Disconnect======================>\n",__FILE__, __func__);
 			rc = Disconnect_SenHub( *pOutParam );
 		}
 		break;	
@@ -663,6 +667,7 @@ static int SendMsgToSUSIAccess(  const char* Data, unsigned int const DataLen, v
 // topic: /cagent/admin/%s/agentcallbackreq
 static void HandlerCustMessageRecv(char * const topic, void* const data, const size_t datalen, void *pRev1, void* pRev2)
 {
+        PRINTF("[ivan] HandlerCustMessageRecv =============================>\n");
 	int cmdID = 0;
 	char SenHubUID[MAX_SN_UID]={0};
 	char buffer[MAX_BUFFER_SIZE]={0};
@@ -675,20 +680,20 @@ static void HandlerCustMessageRecv(char * const topic, void* const data, const s
 
 	int i = 0;
 	// Recv Remot Server Command to process
-	PRINTF(" %s>Recv Cust Topic [%s] Data %s\r\n", strPluginName, topic, (char*) data );
+	PRINTF("[%s][%s]%s>Recv Cust Topic [%s] Data %s\r\n", __FILE__, __func__, strPluginName, topic, (char*) data );
 
 	if(!ParseReceivedData(data, datalen, &cmdID,szSessionId,sizeof(szSessionId))) {
-		PRINTF(" Can't find cmdID\r\n" );
+		PRINTF("[%s][%s] Can't find cmdID\r\n", __FILE__, __func__ );
 		return;
 	}
 
 	if( GetSenHubUIDfromTopic( topic, SenHubUID, sizeof(SenHubUID) ) == 0 ) {
-		PRINTF(" Can't find SenHubID Topic=%s\r\n",topic );
+		PRINTF("[%s][%s] Can't find SenHubID Topic=%s\r\n",__FILE__, __func__, topic );
 		return;
 	}
 
 	if( ( index = GetSenHubAgentInfobyUID(&g_SenHubAgentInfo, MAX_SENNODES, SenHubUID) ) == -1 ) {
-		PRINTF(" Can't find SenHub UID in Table =%s\r\n",SenHubUID );
+		PRINTF("[%s][%s] Can't find SenHub UID in Table =%s\r\n",__FILE__, __func__, SenHubUID );
 		return;
 	}
 
@@ -705,14 +710,15 @@ static void HandlerCustMessageRecv(char * const topic, void* const data, const s
 	memset(Topic,0,sizeof(Topic));
 	snprintf(Topic,sizeof(Topic), SENHUB_CALLBACKREQ_TOPIC, SenHubUID );
 		
-	PRINTF("HandlerCustMessageRecv Cmd =%d\r\n",cmdID);
+	PRINTF("[%s][%s] HandlerCustMessageRecv Cmd =%d\r\n",__FILE__, __func__, cmdID);
 
+#if 0
 	switch (cmdID)
 	{
 	case IOTGW_HANDLER_GET_CAPABILITY_REQUEST:
 		{
 			// { "sessionID":"XXX", "StatusCode":200, "SenHub": { xxxx_JSON_Object } }
-			PRINTF("IOTGW_GET_CAPABILITY_REQUEST: %s\r\n", SenHubUID);
+			PRINTF("[%s][%s] IOTGW_GET_CAPABILITY_REQUEST: %s\r\n",__FILE__, __func__, SenHubUID);
 			len = ProcGetSenHubCapability(SenHubUID, data, buffer, sizeof(buffer));
 			//PRINTF("len=%d Ret=%s\n",len,buffer);
 			if( len > 0 )
@@ -729,7 +735,7 @@ static void HandlerCustMessageRecv(char * const topic, void* const data, const s
 	case IOTGW_GET_CAPABILITY_REQUEST:
 		{
 			// { "sessionID":"XXX", "StatusCode":200, "SenHub": { xxxx_JSON_Object } }
-			PRINTF("IOTGW_GET_CAPABILITY_REQUEST\r\n" );
+			PRINTF("[%s][%s] IOTGW_GET_CAPABILITY_REQUEST\r\n", __FILE__, __func__ );
 			len = ProcGetSenHubCapability(SenHubUID, data, buffer, sizeof(buffer));
 			//PRINTF("len=%d Ret=%s\n",len,buffer);
 			if( len > 0 )
@@ -739,7 +745,7 @@ static void HandlerCustMessageRecv(char * const topic, void* const data, const s
 	case IOTGW_GET_SENSOR_REQUEST:
 		{
 			// { "sessionID":"XXX", "sensorInfoList":{"e":[{"n":"SenData/dout","bv":1,"StatusCode":200}]} }
-			PRINTF("IOTGW_GET_SENSOR_REQUEST data=%s\r\n",data );			
+			PRINTF("[%s][%s]IOTGW_GET_SENSOR_REQUEST data=%s\r\n",__FILE__, __func__, data );			
 			len = ProcGetSenHubValue(SenHubUID, szSessionId, data, buffer, sizeof(buffer));
 			//PRINTF("len=%d Ret=%s\n",len,buffer);
 			if( len > 0 )
@@ -750,7 +756,7 @@ static void HandlerCustMessageRecv(char * const topic, void* const data, const s
 		{
 			// { "sessionID":"XXX", "sensorInfoList":{"e":[ {"n":"SenData/dout", "sv":"Setting", "StatusCode": 202 } ] } }
 			// { "sessionID":"XXX", "sensorInfoList":{"e":[{"n":"SenData/din","sv":"Read Only","StatusCode":405} ] } }
-			PRINTF("IOTGW_SET_SENSOR_REQUEST data=%s\r\n",data );
+			PRINTF("[%s][%s]IOTGW_SET_SENSOR_REQUEST data=%s\r\n",__FILE__, __func__, data );
 			len = ProcSetSenHubValue(SenHubUID, szSessionId, data, index, Topic, buffer, sizeof(buffer));
 			//PRINTF("len=%d Ret=%s\n",len,buffer);
 			if( len > 0 )
@@ -759,7 +765,7 @@ static void HandlerCustMessageRecv(char * const topic, void* const data, const s
 		break;
 	default:
 		{
-			PRINTF("Unknow CMD ID=%d\r\n", cmdID );
+			PRINTF("[%s][%s]Unknow CMD ID=%d\r\n", __FILE__, __func__, cmdID );
 			/*  {"sessionID":"1234","errorRep":"Unknown cmd!"}  */
 			if(strlen(szSessionId)>0)
 				snprintf(buffer, sizeof(buffer), "{\"%s\":\"%s\",\"sessionID\":\"%s\"}", SN_ERROR_REP, "Unknown cmd!", szSessionId);
@@ -769,12 +775,13 @@ static void HandlerCustMessageRecv(char * const topic, void* const data, const s
 		}
 		break;
 	}
+#endif
 }
 
 
 int SenHubConnectToWISECloud( Handler_info *pSenHubHandler)
 {
-    printf("SenHubConnectToWISECloud  +++++++++++\n");
+    printf("[ivan][%s][%s]SenHubConnectToWISECloud ====>\n", __FILE__, __func__);
 #if 1
 	char Topic[MAX_TOPIC_SIZE]={0};
 	char JSONData[MAX_FUNSET_DATA_SIZE]={0};
@@ -792,15 +799,19 @@ int SenHubConnectToWISECloud( Handler_info *pSenHubHandler)
 	// 1. Subscribe Topic2 -> Create SenHub <-> WISECloud communication channel
 	memset(Topic,0,sizeof(Topic));
 	snprintf( Topic, sizeof(Topic), "/cagent/admin/%s/agentcallbackreq", "000E40000005"/*pSenHubHandler->agentInfo->devId*/ );
-	if( g_subscribecustcbf )
+	if( g_subscribecustcbf ){
+                PRINTF("[ivan][%s][%s] g_subscribecustcbf =================>\n", __FILE__, __func__);
 		g_subscribecustcbf( Topic, &HandlerCustMessageRecv );
-	PRINTF("Subscribe SenHub Topic:%s \n", Topic);
+        }
+	PRINTF("[%s][%s]Subscribe SenHub Topic:%s \n", __FILE__, __func__, Topic);
 	// 2. SendAgentInfo online
 	memset(Topic,0,sizeof(Topic));
 	snprintf(Topic,sizeof(Topic),"/cagent/admin/%s/agentinfoack","000E40000005"/*pSenHubHandler->agentInfo->devId*/);
-	if( g_sendcustcbf )
+	if( g_sendcustcbf ){
+                PRINTF("[ivan]g_sendcustcbf ppppppppppppppppppppppppppppppp>\n");
 		g_sendcustcbf(pSenHubHandler,1,Topic,JSONData, datalen, NULL, NULL);
-	PRINTF("Send SenHub AgentInfo:%s \n", JSONData);
+        }
+	PRINTF("[%s][%s]Send SenHub AgentInfo:%s \n", __FILE__, __func__, JSONData);
 	//PRINTF("SenHubConnectToWISECloud Leave\n");
 #endif
 	return 1;
@@ -839,15 +850,19 @@ static int Register_SenHub( const char *pJSON, const int nLen, void **pOutParam,
 	int rc = 0;
 	int index = 0;
 
-        printf("[ivan]%s ====+1\n", __func__ );
+        PRINTF("[ivan][%s][%s] ---------------------------------=====>\n", __FILE__, __func__ );
 	SenHubInfo *pSenHubInfo = (SenHubInfo*)pRev1;
+
+	PRINTF("[ivan][%s][%s] MAC=%s HostName=%s SN=%s Product=%s\n",__FILE__,__func__,		pSenHubInfo->sUID,
+	pSenHubInfo->sHostName,										pSenHubInfo->sSN,										pSenHubInfo->sProduct);
+
 	Handler_info  *pSenHander = NULL;
 
 	if( pSenHubInfo == NULL ) {
-		PRINTF("SenHub is NULL\r\n");
+		PRINTF("[%s][%s] SenHub is NULL\r\n", __FILE__, __func__);
 		return rc;
 	}
-        printf("[ivan]%s ====+2\n", __func__ );
+;
 	// 1. Find empty SenHub Array
 	if(  (index = GetUsableIndex(&g_SenHubAgentInfo, MAX_SENNODES ) )  == -1 ) 
 	{
@@ -855,19 +870,15 @@ static int Register_SenHub( const char *pJSON, const int nLen, void **pOutParam,
 		return rc;
 	}
         
-        printf("[ivan]%s ====+3\n", __func__ );
 	pSenHander = &g_SenPluginInfo[index];
 	*pOutParam    = &g_SenPluginInfo[index];
 
-        printf("[ivan]%s ====+4\n", __func__ );
 	// 2. Prepare Sensor Node Handler_info data
 	PackSenHubPlugInfo( pSenHander, &g_PluginInfo, pSenHubInfo->sUID, pSenHubInfo->sHostName, pSenHubInfo->sProduct, 1 );
 
-        printf("[ivan]%s ====+5\n", __func__ );
 	// 3. Register to WISECloud
 	rc = SenHubConnectToWISECloud( pSenHander );
 
-        printf("[ivan]%s ====+6\n", __func__ );
 	return rc;
 }
 
@@ -1002,8 +1013,11 @@ Exit_ProcSet:
 // <IoTGW>
 int InitSNGWHandler()
 {
-	int rc = 0;
+	
 	int i = 0;
+        int rc = 0;
+
+#if 0
 	char libpath[MAX_PATH]={0};
 
 	//snprintf(libpath,sizeof(libpath),"%s/%s",GetLibaryDir(IoTGW_HANDLE_NAME),SN_MANAGER_LIB_NAME);
@@ -1015,7 +1029,7 @@ int InitSNGWHandler()
 		PRINTF("Failed: InitSNGWHandler: GetSNManagerAPILibFn\r\n");
 		return rc;
 	}
-
+#endif
 	// 2. Allocate Handler_info array buffer point
 	for( i = 0; i< MAX_SENNODES ; i ++ ) {
 		memcpy(&g_SenPluginInfo[i],&g_PluginInfo,sizeof(Handler_info));
@@ -1024,7 +1038,7 @@ int InitSNGWHandler()
 		g_SenPluginInfo[i].agentInfo = &g_SenHubAgentInfo[i];
 	}
 
-
+#if 0
 	// 3. Set ProcSNManagerCbf
 	if( pSNManagerAPI->SN_Manager_ActionProc( SN_Set_ReportSNManagerDataCbf, ProceSNManagerDataCbf,0,0,0) == SN_ER_FAILED ){
 		PRINTF("Failed: InitSNGWHandler: SN_Set_ReportSNManagerDataCbf\r\n");
@@ -1043,6 +1057,7 @@ int InitSNGWHandler()
 	InitAdvAPIMux_Server();
 #endif
 
+#endif
 	rc = 1; 
 	PRINTF("Success: Initial Sensor Network Handler\r\n");
 

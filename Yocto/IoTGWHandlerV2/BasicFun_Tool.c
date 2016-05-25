@@ -1,5 +1,5 @@
 /****************************************************************************/
-/* Copyright(C) : Advantech Technologies, Inc.(¬ãµØ¬ì§ÞªÑ¥÷¦³­­¤½¥q)				 */
+/* Copyright(C) : Advantech Technologies, Inc.(ï¿½ï¿½ï¿½Ø¬ï¿½ï¿½ÞªÑ¥í½›í³­ï¿½ï¿½ï¿½ï¿½q)				 */
 /* Create Date  : 2013/05/20 by Eric Liang															     */
 /* Modified Date: 2013/07/26 by Eric Liang															 */
 /* Abstract     : Basic Function Tool Programs                   										*/
@@ -78,18 +78,18 @@ static int _MATCH(char *source,char *target)
 }
 
 static int _getValue(char *line,char *s) {	//| = value
-	char *sp=strchr(line,'=');		//| ¤À¹j
+	char *sp=strchr(line,'=');		//| ï¿½ï¿½j
 	if (sp) {
 		sp=sp+1;
-		while( *sp == ' ' || *sp == '\t' ) {	//¥h°£±¼" "©Î"\t"
+		while( *sp == ' ' || *sp == '\t' ) {	//ï¿½hï¿½ï¿½ï¿½ï¿½" "ï¿½ï¿½"\t"
 			sp++;
 		}
 
 		strcpy(s,sp);
 
-		sp=strchr(s,0x0d);			//| µ²§À
+		sp=strchr(s,0x0d);			//| ï¿½ï¿½ï¿½ï¿½
 		if (sp) *sp='\0';
-		sp=strchr(s,0x0a);			//| µ²§À
+		sp=strchr(s,0x0a);			//| ï¿½ï¿½ï¿½ï¿½
 		if (sp) *sp='\0';
 		return 1;
 	}
@@ -97,13 +97,13 @@ static int _getValue(char *line,char *s) {	//| = value
 }
 
 static int _getValue2(char *line,char *s) {	//| = value
-	char *sp=strchr(line,'=');		//| ¤À¹j
+	char *sp=strchr(line,'=');		//| ï¿½ï¿½j
 
 	char *end;
 	int size = 0;
 	if (sp) {
 		sp=sp+1;
-		while( *sp == ' ' || *sp == '\t' ) {	//¥h°£±¼" "©Î"\t"
+		while( *sp == ' ' || *sp == '\t' ) {	//ï¿½hï¿½ï¿½ï¿½ï¿½" "ï¿½ï¿½"\t"
 			sp++;
 		}
 		sp=strchr(sp,'"');			//| begin
@@ -132,7 +132,7 @@ int ReadFromFile(char *filepath, char *buf, int bufsize)
 	if ( file == NULL )
 		return -1;
 
-	while ( !feof(file) )	//ÀË¬dÀÉ®×«ü¼Ð¬O§_¨ì¤F©³³¡
+	while ( !feof(file) )	//ï¿½Ë¬dï¿½É®×«ï¿½ï¿½Ð¬Oï¿½_ï¿½ï¿½ï¿½Fï¿½ï¿½ï¿½ï¿½
 	{
 		if ( (readsize = (int) fgets(target, remain, file)) == 0 )	//Get 512 bytes data from file to source buffer
 				break;
@@ -162,15 +162,15 @@ int GetPrivateProfileString(char* lpAppName, char* lpKeyName, char* lpDefault, c
 	
 	memset( lpReturnedString, 0, nSize );
 	
-	//¥ý§ä¥X AppName
+	//ï¿½ï¿½ï¿½ï¿½ï¿½X AppName
 	memset( target, 0, 512 );
 	sprintf( target, "[%s]", lpAppName );
-	while ( !feof(file) )	//ÀË¬dÀÉ®×«ü¼Ð¬O§_¨ì¤F©³³¡
+	while ( !feof(file) )	//ï¿½Ë¬dï¿½É®×«ï¿½ï¿½Ð¬Oï¿½_ï¿½ï¿½ï¿½Fï¿½ï¿½ï¿½ï¿½
 	{
 		memset(source, 0, 512);
 		if ( fgets(source, 512, file) == NULL )	//Get 512 bytes data from file to source buffer
 		{
-			strcpy( lpReturnedString, lpDefault );	// ¨S¦³¨ú¨ì¸ê®Æ®É¦^¶Ç default ­È
+			strcpy( lpReturnedString, lpDefault );	// ï¿½Sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®É¦^ï¿½ï¿½ default ï¿½ï¿½
 			fclose(file);
 			return strlen(lpReturnedString);
 		}
@@ -179,7 +179,7 @@ int GetPrivateProfileString(char* lpAppName, char* lpKeyName, char* lpDefault, c
 			break;
 	}
 	
-	//¦A§ä¥X KeyName
+	//ï¿½Aï¿½ï¿½ï¿½X KeyName
 	memset(target, 0, 512);
 	sprintf(target, "%s", lpKeyName);
 	while ( !feof(file) )
@@ -199,7 +199,7 @@ search_again:
 			fclose(file);
 			return strlen(lpReturnedString);
 		}else 
-			if (source[0] == '\n') goto search_again;	//¤¹³\¦³¦h­Ó´«¦æ
+			if (source[0] == '\n') goto search_again;	//ï¿½ï¿½ï¿½\ï¿½ï¿½ï¿½hï¿½Ó´ï¿½ï¿½ï¿½
 
 		if ( _MATCH(source, target) )
 			break;
@@ -438,9 +438,9 @@ void toLOWER( char *str, int length )
 
 //--------------------------------------------------------
 // Function Name : StrPos
-// Purpose       : §ä´M¦r¦ê¦ì¸m
-// Input         : str1: ­ì¥»¦r¦ê   str2:±ý´M§ä¦r¦ê
-// Output        : ¦³§ä¨ì´N¦^¶Ç¦ì¸m, §ä¤£¨ì¦^¶Ç-1
+// Purpose       : ï¿½ï¿½ï¿½Mï¿½rï¿½ï¿½ï¿½ï¿½ï¿½m
+// Input         : str1: ï¿½ì¥»ï¿½rï¿½ï¿½   str2:ï¿½ï¿½ï¿½Mï¿½ï¿½ï¿½rï¿½ï¿½
+// Output        : ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Nï¿½^ï¿½Ç¦ï¿½ï¿½m, ï¿½ä¤£ï¿½ï¿½ï¿½^ï¿½ï¿½-1
 // return value  : None
 // Modified Date : 2013/07/24 by Eric Liang
 //--------------------------------------------------------
@@ -454,7 +454,7 @@ int	StrPos(char *str1, char *str2){
 
 //--------------------------------------------------------
 // Function Name : SplitUrl
-// Purpose       : §â¿é¤Jªººô§}©â¥Xip port
+// Purpose       : ï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½}ï¿½ï¿½ï¿½Xip port
 // Input         : url , ip point, port point, path point
 // Output        : None
 // return value  : None
@@ -465,7 +465,7 @@ int	SplitUrl(char *url, char *ip, int *port, char* path )
 	int pos1,pos2;
 	
 	toLOWER( url, 4 );
-	//¦³http://¡A·s¼Wrtsp§PÂ_¡Akidd 2010/10/20
+	//ï¿½ï¿½http://ï¿½Aï¿½sï¿½Wrtspï¿½Pï¿½_ï¿½Akidd 2010/10/20
 	if (strncmp(url, "http://", 7) == 0 || strncmp(url, "rtsp://", 7) == 0){
 		url += 7;
 	}else
@@ -476,23 +476,23 @@ int	SplitUrl(char *url, char *ip, int *port, char* path )
 	
 	
 	
-	if (pos1 >= 0){					//¦³ /
-		if (pos2 >= 0){				//¦³ : , ªí¥Ü¦³«ü©wport
+	if (pos1 >= 0){					//ï¿½ï¿½ /
+		if (pos2 >= 0){				//ï¿½ï¿½ : , ï¿½ï¿½ï¿½Ü¦ï¿½ï¿½ï¿½ï¿½wport
 			strncpy(ip, url, pos2 ); 
 			ip[pos2] = 0x00;
 			*port = atoi( url + pos2 + 1);
-		}else{					//¨S¦³:
+		}else{					//ï¿½Sï¿½ï¿½:
 			strncpy(ip, url , pos1 );
 			ip[pos1] = 0x00;
 			*port = 80;
 		}
 		strcpy(path, url + pos1);
-	}else{						//¨S¦³ /
-		if (pos2 >= 0){				//¦³ :
+	}else{						//ï¿½Sï¿½ï¿½ /
+		if (pos2 >= 0){				//ï¿½ï¿½ :
 			strncpy(ip, url , pos2 ); 
 			ip[pos2] = 0x00;
 			*port = atoi( url + pos2 + 1);
-		}else{					//¨S¦³:
+		}else{					//ï¿½Sï¿½ï¿½:
 			strcpy(ip, url );
 			*port = 80;
 		}

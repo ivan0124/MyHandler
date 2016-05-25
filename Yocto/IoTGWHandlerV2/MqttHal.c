@@ -122,7 +122,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	ADV_TRACE("Topic type: %s \n", topicType);
 	//printf("Topic type: %s \n", topicType);
 	if(strcmp(topicType, WA_PUB_ACTION_TOPIC) == 0) {
-		printf("\033[33m #Action Topic# \033[0m\n");
+		PRINTF("[%s][%s]\033[33m #Action Topic# \033[0m\n",__FILE__, __func__);
 		//JSON_Print(json);
 #if 0
 		// Check Publish response about SenHub
@@ -191,7 +191,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		}
 #endif
 	} else if(strcmp(topicType, WA_PUB_DEVINFO_TOPIC) == 0) {
-		printf("\033[33m #Devinfo Topic# \033[0m\n");
+		PRINTF("[%s][%s]\033[33m #Devinfo Topic# \033[0m\n", __FILE__, __func__);
 #if 0
 		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		JSON_Get(json, OBJ_IOTGW_DATA, nodeContent, sizeof(nodeContent));
@@ -239,7 +239,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		}
 #endif
 	} else if(strcmp(topicType, WA_PUB_CONNECT_TOPIC) == 0) {
-		printf("\033[33m #Connect Topic# \033[0m\n");
+		printf("[%s][%s]\033[33m #Connect Topic# \033[0m\n", __FILE__, __func__);
 
                 g_doUpdateInterface = 1;
 		senhub_info_t shinfo;
@@ -342,7 +342,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #endif
 	} else if(strcmp(topicType, WA_PUB_WILL_TOPIC) == 0) {
 		// CmdID=2003
-		//ADV_TRACE("%s: Receive messages from will topic!!\n", __func__);
+		PRINTF("[%s][%s] Receive messages from will topic!!\n", __FILE__, __func__);
 		char macAddr[MAX_MACADDRESS_LEN];
 		//JSON_Print(json);
 		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);

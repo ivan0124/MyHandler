@@ -234,7 +234,8 @@ SN_CODE ProcUpdateSNDataCbf( const int cmdId, const void *pInData, const int InD
 		    SenHubInfo *pSenHubInfo = (SenHubInfo*)pInData;
 
 			if( pSenHubInfo != NULL ) {
-				ADV_TRACE("Cmd = SenHub_Registe  MAC=%s HostName=%s SN=%s Product=%s\n",		pSenHubInfo->sUID,
+				PRINTF("[ivan][%s][%s]Cmd = SenHub_Registe  MAC=%s HostName=%s SN=%s Product=%s\n",__FILE__,__func__,		
+                                                pSenHubInfo->sUID,
 																																													pSenHubInfo->sHostName,
 																																													pSenHubInfo->sSN,
 																																													pSenHubInfo->sProduct);
@@ -245,6 +246,7 @@ SN_CODE ProcUpdateSNDataCbf( const int cmdId, const void *pInData, const int InD
                                    
 					//rc = g_ReportSNManagerCbf(cmdId, NULL, 0, &pOutAddres, (void *)pInData, NULL );
                                         /*ivan add*/
+                                        PRINTF("**************[ivan] ProceSNManagerDataCbf xxxx--------------->\n");
 					rc = ProceSNManagerDataCbf(cmdId, NULL, 0, &pOutAddres, (void *)pInData, NULL );
 				}
 

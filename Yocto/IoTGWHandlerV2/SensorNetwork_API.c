@@ -274,7 +274,7 @@ int SetSenData(char *_sUID, InBaseData *_input, OutBaseData *output)
 //-----------------------------------------------------------------------------
 int GatewayIntf_Update()
 {
-        printf("GatewayIntf_Update ---------->\n");
+        PRINTF("[ivan][%s][%s]GatewayIntf_Update =====>\n",__FILE__, __func__);
 	SNInterfaceData SNInfData;
 
 	if(g_UpdateDataCbf == NULL) {
@@ -313,7 +313,7 @@ int SensorHub_Register(senhub_info_t *pMote)
 	memset(&nodeInfo, 0, sizeof(SenHubInfo));
 	if(fillSenHubInfo(&nodeInfo, pMote) == 0) {
 	//ADV_INFO("%s: 2000 --------------------------\n", __func__);
-		g_UpdateDataCbf(SN_SenHub_Register, &nodeInfo, sizeof(SenHubInfo), g_UserData, NULL, NULL, NULL);
+		ProcUpdateSNDataCbf(SN_SenHub_Register, &nodeInfo, sizeof(SenHubInfo), g_UserData, NULL, NULL, NULL);
 	}
 
 	return 0;

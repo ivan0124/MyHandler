@@ -763,8 +763,10 @@ int SenHubConnectToWISECloud( Handler_info *pSenHubHandler)
 	// 2. SendAgentInfo online
 	memset(Topic,0,sizeof(Topic));
 	snprintf(Topic,sizeof(Topic),"/cagent/admin/%s/agentinfoack",pSenHubHandler->agentInfo->devId);
+
 	if( g_sendcustcbf )
 		g_sendcustcbf(pSenHubHandler,1,Topic,JSONData, datalen, NULL, NULL);
+
 	PRINTF("Send SenHub AgentInfo:%s \n", JSONData);
 	//PRINTF("SenHubConnectToWISECloud Leave\n");
 	return rc;

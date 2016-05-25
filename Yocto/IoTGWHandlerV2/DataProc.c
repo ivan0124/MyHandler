@@ -177,6 +177,7 @@ void fillSNInfInfos(SNInfInfos *pSNInfInfos)
 // CmdID=1000
 int fillSNInfData(SNInterfaceData *pSNInfData)
 {
+        PRINTF("[ivan][%s][%s] =====>\n", __FILE__, __func__);
 	int bufSize;
 	char macList[2048];
 	char neighborList[2048];
@@ -208,6 +209,7 @@ int fillSNInfData(SNInterfaceData *pSNInfData)
 		return -1;
 	memset(pSNInfData->inDataClass.pInBaseDataArray[0].psData, 0, bufSize);
 
+        /*ivan hard code*/
 	sprintf(pSNInfData->inDataClass.pInBaseDataArray[0].psData,
 			IFACE_INFO_DATA_JSON,
 			"000E40000005"/*macList*/, ""/*neighborList*/, 100, VERSION, 0);
