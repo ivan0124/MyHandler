@@ -112,7 +112,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	char nodeContent[MAX_JSON_NODE_SIZE];
 	senhub_info_t *pshinfo;
 	int ret = 0;
-        //printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+        printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 	if((json = JSON_Parser(message->payload)) == NULL) {
 		printf("json parse err!\n");
 		return -1;
@@ -120,7 +120,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 
 	sscanf(message->topic, "/%*[^/]/%*[^/]/%*[^/]/%s", topicType);
 	ADV_TRACE("Topic type: %s \n", topicType);
-	//printf("Topic type: %s \n", topicType);
+	printf("Topic type: %s \n", topicType);
 	if(strcmp(topicType, WA_PUB_ACTION_TOPIC) == 0) {
 		PRINTF("[%s][%s]\033[33m #Action Topic# \033[0m\n",__FILE__, __func__);
 		//JSON_Print(json);
@@ -191,7 +191,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		}
 #endif
 	} else if(strcmp(topicType, WA_PUB_DEVINFO_TOPIC) == 0) {
-		PRINTF("[%s][%s]\033[33m #Devinfo Topic# \033[0m\n", __FILE__, __func__);
+		printf("[%s][%s]\033[33m #Devinfo Topic# \033[0m\n", __FILE__, __func__);
 		senhub_info_t shinfo;
                 memset(&shinfo,0,sizeof(senhub_info_t));
                 strcpy(shinfo.macAddress, "000E40000005");
@@ -249,6 +249,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #endif
 	} else if(strcmp(topicType, WA_PUB_CONNECT_TOPIC) == 0) {
 		printf("[%s][%s]\033[33m #Connect Topic# \033[0m\n", __FILE__, __func__);
+		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		JSON_Get(json, OBJ_DEVICE_TYPE, nodeContent, sizeof(nodeContent));
+		printf("==================>device type : %s\n",nodeContent);
 
                 g_doUpdateInterface = 1;
 		senhub_info_t shinfo;

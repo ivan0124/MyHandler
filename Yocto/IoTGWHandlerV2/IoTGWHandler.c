@@ -601,7 +601,7 @@ static int ProcSet_Result( const char *pInJson, const int InDataLen, void *pInPa
 
 SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int InDatalen, void **pOutParam, void *pRev1, void *pRev2 )
 {
-        printf("[ivan][%s][%s] ======================>\n",__FILE__, __func__);
+        PRINTF("[ivan][%s][%s] ======================>\n",__FILE__, __func__);
 	int rc = 0;
 
 	switch( cmdId)
@@ -609,7 +609,7 @@ SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int 
 	case SN_Inf_UpdateInterface_Data:
 		{
 #if 1
-                        char mydata[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000005\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549737\",\"ver\": 1},\"bn\": \"LAN\"},\"ver\": 1}}"};
+                        char mydata[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"80027549737,000E40000005\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549737\",\"ver\": 1},\"bn\": \"LAN\"},\"ver\": 1}}"};
                         PRINTF("[ivan][%s][%s] SN_Inf_UpdateInterface_Data======================>\n",__FILE__, __func__);
 
                         PRINTF("[ivan][%s][%s]Interface Data=%s\n",__FILE__, __func__, mydata);
@@ -620,31 +620,31 @@ SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int 
 	case SN_SenHub_Register:
 		{
                         SenHubInfo *pSenHubInfo = (SenHubInfo*)pRev1;
-                        printf("[ivan][%s][%s] ****************************************\n",__FILE__, __func__);
+                        PRINTF("[ivan][%s][%s] ****************************************\n",__FILE__, __func__);
 			rc = Register_SenHub( pInJson, InDatalen, pOutParam, pRev1, pRev2 );
 		}
 		break;
 	case SN_SenHub_SendInfoSpec:
 		{
-                        printf("[ivan][%s][%s] SN_SenHub_SendInfoSpec======================>\n",__FILE__, __func__);
+                        PRINTF("[ivan][%s][%s] SN_SenHub_SendInfoSpec======================>\n",__FILE__, __func__);
 			rc = SendInfoSpec_SenHub( pInJson, InDatalen, *pOutParam, pRev1 );
 		}
 		break;
 	case SN_SenHub_AutoReportData:
 		{
-                        printf("[ivan][%s][%s] SN_SenHub_AutoReportData======================>\n",__FILE__, __func__);
+                        PRINTF("[ivan][%s][%s] SN_SenHub_AutoReportData======================>\n",__FILE__, __func__);
 			rc = AutoReportSenData_SenHub( 0, 0, 0, 0 );
 		}
 		break;
 	case SN_SetResult:
 		{
-                        printf("[ivan][%s][%s] SN_SetResult======================>\n",__FILE__, __func__);
+                        PRINTF("[ivan][%s][%s] SN_SetResult======================>\n",__FILE__, __func__);
 			rc = ProcSet_Result( pInJson, InDatalen, *pOutParam, pRev1 );
 		}
 		break;
 	case SN_SenHub_Disconnect:
 		{
-                        printf("[ivan][%s][%s] SN_SenHub_Disconnect======================>\n",__FILE__, __func__);
+                        PRINTF("[ivan][%s][%s] SN_SenHub_Disconnect======================>\n",__FILE__, __func__);
 			rc = Disconnect_SenHub( *pOutParam );
 		}
 		break;	
@@ -718,6 +718,10 @@ static void HandlerCustMessageRecv(char * const topic, void* const data, const s
 
 #if 1
         char mydata[2024]={"{\"infoSpec\":{\"SenHub\":{\"SenData\":{\"e\":[{\"n\":\"Temperature\",\"u\":\"Cel\",\"v\":0.000000,\"min\":-100.000000,\"max\":200.000000,\"asm\":\"r\",\"type\":\"d\",\"rt\":\"ucum.Cel\",\"st\":\"ipso\",\"exten\":\"\"},{\"n\":\"Humidity\",\"u\":\"%\",\"v\":0.000000,\"min\":0.000000,\"max\":100.000000,\"asm\":\"r\",\"type\":\"d\",\"rt\":\"ucum.%\",\"st\":\"ipso\",\"exten\":\"\"},{\"n\":\"GPIO1\",\"u\":\"\",\"bv\":0,\"min\":0.000000,\"max\":1.000000,\"asm\":\"rw\",\"type\":\"b\",\"rt\":\"\",\"st\":\"ipso\",\"exten\":\"\"},{\"n\":\"GPIO2\",\"u\":\"\",\"bv\":0,\"min\":0.000000,\"max\":1.000000,\"asm\":\"rw\",\"type\":\"b\",\"rt\":\"\",\"st\":\"ipso\",\"exten\":\"\"}],\"bn\":\"SenData\"},\"Info\":{\"e\":[{\"n\":\"Name\",\"sv\":\"AAA\",\"asm\":\"rw\"},{\"n\":\"sw\",\"sv\":\"1.0.00\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"Net\":{\"e\":[{\"n\":\"sw\",\"sv\":\"1.0.00\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"}],\"bn\":\"Net\"},\"Action\":{\"e\":[{\"n\":\"AutoReport\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Action\"},\"ver\":1}}}"};
+#endif
+
+#if 0
+        char mydata[1024]={"{\"infoSpec\":{\"IoTGW\":{\"Ethernet\":{\"Ethernet0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"0007080027549737\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":100,\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"Ethernet0\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":0,\"asm\":\"rw\"}],\"bn\":\"Info\"},\"bn\":\"0007080027549737\",\"ver\":1},\"bn\":\"Ethernet\",\"ver\":1},\"ver\":1}}"};
 #endif
 
 	switch (cmdID)
@@ -798,7 +802,7 @@ static void HandlerCustMessageRecv(char * const topic, void* const data, const s
 
 int SenHubConnectToWISECloud( Handler_info *pSenHubHandler)
 {
-    printf("[ivan][%s][%s]SenHubConnectToWISECloud ====>\n", __FILE__, __func__);
+    PRINTF("[ivan][%s][%s]SenHubConnectToWISECloud ====>\n", __FILE__, __func__);
 #if 1
 	char Topic[MAX_TOPIC_SIZE]={0};
 	char JSONData[MAX_FUNSET_DATA_SIZE]={0};
@@ -934,7 +938,7 @@ static int SendInfoSpec_SenHub( const char *pInJson, const int InDataLen, void *
 
 static int AutoReportSenData_SenHub( const char *pInJson, const int InDataLen, void *pInParam, void *pRev1 )
 {
-        PRINTF("[ivan][%s][%s] =====>\n", __FILE__, __func__);
+        //PRINTF("[ivan][%s][%s] =====>\n", __FILE__, __func__);
 	int rc = 0;
 #if 1
         int index = -1;
@@ -944,7 +948,7 @@ static int AutoReportSenData_SenHub( const char *pInJson, const int InDataLen, v
 		return 0;
 	}
 
-        PRINTF(" find SenHub UID in Table =%s, index=%d\r\n","000E40000005", index );
+        //PRINTF(" find SenHub UID in Table =%s, index=%d\r\n","000E40000005", index );
 #endif 
 #if 1
 	//Handler_info *pHandler_info = (Handler_info*)pInParam;

@@ -19,3 +19,4 @@ echo "build IoTGWHandlerV2 version"
     cd /mnt/MyHandler/Yocto/
     echo "build IoTGWHandlerV2 version done"
 fi
+cp -rf ./module_config.xml ~ivan/CAgentIoT/Release/AgentService/module/
