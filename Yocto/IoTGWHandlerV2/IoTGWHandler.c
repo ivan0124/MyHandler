@@ -609,7 +609,7 @@ SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int 
 	case SN_Inf_UpdateInterface_Data:
 		{
 #if 1
-                        char mydata[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"80027549737,000E40000005\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549737\",\"ver\": 1},\"bn\": \"LAN\"},\"ver\": 1}}"};
+                        char mydata[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"080027549737,000E40000005\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549737\",\"ver\": 1},\"bn\": \"LAN\"},\"ver\": 1}}"};
                         PRINTF("[ivan][%s][%s] SN_Inf_UpdateInterface_Data======================>\n",__FILE__, __func__);
 
                         PRINTF("[ivan][%s][%s]Interface Data=%s\n",__FILE__, __func__, mydata);
@@ -621,7 +621,7 @@ SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int 
 		{
                         SenHubInfo *pSenHubInfo = (SenHubInfo*)pRev1;
                         PRINTF("[ivan][%s][%s] ****************************************\n",__FILE__, __func__);
-			rc = Register_SenHub( pInJson, InDatalen, pOutParam, pRev1, pRev2 );
+			rc = Register_SenHub( 0, 0, 0, pRev1, 0 );
 		}
 		break;
 	case SN_SenHub_SendInfoSpec:
@@ -815,7 +815,27 @@ int SenHubConnectToWISECloud( Handler_info *pSenHubHandler)
 	if(datalen <20 )
 		rc = 0;
 #endif
+      
+#if 0
+	snprintf( pSenHubHandler->agentInfo->hostname, DEF_HOSTNAME_LENGTH, "%s", hostname );
+	snprintf( pSenHubHandler->agentInfo->devId, DEF_DEVID_LENGTH, "%s", mac );
+	snprintf( pSenHubHandler->agentInfo->sn, DEF_SN_LENGTH, "%s", mac );
+	snprintf( pSenHubHandler->agentInfo->mac, DEF_MAC_LENGTH, "%s", mac );
+	snprintf( pSenHubHandler->agentInfo->type, DEF_MAX_STRING_LENGTH, "SenHub");
+	snprintf( pSenHubHandler->agentInfo->product, DEF_MAX_STRING_LENGTH, "%s",product);
+	pSenHubHandler->agentInfo->status = status;
+#endif
+
+#if 0  
         strcpy(JSONData,"{\"devID\":\"000E40000005\",\"hostname\":\"AA1\",\"sn\":\"000E40000005\",\"mac\":\"000E40000005\",\"version\":\"3.1.30.5434\",\"type\":\"SenHub\",\"product\":\"BB1\",\"manufacture\":\"\",\"status\":\"1\"}");
+#endif
+        sprintf(JSONData,"{\"devID\":\"%s\",\"hostname\":\"%s\",\"sn\":\"%s\",\"mac\":\"%s\",\"version\":\"3.1.30.5434\",\"type\":\"SenHub\",\"product\":\"%s\",\"manufacture\":\"\",\"status\":\"1\"}",
+        pSenHubHandler->agentInfo->devId,
+        pSenHubHandler->agentInfo->hostname,
+        pSenHubHandler->agentInfo->sn,
+        pSenHubHandler->agentInfo->mac,
+        pSenHubHandler->agentInfo->product);
+
         datalen=strlen(JSONData);
 	// 1. Subscribe Topic2 -> Create SenHub <-> WISECloud communication channel
 	memset(Topic,0,sizeof(Topic));
@@ -892,7 +912,7 @@ static int Register_SenHub( const char *pJSON, const int nLen, void **pOutParam,
 	}
         
 	pSenHander = &g_SenPluginInfo[index];
-	*pOutParam    = &g_SenPluginInfo[index];
+	//*pOutParam    = &g_SenPluginInfo[index];
 
 	// 2. Prepare Sensor Node Handler_info data
 	PackSenHubPlugInfo( pSenHander, &g_PluginInfo, pSenHubInfo->sUID, pSenHubInfo->sHostName, pSenHubInfo->sProduct, 1 );
