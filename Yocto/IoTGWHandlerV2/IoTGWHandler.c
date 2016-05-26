@@ -50,6 +50,7 @@ typedef struct{
 static void* g_loghandle = NULL;
 static bool g_bEnableLog = TRUE;
 static char agentConfigFilePath[MAX_PATH] = {0};
+static char g_mac_to_register[32]={0};
 
 static Handler_info  g_PluginInfo;
 static handler_context_t g_HandlerContex;
@@ -609,7 +610,7 @@ SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int 
 	case SN_Inf_UpdateInterface_Data:
 		{
 #if 1
-                        char mydata[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"080027549737,000E40000005\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549737\",\"ver\": 1},\"bn\": \"LAN\"},\"ver\": 1}}"};
+                        char mydata[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000006\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549737\",\"ver\": 1},\"bn\": \"LAN\"},\"ver\": 1}}"};
                         PRINTF("[ivan][%s][%s] SN_Inf_UpdateInterface_Data======================>\n",__FILE__, __func__);
 
                         PRINTF("[ivan][%s][%s]Interface Data=%s\n",__FILE__, __func__, mydata);
@@ -836,10 +837,12 @@ int SenHubConnectToWISECloud( Handler_info *pSenHubHandler)
         pSenHubHandler->agentInfo->mac,
         pSenHubHandler->agentInfo->product);
 
+        strcpy(g_mac_to_register,pSenHubHandler->agentInfo->mac);
+
         datalen=strlen(JSONData);
 	// 1. Subscribe Topic2 -> Create SenHub <-> WISECloud communication channel
 	memset(Topic,0,sizeof(Topic));
-	snprintf( Topic, sizeof(Topic), "/cagent/admin/%s/agentcallbackreq", "000E40000005"/*pSenHubHandler->agentInfo->devId*/ );
+	snprintf( Topic, sizeof(Topic), "/cagent/admin/%s/agentcallbackreq", /*"000E40000005"*/pSenHubHandler->agentInfo->devId );
 	if( g_subscribecustcbf ){
                 PRINTF("[ivan][%s][%s] g_subscribecustcbf =================>\n", __FILE__, __func__);
 		g_subscribecustcbf( Topic, &HandlerCustMessageRecv );
@@ -847,7 +850,7 @@ int SenHubConnectToWISECloud( Handler_info *pSenHubHandler)
 	PRINTF("[%s][%s]Subscribe SenHub Topic:%s \n", __FILE__, __func__, Topic);
 	// 2. SendAgentInfo online
 	memset(Topic,0,sizeof(Topic));
-	snprintf(Topic,sizeof(Topic),"/cagent/admin/%s/agentinfoack","000E40000005"/*pSenHubHandler->agentInfo->devId*/);
+	snprintf(Topic,sizeof(Topic),"/cagent/admin/%s/agentinfoack",/*"000E40000005"*/pSenHubHandler->agentInfo->devId);
 	if( g_sendcustcbf ){
                 PRINTF("[ivan]g_sendcustcbf ppppppppppppppppppppppppppppppp>\n");
 		g_sendcustcbf(pSenHubHandler,1,Topic,JSONData, datalen, NULL, NULL);
@@ -963,8 +966,9 @@ static int AutoReportSenData_SenHub( const char *pInJson, const int InDataLen, v
 #if 1
         int index = -1;
         char SenHubUID[MAX_SN_UID]={"000E40000005"};
+        strcpy(SenHubUID,g_mac_to_register);
 	if( ( index = GetSenHubAgentInfobyUID(&g_SenHubAgentInfo, 256, SenHubUID) ) == -1 ) {
-		PRINTF(" Can't find SenHub UID in Table =%s\r\n","000E40000005" );
+		PRINTF(" Can't find SenHub UID in Table =%s\r\n",g_mac_to_register );
 		return 0;
 	}
 

@@ -256,7 +256,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 g_doUpdateInterface = 1;
 		senhub_info_t shinfo;
                 memset(&shinfo,0,sizeof(senhub_info_t));
-                strcpy(shinfo.macAddress, "000E40000005");
+                strcpy(shinfo.macAddress, "000E40000006");
                 strcpy(shinfo.hostName, "AA1");
                 strcpy(shinfo.productName, "BB1");
                 strcpy(shinfo.softwareVersion, "BC1");
