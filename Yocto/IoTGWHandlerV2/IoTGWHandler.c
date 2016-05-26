@@ -155,12 +155,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadSendSenHubConnect, args)
 	char buffer[MAX_BUFFER_SIZE]={0};
 	//cagent_agent_info_body_t *pSenAgentInfo = NULL;
 
-	PRINTF("[ivan][%s][%s] Start send SenHub list message \r\n", __FILE__, __func__ );
-        strcpy(buffer,"{\"IoTGW\":{\"LAN\":{\"LAN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":-1,\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"LAN0\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.4.5\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":0,\"asm\":\"r\"}],\"bn\":\"Info\"},\"bn\":\"0000080027549737\",\"ver\":1},\"bn\":\"LAN\",\"ver\":1},\"ver\":1}}");	
 
-        PRINTF("[ivan][%s][%s] Start send SenHub list message \r\n", __FILE__, __func__ );
-        PRINTF("[ivan][%s][%s] SenHub list message: %s\r\n", __FILE__, __func__, buffer );	
-        SendMsgToSUSIAccess(buffer, sizeof(buffer), NULL, NULL);
 #if 0		
 	len = ProcGetTotalInterface(buffer, sizeof(buffer));
 	if( len > 0 )
@@ -514,7 +509,8 @@ int HANDLER_API Handler_Get_Capability( char ** pOutReply ) // JSON Format
 	int len = 0; // Data length of the pOutReply 
 	char *pBuffer = NULL;
 	//char result[MAX_DATA_SIZE]={0};
-        char capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"LAN\":{\"LAN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":-1,\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"LAN0\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.4.5\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":0,\"asm\":\"r\"}],\"bn\":\"Info\"},\"bn\":\"0000080027549737\",\"ver\":1},\"bn\":\"LAN\",\"ver\":1},\"ver\":1}}"};
+#if 1
+    char capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"LAN\":{\"LAN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":-1,\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"LAN0\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.4.5\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":0,\"asm\":\"r\"}],\"bn\":\"Info\"},\"bn\":\"0000080027549725\",\"ver\":1},\"bn\":\"LAN\",\"ver\":1},\"ver\":1}}"};
 	PRINTF("\r\n\r\n");
 	PRINTF("[%s][%s]IoTGW Handler_Get_Capability\r\n", __FILE__, __func__);
         
@@ -523,7 +519,8 @@ int HANDLER_API Handler_Get_Capability( char ** pOutReply ) // JSON Format
 	*pOutReply = (char *)malloc(len + 1);
 	memset(*pOutReply, 0, len + 1);
 	strcpy(*pOutReply, capability);
-        PRINTF("[%s][%s]capability data=%s\n", __FILE__, __func__, capability);
+    PRINTF("[%s][%s]capability data=%s\n", __FILE__, __func__, capability);
+#endif
 	{
 	       void* threadHandler;
 	       if (app_os_thread_create(&threadHandler, ThreadSendSenHubConnect, NULL) == 0)
@@ -610,8 +607,9 @@ SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int 
 	case SN_Inf_UpdateInterface_Data:
 		{
 #if 1
-                        char mydata[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000006\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549737\",\"ver\": 1},\"bn\": \"LAN\"},\"ver\": 1}}"};
-                        PRINTF("[ivan][%s][%s] SN_Inf_UpdateInterface_Data======================>\n",__FILE__, __func__);
+                        char mydata[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000006\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549725\",\"ver\": 1},\"bn\": \"LAN\"},\"ver\": 1}}"};
+          
+						PRINTF("[ivan][%s][%s] SN_Inf_UpdateInterface_Data======================>\n",__FILE__, __func__);
 
                         PRINTF("[ivan][%s][%s]Interface Data=%s\n",__FILE__, __func__, mydata);
 			rc = UpdateInterfaceData( mydata/*pInJson*/, strlen(mydata)/*InDatalen*/ );
