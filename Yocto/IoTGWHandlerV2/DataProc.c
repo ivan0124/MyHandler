@@ -177,6 +177,7 @@ void fillSNInfInfos(SNInfInfos *pSNInfInfos)
 // CmdID=1000
 int fillSNInfData(SNInterfaceData *pSNInfData)
 {
+#if 0
         PRINTF("[ivan][%s][%s] =====>\n", __FILE__, __func__);
 	int bufSize;
 	char macList[2048];
@@ -195,14 +196,14 @@ int fillSNInfData(SNInterfaceData *pSNInfData)
 	pSNInfData->inDataClass.pInBaseDataArray[0].psType = strdup("Info");
 	pSNInfData->inDataClass.pInBaseDataArray[0].iSizeType = sizeof(pSNInfData->inDataClass.pInBaseDataArray[0].psType);
 
-#if 0
+
 	// Sensor Hub List
 	memset(macList, 0, sizeof(macList));
 	MqttHal_GetMacAddrList(macList, sizeof(macList), 1);
 	// Neighbors
 	memset(neighborList, 0, sizeof(neighborList));
 	MqttHal_GetMacAddrList(neighborList, sizeof(neighborList), 0);
-#endif
+
 	bufSize = 512;
 	pSNInfData->inDataClass.pInBaseDataArray[0].psData = malloc(bufSize);
 	if (NULL == pSNInfData->inDataClass.pInBaseDataArray[0].psData)
@@ -239,7 +240,7 @@ int fillSNInfData(SNInterfaceData *pSNInfData)
 	ADV_INFO("data=%s, ", pSNInfData->inDataClass.pInBaseDataArray[0].psData);
 	ADV_INFO("data size=%d\n", pSNInfData->inDataClass.pInBaseDataArray[0].iSizeData);
 	ADV_INFO("=============================================\n");
-
+#endif
 	return 0;
 }
 
