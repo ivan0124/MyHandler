@@ -274,6 +274,7 @@ int SetSenData(char *_sUID, InBaseData *_input, OutBaseData *output)
 //-----------------------------------------------------------------------------
 int GatewayIntf_Update()
 {
+#if 1
         PRINTF("[ivan][%s][%s]GatewayIntf_Update =====>\n",__FILE__, __func__);
 	SNInterfaceData SNInfData;
 
@@ -285,10 +286,10 @@ int GatewayIntf_Update()
 	//ADV_INFO("%s: 1000 --------------------------\n", __func__);
 	memset(&SNInfData, 0, sizeof(SNInterfaceData));
 	if(fillSNInfData(&SNInfData) == 0) {
-		g_UpdateDataCbf(SN_Inf_UpdateInterface_Data, &SNInfData, sizeof(SNInterfaceData), g_UserData, NULL, NULL, NULL);
+		ProcUpdateSNDataCbf(SN_Inf_UpdateInterface_Data, &SNInfData, sizeof(SNInterfaceData), g_UserData, NULL, NULL, NULL);
 	}
 	freeSNInfData(&SNInfData);
-
+#endif
 	return 0;
 }
 
