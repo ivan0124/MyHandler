@@ -274,7 +274,8 @@ int SetSenData(char *_sUID, InBaseData *_input, OutBaseData *output)
 //-----------------------------------------------------------------------------
 int GatewayIntf_Update()
 {
-#if 1
+	ProcUpdateSNDataCbf(SN_Inf_UpdateInterface_Data, 0, 0, 0, 0, 0, 0);
+#if 0
         PRINTF("[ivan][%s][%s]GatewayIntf_Update =====>\n",__FILE__, __func__);
 	SNInterfaceData SNInfData;
 
@@ -282,11 +283,11 @@ int GatewayIntf_Update()
 		ADV_TRACE("g_UpdateDataCbf is not register\n");
 		return -1;
 	}
-
 	//ADV_INFO("%s: 1000 --------------------------\n", __func__);
 	memset(&SNInfData, 0, sizeof(SNInterfaceData));
 	if(fillSNInfData(&SNInfData) == 0) {
 		ProcUpdateSNDataCbf(SN_Inf_UpdateInterface_Data, &SNInfData, sizeof(SNInterfaceData), g_UserData, NULL, NULL, NULL);
+
 	}
 	freeSNInfData(&SNInfData);
 #endif

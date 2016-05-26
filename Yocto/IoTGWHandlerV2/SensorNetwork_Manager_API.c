@@ -194,10 +194,10 @@ SN_CODE ProcUpdateSNDataCbf( const int cmdId, const void *pInData, const int InD
 	case SN_Inf_UpdateInterface_Data: // Ok
 		{	
                         printf("[ivan][%s][%s]SN_Inf_UpdateInterface_Data****************************************>>>> \n", __FILE__, __func__);
-                        char aa[128]={"1234567890"};
-                        char bb[128]={"7788990011223344"};
+                        //char aa[128]={"1234567890"};
+                        //char bb[128]={"7788990011223344"};
 
-			ProceSNManagerDataCbf(cmdId, &aa, strlen(aa), (void **)NULL, (void *)&bb, NULL );
+			ProceSNManagerDataCbf(cmdId, 0, 0, 0, 0, 0 );
 #if 0                        		
 			ADV_TRACE("Cmd  UpdateInterface_Data \n");
 
