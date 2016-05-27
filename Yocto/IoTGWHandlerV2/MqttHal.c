@@ -112,7 +112,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	char nodeContent[MAX_JSON_NODE_SIZE];
 	senhub_info_t *pshinfo;
 	int ret = 0;
-        printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+        //printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 	if((json = JSON_Parser(message->payload)) == NULL) {
 		printf("json parse err!\n");
 		return -1;
@@ -192,16 +192,17 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #endif
 	} else if(strcmp(topicType, WA_PUB_DEVINFO_TOPIC) == 0) {
 		printf("[%s][%s]\033[33m #Devinfo Topic# \033[0m\n", __FILE__, __func__);
-
+#if 1
 		senhub_info_t shinfo;
                 memset(&shinfo,0,sizeof(senhub_info_t));
-                strcpy(shinfo.macAddress, "000E40000006");
-                strcpy(shinfo.hostName, "AA1");
-                strcpy(shinfo.productName, "BB1");
-                strcpy(shinfo.softwareVersion, "BC1");
+                strcpy(shinfo.macAddress, "000E40000009");
+                strcpy(shinfo.hostName, "AA9");
+                strcpy(shinfo.productName, "BB9");
+                strcpy(shinfo.softwareVersion, "BC9");
                 shinfo.jsonNode = NULL;
                 shinfo.id=1;
 		SensorHub_Data(&shinfo);
+#endif
 #if 0
 		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		JSON_Get(json, OBJ_IOTGW_DATA, nodeContent, sizeof(nodeContent));
@@ -250,20 +251,23 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #endif
 	} else if(strcmp(topicType, WA_PUB_CONNECT_TOPIC) == 0) {
 		printf("[%s][%s]\033[33m #Connect Topic# \033[0m\n", __FILE__, __func__);
+                g_doUpdateInterface = 1;
+
+#if 1
 		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		JSON_Get(json, OBJ_DEVICE_TYPE, nodeContent, sizeof(nodeContent));
 		printf("==================>device type : %s\n",nodeContent);
 
-                g_doUpdateInterface = 1;
 		senhub_info_t shinfo;
                 memset(&shinfo,0,sizeof(senhub_info_t));
-                strcpy(shinfo.macAddress, "000E40000006");
-                strcpy(shinfo.hostName, "AA1");
-                strcpy(shinfo.productName, "BB1");
-                strcpy(shinfo.softwareVersion, "BC1");
+                strcpy(shinfo.macAddress, "000E40000009");
+                strcpy(shinfo.hostName, "AA9");
+                strcpy(shinfo.productName, "BB9");
+                strcpy(shinfo.softwareVersion, "BC9");
                 shinfo.jsonNode = NULL;
                 shinfo.id=1;
 		SensorHub_Register(&shinfo);
+#endif
 #if 0
 		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		JSON_Get(json, OBJ_DEVICE_TYPE, nodeContent, sizeof(nodeContent));
