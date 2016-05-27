@@ -192,9 +192,10 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #endif
 	} else if(strcmp(topicType, WA_PUB_DEVINFO_TOPIC) == 0) {
 		printf("[%s][%s]\033[33m #Devinfo Topic# \033[0m\n", __FILE__, __func__);
+
 		senhub_info_t shinfo;
                 memset(&shinfo,0,sizeof(senhub_info_t));
-                strcpy(shinfo.macAddress, "000E40000005");
+                strcpy(shinfo.macAddress, "000E40000006");
                 strcpy(shinfo.hostName, "AA1");
                 strcpy(shinfo.productName, "BB1");
                 strcpy(shinfo.softwareVersion, "BC1");
