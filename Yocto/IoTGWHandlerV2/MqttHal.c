@@ -52,6 +52,7 @@ static char g_sessionID[34];
 
 static senhub_list_t   *g_SensorHubList;
 static char            g_GWInfMAC[MAX_MACADDRESS_LEN];
+char g_connectivity_capability[1024]={0};
 
 #define SET_SENHUB_V_JSON "{\"susiCommData\":{\"sensorIDList\":{\"e\":[{\"v\":%s,\"n\":\"SenHub/%s/%s\"}]},\"handlerName\":\"SenHub\",\"commCmd\":525,\"sessionID\":\"%s\"}}"
 #define SET_SENHUB_BV_JSON "{\"susiCommData\":{\"sensorIDList\":{\"e\":[{\"bv\":%s,\"n\":\"SenHub/%s/%s\"}]},\"handlerName\":\"SenHub\",\"commCmd\":525,\"sessionID\":\"%s\"}}"
@@ -121,8 +122,29 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	sscanf(message->topic, "/%*[^/]/%*[^/]/%*[^/]/%s", topicType);
 	ADV_TRACE("Topic type: %s \n", topicType);
 	printf("Topic type: %s \n", topicType);
-	if(strcmp(topicType, WA_PUB_ACTION_TOPIC) == 0) {
-		PRINTF("[%s][%s]\033[33m #Action Topic# \033[0m\n",__FILE__, __func__);
+	if(strcmp(topicType, WA_PUB_REGISTER_TOPIC) == 0) {
+                printf("------------------------------------------------\n");
+		printf("[%s][%s]\033[33m #Register capability Topic# \033[0m\n",__FILE__, __func__);
+                printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                //
+                memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		JSON_Get(json, OBJ_IOTGW_INFO_SPEC, nodeContent, sizeof(nodeContent));
+                if(strcmp(nodeContent, "NULL") != 0){
+                    printf("Type: IoTGW\nConnectivity capability: ");
+                    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		    JSON_Get(json, OBJ_INFO_SPEC, nodeContent, sizeof(nodeContent));
+                    if(strcmp(nodeContent, "NULL") != 0){
+                        printf(nodeContent);
+                        RegisterCapability(CONNECTIVITY_CAPABILITY,nodeContent,strlen(nodeContent)+1);
+                        //strcpy(g_connectivity_capability,nodeContent);
+                    }
+                    else{
+			printf("capability content is NULL !\n");
+                    }
+                    
+                }
+                printf("\n------------------------------------------------\n");
+                
 		//JSON_Print(json);
 #if 0
 		// Check Publish response about SenHub
@@ -191,8 +213,28 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		}
 #endif
 	} else if(strcmp(topicType, WA_PUB_DEVINFO_TOPIC) == 0) {
+                printf("------------------------------------------------\n");
 		printf("[%s][%s]\033[33m #Devinfo Topic# \033[0m\n", __FILE__, __func__);
-#if 1
+                printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+
+                memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		JSON_Get(json, OBJ_IOTGW_DATA, nodeContent, sizeof(nodeContent));
+                if(strcmp(nodeContent, "NULL") != 0){
+                    printf("Type: IoTGW\nupdate connectivity: ");
+                    //printf(nodeContent);
+                    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		    JSON_Get(json, OBJ_DATA, nodeContent, sizeof(nodeContent));
+                    if(strcmp(nodeContent, "NULL") != 0){
+                        UpdateConnectivityInfo(nodeContent, strlen(nodeContent));
+                    }
+                    else{
+	                printf("update connectivity info is NULL !\n");
+                    }
+                }
+                printf("\n------------------------------------------------\n");
+                //
+
+#if 0
 		senhub_info_t shinfo;
                 memset(&shinfo,0,sizeof(senhub_info_t));
                 strcpy(shinfo.macAddress, "000E40000009");
@@ -378,7 +420,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	}
 	
 	// CmdID=1000
-#if 1
+#if 0
 	if(g_doUpdateInterface) {
 		GatewayIntf_Update();
 		g_doUpdateInterface = 0;

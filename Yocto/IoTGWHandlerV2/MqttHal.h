@@ -15,7 +15,7 @@
 // User API
 //-----------------------------------------------------------------------------
 #define WA_PUB_CONNECT_TOPIC "agentinfoack"
-#define WA_PUB_ACTION_TOPIC  "agentactionreq"
+#define WA_PUB_REGISTER_TOPIC  "agentactionreq"
 #define WA_PUB_DEVINFO_TOPIC "deviceinfo"
 #define WA_PUB_WILL_TOPIC    "willmessage"
 #define WA_SUB_CBK_TOPIC     "agentcallbackreq"
@@ -53,6 +53,9 @@
 #define IFACENAME		"eth0"
 #define CONTYPE			"LAN"
 #define CONNAME(d)		CONTYPE#d
+
+#define CONNECTIVITY_CAPABILITY  1
+#define SENSOR_HUB_CAPABILITY    2
 
 typedef enum {
 	Mote_Report_CMD2000 = 0,

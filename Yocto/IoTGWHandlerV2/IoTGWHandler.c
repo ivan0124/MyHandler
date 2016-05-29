@@ -22,6 +22,7 @@
 #include "SnGwParser.h"
 // include lib Header Files
 #include "BasicFun_Tool.h"
+#include "MqttHal.h"
 
 // include AdvApiMux
 #include "inc/AdvApiMux/AdvAPIMuxServer.h"
@@ -75,6 +76,7 @@ static char* GetCapability( );
 
 int runing = 0;
 
+extern char g_connectivity_capability[1024];
 
 //-----------------------------------------------------------------------------
 // Function:
@@ -610,13 +612,12 @@ SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int 
 	{
 	case SN_Inf_UpdateInterface_Data:
 		{
-#if 1
+#if 0
 
          printf("Update Interface ===============================================================================>\n");
-         char capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"LAN\":{\"LAN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":-1,\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"LAN0\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.4.5\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":0,\"asm\":\"r\"}],\"bn\":\"Info\"},\"bn\":\"0000080027549747\",\"ver\":1},\"LAN1\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":-1,\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"LAN1\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.4.5\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":0,\"asm\":\"r\"}],\"bn\":\"Info\"},\"bn\":\"0000080027549748\",\"ver\":1},\"bn\":\"LAN\",\"ver\":1},\"ver\":1}}"};
-	     g_sendinfospeccbf( &g_PluginInfo, capability, strlen(capability)+1, NULL, NULL);
+         
 	
-                        char mydata[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000006,000E40000009\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549747\",\"ver\": 1},\"LAN1\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000007,000E40000008\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549748\",\"ver\": 1},\"bn\": \"LAN\"},\"ver\": 1}}"};
+                        
           
 						PRINTF("[ivan][%s][%s] SN_Inf_UpdateInterface_Data======================>\n",__FILE__, __func__);
 
@@ -1072,7 +1073,31 @@ Exit_ProcSet:
 	return rc;
 }
 
+int RegisterCapability(int type, char* pszCapability, int iCapabilitySize){
 
+#if 0
+    //CONNECTIVITY_CAPABILITY
+char Capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"LAN\":{\"LAN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":-1,\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"LAN0\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.4.5\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":0,\"asm\":\"r\"}],\"bn\":\"Info\"},\"bn\":\"0000080027549767\",\"ver\":1},\"LAN1\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":-1,\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"LAN1\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.4.5\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":0,\"asm\":\"r\"}],\"bn\":\"Info\"},\"bn\":\"0000080027549768\",\"ver\":1},\"bn\":\"LAN\",\"ver\":1},\"ver\":1}}"};
+     g_sendinfospeccbf( &g_PluginInfo, Capability, strlen(Capability), NULL, NULL);
+#else
+     g_sendinfospeccbf( &g_PluginInfo, pszCapability, iCapabilitySize, NULL, NULL);
+#endif
+
+    return 0;
+} 
+
+int UpdateConnectivityInfo(char* pszConnectivityInfo, int iSizeConnectivityInfo){
+
+#if 0
+char ConnectivityInfo[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000006,000E40000009\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549767\",\"ver\": 1},\"LAN1\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000007,000E40000008\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549768\",\"ver\": 1},\"bn\": \"LAN\"},\"ver\": 1}}"};
+
+    return UpdateInterfaceData(ConnectivityInfo, strlen(ConnectivityInfo));
+
+#else
+    return UpdateInterfaceData(pszConnectivityInfo, iSizeConnectivityInfo);
+#endif
+
+}
 
 
 // <IoTGW>
