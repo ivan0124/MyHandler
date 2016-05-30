@@ -28,9 +28,12 @@
 #define OBJ_IOTGW_DATA             "[susiCommData][data][IoTGW]"
 #define OBJ_SENHUB_DATA            "[susiCommData][data][SenHub]"
 #define OBJ_DEVICE_TYPE            "[susiCommData][type]"
+#define OBJ_DEVICE_ID              "[susiCommData][devID]"
 #define OBJ_DEVICE_MAC             "[susiCommData][mac]"
+#define OBJ_DEVICE_SN              "[susiCommData][sn]"
 #define OBJ_DEVICE_HOSTNAME        "[susiCommData][hostname]"
 #define OBJ_DEVICE_PRODUCTNAME     "[susiCommData][product]"
+#define OBJ_DEVICE_VERSION         "[susiCommData][version]"
 #define OBJ_AGENT_ID               "[susiCommData][agentID]"
 #define OBJ_STATUS_CODE            "[susiCommData][sensorInfoList][e][0][StatusCode]"
 #define OBJ_SESSION_ID             "[susiCommData][sessionID]"
@@ -45,7 +48,9 @@
 #define MAX_HOSTNAME_LEN         32
 #define MAX_PRODUCTNAME_LEN	     32
 #define MAX_SOFTWAREVERSION_LEN  12	
-#define MAX_MACADDRESS_LEN       18	
+#define MAX_MACADDRESS_LEN       18
+#define MAX_DEVICE_ID_LEN        18
+#define MAX_DEVICE_SN_LEN        18	
 #define MAX_SENDATA_LEN          256
 
 #define MAX_JSON_NODE_SIZE       1024
@@ -75,10 +80,12 @@ typedef enum {
 typedef struct _senhub_info_t {
 	struct _senhub_info_t *next;
 	int id;                                        // index
+        char devID[MAX_DEVICE_ID_LEN];         //device ID
+        char sn[MAX_DEVICE_SN_LEN];            //serial number
 	char macAddress[MAX_MACADDRESS_LEN];  // mac address
 	char hostName[MAX_HOSTNAME_LEN];               // hostname
 	char productName[MAX_PRODUCTNAME_LEN];         // product name
-	char softwareVersion[MAX_SOFTWAREVERSION_LEN]; // software version
+	char version[MAX_SOFTWAREVERSION_LEN]; // software version
 	int state;                                     // state
 	JSONode *jsonNode;                             // json data
 } senhub_info_t;

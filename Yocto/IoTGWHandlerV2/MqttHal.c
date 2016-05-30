@@ -292,10 +292,91 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		}
 #endif
 	} else if(strcmp(topicType, WA_PUB_CONNECT_TOPIC) == 0) {
+                printf("------------------------------------------------\n");
 		printf("[%s][%s]\033[33m #Connect Topic# \033[0m\n", __FILE__, __func__);
-                g_doUpdateInterface = 1;
+                printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 
-#if 1
+		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		JSON_Get(json, OBJ_DEVICE_TYPE, nodeContent, sizeof(nodeContent));
+                if(strcmp(nodeContent, "SenHub") == 0){
+                    printf("[%s][%s]\033[33m #Register SensorHub# \033[0m\n", __FILE__, __func__);
+
+		    senhub_info_t shinfo;
+                    memset(&shinfo,0,sizeof(senhub_info_t));
+                    shinfo.state=Mote_Report_CMD2001;
+                    shinfo.jsonNode = NULL;
+                    shinfo.id=1;
+                    /*Get devID*/
+	            memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		    JSON_Get(json, OBJ_DEVICE_ID, nodeContent, sizeof(nodeContent));
+                    if(strcmp(nodeContent, "NULL") == 0){
+                        return -1;
+                    }
+                    printf("%s: DevID=%s\n", __func__, nodeContent);
+                    strcpy(shinfo.devID, nodeContent);
+
+                    /*Get MAC*/
+	            memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		    JSON_Get(json, OBJ_DEVICE_MAC, nodeContent, sizeof(nodeContent));
+                    if(strcmp(nodeContent, "NULL") == 0){
+                        return -1;
+                    }
+                    printf("%s: mac=%s\n", __func__, nodeContent);
+                    strcpy(shinfo.macAddress, nodeContent);
+
+                    /*Get SN*/
+	            memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		    JSON_Get(json, OBJ_DEVICE_SN, nodeContent, sizeof(nodeContent));
+                    if(strcmp(nodeContent, "NULL") == 0){
+                        return -1;
+                    }
+                    printf("%s: sn=%s\n", __func__, nodeContent);
+                    strcpy(shinfo.sn, nodeContent);
+
+                    /*Get hostname*/
+	            memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		    JSON_Get(json, OBJ_DEVICE_HOSTNAME, nodeContent, sizeof(nodeContent));
+                    if(strcmp(nodeContent, "NULL") == 0){
+		        return -1;
+                    }
+                    printf("%s: hostName=%s\n", __func__, nodeContent);
+                    strcpy(shinfo.hostName, nodeContent);
+
+                    //Get productName
+	            memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		    JSON_Get(json, OBJ_DEVICE_PRODUCTNAME, nodeContent, sizeof(nodeContent));
+                    if(strcmp(nodeContent, "NULL") == 0){
+		        return -1;
+                    }
+                    printf("%s: productName=%s\n", __func__, nodeContent);
+                    strcpy(shinfo.productName, nodeContent);
+
+                    //Get version
+	            memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		    JSON_Get(json, OBJ_DEVICE_VERSION, nodeContent, sizeof(nodeContent));
+                    if(strcmp(nodeContent, "NULL") == 0){
+		        return -1;
+                    }
+                    printf("%s: version=%s\n", __func__, nodeContent);
+                    strcpy(shinfo.version, nodeContent);
+                    //
+#if 0
+                    strcpy(shinfo.macAddress,"000E40000000");
+                    strcpy(shinfo.hostName, "AA9");
+                    strcpy(shinfo.productName, "BB9");
+                    strcpy(shinfo.version, "BC9");
+#endif
+                    RegisterSensorHub(&shinfo);
+                }
+                printf("\n------------------------------------------------\n");
+#if 0
+                //g_doUpdateInterface = 1;
+                memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		JSON_Get(json, OBJ_IOTGW_DATA, nodeContent, sizeof(nodeContent));
+                if(strcmp(nodeContent, "NULL") != 0){
+                }
+#endif
+#if 0
 		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		JSON_Get(json, OBJ_DEVICE_TYPE, nodeContent, sizeof(nodeContent));
 		printf("==================>device type : %s\n",nodeContent);

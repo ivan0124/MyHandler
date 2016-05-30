@@ -818,7 +818,7 @@ int SenHubConnectToWISECloud( Handler_info *pSenHubHandler)
 	int   datalen = 0;
 	int   rc = 1;
 
-#if 0
+#if 1
 	datalen = GetAgentInfoData(JSONData,sizeof(JSONData),pSenHubHandler);
 
 	if(datalen <20 )
@@ -838,6 +838,8 @@ int SenHubConnectToWISECloud( Handler_info *pSenHubHandler)
 #if 0  
         strcpy(JSONData,"{\"devID\":\"000E40000005\",\"hostname\":\"AA1\",\"sn\":\"000E40000005\",\"mac\":\"000E40000005\",\"version\":\"3.1.30.5434\",\"type\":\"SenHub\",\"product\":\"BB1\",\"manufacture\":\"\",\"status\":\"1\"}");
 #endif
+
+#if 0
         sprintf(JSONData,"{\"devID\":\"%s\",\"hostname\":\"%s\",\"sn\":\"%s\",\"mac\":\"%s\",\"version\":\"3.1.30.5434\",\"type\":\"SenHub\",\"product\":\"%s\",\"manufacture\":\"\",\"status\":\"1\"}",
         pSenHubHandler->agentInfo->devId,
         pSenHubHandler->agentInfo->hostname,
@@ -846,6 +848,7 @@ int SenHubConnectToWISECloud( Handler_info *pSenHubHandler)
         pSenHubHandler->agentInfo->product);
 
         strcpy(g_mac_to_register,pSenHubHandler->agentInfo->mac);
+#endif
 
         datalen=strlen(JSONData);
 	// 1. Subscribe Topic2 -> Create SenHub <-> WISECloud communication channel
@@ -863,7 +866,7 @@ int SenHubConnectToWISECloud( Handler_info *pSenHubHandler)
                 PRINTF("[ivan]g_sendcustcbf ppppppppppppppppppppppppppppppp>\n");
 		g_sendcustcbf(pSenHubHandler,1,Topic,JSONData, datalen, NULL, NULL);
         }
-	PRINTF("[%s][%s]Send SenHub AgentInfo:%s \n", __FILE__, __func__, JSONData);
+	printf("[%s][%s]Send SenHub AgentInfo:%s \n", __FILE__, __func__, JSONData);
 	//PRINTF("SenHubConnectToWISECloud Leave\n");
 #endif
 	return 1;
@@ -1089,7 +1092,7 @@ char Capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"LAN\":{\"LAN0\":{\"Info\":{\"e\":
 int UpdateConnectivityInfo(char* pszConnectivityInfo, int iSizeConnectivityInfo){
 
 #if 0
-char ConnectivityInfo[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000006,000E40000009\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549767\",\"ver\": 1},\"LAN1\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000007,000E40000008\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549768\",\"ver\": 1},\"bn\": \"LAN\"},\"ver\": 1}}"};
+char ConnectivityInfo[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000006\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549767\",\"ver\": 1},\"LAN1\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000007\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549768\",\"ver\": 1},\"LAN2\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000007\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549737\",\"ver\": 1},\"bn\": \"LAN\"},\"ver\": 1}}"};
 
     return UpdateInterfaceData(ConnectivityInfo, strlen(ConnectivityInfo));
 
@@ -1097,6 +1100,47 @@ char ConnectivityInfo[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\"
     return UpdateInterfaceData(pszConnectivityInfo, iSizeConnectivityInfo);
 #endif
 
+}
+
+int RegisterSensorHub(void *pRev1)
+{
+	int rc = 0;
+	int index = 0;
+
+        PRINTF("[ivan][%s][%s] ---------------------------------=====>\n", __FILE__, __func__ );
+	senhub_info_t *pSenHubInfo = (senhub_info_t*)pRev1;
+
+#if 0
+	PRINTF("[ivan][%s][%s] MAC=%s HostName=%s SN=%s Product=%s\n",__FILE__,__func__,		pSenHubInfo->sUID,
+	pSenHubInfo->sHostName,										pSenHubInfo->sSN,										pSenHubInfo->sProduct);
+#endif
+
+	Handler_info  *pSenHander = NULL;
+
+	if( pSenHubInfo == NULL ) {
+		PRINTF("[%s][%s] SensorHub is NULL\r\n", __FILE__, __func__);
+		return rc;
+	}
+;
+	// 1. Find empty SenHub Array
+	if(  (index = GetUsableIndex(&g_SenHubAgentInfo, MAX_SENNODES ) )  == -1 ) 
+	{
+		PRINTF("GW Handler is Full \r\n");
+		return rc;
+	}
+        
+	pSenHander = &g_SenPluginInfo[index];
+
+	// 2. Prepare Sensor Node Handler_info data
+        PackSensorHubPlugInfo(pSenHander, &g_PluginInfo, pSenHubInfo);
+#if 0
+	PackSenHubPlugInfo( pSenHander, &g_PluginInfo, pSenHubInfo->macAddress, pSenHubInfo->hostName, pSenHubInfo->productName, 1 );
+#endif
+
+	// 3. Register to WISECloud
+	rc = SenHubConnectToWISECloud( pSenHander );
+
+	return rc;
 }
 
 

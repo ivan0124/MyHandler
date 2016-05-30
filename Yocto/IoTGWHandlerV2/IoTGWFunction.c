@@ -13,6 +13,7 @@
 #include "inc/IoTGW_Def.h"
 
 #include "BasicFun_Tool.h"
+#include "MqttHal.h"
 
 int GetAgentInfoData(char *outData, int buflen, void *pInput )
 {
@@ -33,19 +34,14 @@ int GetAgentInfoData(char *outData, int buflen, void *pInput )
 
 int PackSenHubPlugInfo(Handler_info *pSenHubHandler, Handler_info *pGwHandlerInfo, const char *mac, const char *hostname, const char *product, const int status )
 {
-        PRINTF("[ivan][%s][%s] ----------------------------------->+1\n",__FILE__, __func__);
 	if( pSenHubHandler == NULL || pGwHandlerInfo == NULL ) return -1;
 
-        PRINTF("[ivan][%s][%s] ----------------------------------->+2\n",__FILE__, __func__);
 	if( pSenHubHandler->agentInfo == NULL ) return -1;
 
-        PRINTF("[ivan][%s][%s] ----------------------------------->+3\n",__FILE__, __func__);
 	memset( pSenHubHandler->agentInfo,0,sizeof(cagent_agent_info_body_t));
 
-        PRINTF("[ivan][%s][%s] ----------------------------------->+4\n",__FILE__, __func__);
 	memcpy( pSenHubHandler->agentInfo, pGwHandlerInfo->agentInfo, sizeof(cagent_agent_info_body_t));
 
-        PRINTF("[ivan][%s][%s] ----------------------------------->+5\n",__FILE__, __func__);
 	snprintf(pSenHubHandler->Name,MAX_TOPIC_LEN, "%s", CAGENG_HANDLER_NAME); // "general"
 
 	snprintf( pSenHubHandler->agentInfo->hostname, DEF_HOSTNAME_LENGTH, "%s", hostname );
@@ -56,7 +52,6 @@ int PackSenHubPlugInfo(Handler_info *pSenHubHandler, Handler_info *pGwHandlerInf
 	snprintf( pSenHubHandler->agentInfo->product, DEF_MAX_STRING_LENGTH, "%s",product);
 	pSenHubHandler->agentInfo->status = status;
 
-        PRINTF("[ivan][%s][%s] ----------------------------------->+6\n",__FILE__, __func__);
 	return 1;
 }
 
@@ -111,6 +106,30 @@ int GetUsableIndex(void *pAgentInfoArray, int Max )
 	}
 
 	return index;
+}
+
+int PackSensorHubPlugInfo(Handler_info *pSenHubHandler, Handler_info *pGwHandlerInfo, senhub_info_t* psenhub_info)
+{
+	if( pSenHubHandler == NULL || pGwHandlerInfo == NULL ) return -1;
+
+	if( pSenHubHandler->agentInfo == NULL ) return -1;
+
+        if( psenhub_info == NULL ) return -1;
+
+	memset( pSenHubHandler->agentInfo,0,sizeof(cagent_agent_info_body_t));
+
+	memcpy( pSenHubHandler->agentInfo, pGwHandlerInfo->agentInfo, sizeof(cagent_agent_info_body_t));
+
+	snprintf(pSenHubHandler->Name,MAX_TOPIC_LEN, "%s", CAGENG_HANDLER_NAME); // "general"
+
+	snprintf( pSenHubHandler->agentInfo->hostname, DEF_HOSTNAME_LENGTH, "%s", psenhub_info->hostName );
+	snprintf( pSenHubHandler->agentInfo->devId, DEF_DEVID_LENGTH, "%s", psenhub_info->devID );
+	snprintf( pSenHubHandler->agentInfo->sn, DEF_SN_LENGTH, "%s", psenhub_info->sn );
+	snprintf( pSenHubHandler->agentInfo->mac, DEF_MAC_LENGTH, "%s", psenhub_info->macAddress );
+	snprintf( pSenHubHandler->agentInfo->type, DEF_MAX_STRING_LENGTH, "SenHub");
+	snprintf( pSenHubHandler->agentInfo->product, DEF_MAX_STRING_LENGTH, "%s",psenhub_info->productName);
+	pSenHubHandler->agentInfo->status = psenhub_info->state;
+	return 0;
 }
 
 
