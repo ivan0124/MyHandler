@@ -123,14 +123,14 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	ADV_TRACE("Topic type: %s \n", topicType);
 	printf("Topic type: %s \n", topicType);
 	if(strcmp(topicType, WA_PUB_REGISTER_TOPIC) == 0) {
-                printf("------------------------------------------------\n");
-		printf("[%s][%s]\033[33m #Register capability Topic# \033[0m\n",__FILE__, __func__);
-                printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                 //
                 memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		JSON_Get(json, OBJ_IOTGW_INFO_SPEC, nodeContent, sizeof(nodeContent));
                 if(strcmp(nodeContent, "NULL") != 0){
-                    printf("Type: IoTGW\nConnectivity capability: ");
+                    printf("------------------------------------------------\n");
+		    printf("[%s][%s]\033[33m #Register connectivity capability# \033[0m\n",__FILE__, __func__);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+
                     memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		    JSON_Get(json, OBJ_INFO_SPEC, nodeContent, sizeof(nodeContent));
                     if(strcmp(nodeContent, "NULL") != 0){
@@ -141,9 +141,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     else{
 			printf("capability content is NULL !\n");
                     }
-                    
+                    printf("\n------------------------------------------------\n"); 
                 }
-                printf("\n------------------------------------------------\n");
+                
                 
 		//JSON_Print(json);
 #if 0
@@ -213,14 +213,12 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		}
 #endif
 	} else if(strcmp(topicType, WA_PUB_DEVINFO_TOPIC) == 0) {
-                printf("------------------------------------------------\n");
-		printf("[%s][%s]\033[33m #Devinfo Topic# \033[0m\n", __FILE__, __func__);
-                printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-
                 memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		JSON_Get(json, OBJ_IOTGW_DATA, nodeContent, sizeof(nodeContent));
                 if(strcmp(nodeContent, "NULL") != 0){
-                    printf("Type: IoTGW\nupdate connectivity: ");
+                    printf("------------------------------------------------\n");
+		    printf("[%s][%s]\033[33m #Update connectivity# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     //printf(nodeContent);
                     memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		    JSON_Get(json, OBJ_DATA, nodeContent, sizeof(nodeContent));
@@ -230,8 +228,41 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     else{
 	                printf("update connectivity info is NULL !\n");
                     }
+                    printf("\n------------------------------------------------\n");
                 }
-                printf("\n------------------------------------------------\n");
+		else{
+                    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		    JSON_Get(json, OBJ_SENHUB_DATA, nodeContent, sizeof(nodeContent));
+                    if(strcmp(nodeContent, "NULL") != 0){
+                        printf("------------------------------------------------\n");
+		        printf("[%s][%s]\033[33m #Update SensorHub# \033[0m\n", __FILE__, __func__);
+                        printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                        
+                        //Get SensorHub ID
+                        memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		        JSON_Get(json, OBJ_SENHUB_ID, nodeContent, sizeof(nodeContent));
+                        if(strcmp(nodeContent, "NULL") == 0){
+                            return -1;
+                        }
+                        char devID[MAX_DEVICE_ID_LEN]={0};
+                        strcpy(devID,nodeContent);
+                        PRINTF("%s: SensorHub devID=%s\n", __func__, nodeContent);
+
+                        //Get SensorHub Data
+                        memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		        JSON_Get(json, OBJ_DATA, nodeContent, sizeof(nodeContent));
+                        if(strcmp(nodeContent, "NULL") == 0){
+                            return -1;
+                        }
+                        PRINTF("%s: SensorHub data=%s\n", __func__, nodeContent);
+                        
+                        UpdateSensorHubData(devID,nodeContent,strlen(nodeContent));
+                        printf("\n------------------------------------------------\n");
+                    }
+		    else{
+                        printf("update SensorHub info is NULL !\n");
+                    }
+                }
                 //
 
 #if 0
@@ -292,14 +323,13 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		}
 #endif
 	} else if(strcmp(topicType, WA_PUB_CONNECT_TOPIC) == 0) {
-                printf("------------------------------------------------\n");
-		printf("[%s][%s]\033[33m #Connect Topic# \033[0m\n", __FILE__, __func__);
-                printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 
 		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		JSON_Get(json, OBJ_DEVICE_TYPE, nodeContent, sizeof(nodeContent));
                 if(strcmp(nodeContent, "SenHub") == 0){
+                    printf("------------------------------------------------\n");
                     printf("[%s][%s]\033[33m #Register SensorHub# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 
 		    senhub_info_t shinfo;
                     memset(&shinfo,0,sizeof(senhub_info_t));
@@ -367,8 +397,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     strcpy(shinfo.version, "BC9");
 #endif
                     RegisterSensorHub(&shinfo);
+                    printf("\n------------------------------------------------\n");
                 }
-                printf("\n------------------------------------------------\n");
+                
 #if 0
                 //g_doUpdateInterface = 1;
                 memset(nodeContent, 0, MAX_JSON_NODE_SIZE);

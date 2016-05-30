@@ -1143,6 +1143,41 @@ int RegisterSensorHub(void *pRev1)
 	return rc;
 }
 
+int UpdateSensorHubData( const char* pSensroHubUID, const char *pInJson, const int InDataLen)
+{
+	int rc = 0;
+        int index = -1;
+
+        if (pSensroHubUID == NULL){
+	    return -1;
+        }
+
+	if( ( index = GetSenHubAgentInfobyUID(&g_SenHubAgentInfo, 256, pSensroHubUID/*SenHubUID*/) ) == -1 ) {
+		printf(" Can't find SenHub UID in Table =%s\r\n", pSensroHubUID );
+		return -1;
+	}
+
+        PRINTF("find SenHub UID in Table =%s, index=%d\r\n",pSensroHubUID, index );
+        PRINTF("Sensor Hub data=%s\n", pInJson);
+
+#if 0
+	//Handler_info *pHandler_info = (Handler_info*)pInParam;
+        char mydata[1024]={"{\"SenHub\":{\"SenData\":{\"e\":[{\"n\":\"Temperature\",\"v\":8.000000},{\"n\":\"Humidity\",\"v\":64.000000},{\"n\":\"GPIO1\",\"bv\":0},{\"n\":\"GPIO2\",\"bv\":0}],\"bn\":\"SenData\"},\"Info\":{\"e\":[{\"n\":\"Name\",\"sv\":\"123456789012345678901234567890\",\"asm\":\"rw\"},{\"n\":\"sw\",\"sv\":\"1.0.00\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"Net\":{\"e\":[{\"n\":\"sw\",\"sv\":\"1.0.00\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"}],\"bn\":\"Net\"},\"Action\":{\"e\":[{\"n\":\"AutoReport\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Action\"},\"ver\":1}}"};
+
+#endif
+        Handler_info *pHandler_info = (Handler_info*)&g_SenPluginInfo[index];
+
+	if( pHandler_info == NULL ) return -1;
+
+
+	if( g_sendreportcbf ) {
+		g_sendreportcbf( pHandler_info, pInJson, InDataLen, NULL, NULL );
+		rc = 1;
+	}
+
+	return 0;
+}
+
 
 // <IoTGW>
 int InitSNGWHandler()
