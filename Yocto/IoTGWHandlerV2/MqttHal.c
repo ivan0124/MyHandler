@@ -254,7 +254,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         if(strcmp(nodeContent, "NULL") == 0){
                             return -1;
                         }
-                        PRINTF("%s: SensorHub data=%s\n", __func__, nodeContent);
+                        printf("%s: SensorHub data=%s\n", __func__, nodeContent);
                         
                         UpdateSensorHubData(devID,nodeContent,strlen(nodeContent));
                         printf("\n------------------------------------------------\n");
