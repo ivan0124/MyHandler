@@ -236,7 +236,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     if(strcmp(nodeContent, "NULL") != 0){
                         printf("------------------------------------------------\n");
 		        printf("[%s][%s]\033[33m #Update SensorHub# \033[0m\n", __FILE__, __func__);
-                        printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                        PRINTF("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                         
                         //Get SensorHub ID
                         memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
@@ -254,7 +254,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         if(strcmp(nodeContent, "NULL") == 0){
                             return -1;
                         }
-                        printf("%s: SensorHub data=%s\n", __func__, nodeContent);
+                        PRINTF("%s: SensorHub data=%s\n", __func__, nodeContent);
                         
                         UpdateSensorHubData(devID,nodeContent,strlen(nodeContent));
                         printf("\n------------------------------------------------\n");
