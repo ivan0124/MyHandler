@@ -1087,14 +1087,24 @@ Exit_ProcSet:
 	return rc;
 }
 
-int RegisterCapability(int type, char* pszCapability, int iCapabilitySize){
-
 #if 0
-    //CONNECTIVITY_CAPABILITY
+int RegisterCapability(int type, char* pszCapability, int iCapabilitySize){
+#endif
+
+int RegisterCapability(JSONode *json){
+#if 0
 char Capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"LAN\":{\"LAN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":-1,\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"LAN0\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.4.5\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":0,\"asm\":\"r\"}],\"bn\":\"Info\"},\"bn\":\"0000080027549767\",\"ver\":1},\"LAN1\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":-1,\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"LAN1\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.4.5\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":0,\"asm\":\"r\"}],\"bn\":\"Info\"},\"bn\":\"0000080027549768\",\"ver\":1},\"bn\":\"LAN\",\"ver\":1},\"ver\":1}}"};
      g_sendinfospeccbf( &g_PluginInfo, Capability, strlen(Capability), NULL, NULL);
 #else
-     g_sendinfospeccbf( &g_PluginInfo, pszCapability, iCapabilitySize, NULL, NULL);
+     char nodeContent[MAX_JSON_NODE_SIZE]={0};
+
+     JSON_Get(json, OBJ_INFO_SPEC, nodeContent, sizeof(nodeContent));
+     if(strcmp(nodeContent, "NULL") == 0){
+         return -1;
+     }
+         
+     printf(nodeContent);
+     g_sendinfospeccbf( &g_PluginInfo, nodeContent, strlen(nodeContent)+1, NULL, NULL);
 #endif
 
     return 0;

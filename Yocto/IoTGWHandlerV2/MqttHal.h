@@ -15,7 +15,7 @@
 // User API
 //-----------------------------------------------------------------------------
 #define WA_PUB_CONNECT_TOPIC "agentinfoack"
-#define WA_PUB_REGISTER_TOPIC  "agentactionreq"
+#define AGENTACTIONREQ_TOPIC  "agentactionreq"
 #define WA_PUB_DEVINFO_TOPIC "deviceinfo"
 #define WA_PUB_WILL_TOPIC    "willmessage"
 #define WA_SUB_CBK_TOPIC     "agentcallbackreq"

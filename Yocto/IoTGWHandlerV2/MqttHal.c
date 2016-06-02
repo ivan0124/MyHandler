@@ -173,6 +173,19 @@ int GetSensorReply(char* ptopic, JSONode *json){
 
 }
 
+int isRegisterConnectivity(JSONode *json){
+
+    char nodeContent[MAX_JSON_NODE_SIZE]={0};
+
+    JSON_Get(json, OBJ_IOTGW_INFO_SPEC, nodeContent, sizeof(nodeContent));
+
+    if(strcmp(nodeContent, "NULL") == 0){
+        return -1;
+    }
+
+    return 0;
+}
+
 int MqttHal_Message_Process(const struct mosquitto_message *message)
 {
 	char topicType[32];
@@ -189,13 +202,13 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	sscanf(message->topic, "/%*[^/]/%*[^/]/%*[^/]/%s", topicType);
 	ADV_TRACE("Topic type: %s \n", topicType);
 	printf("Topic type: %s \n", topicType);
-	if(strcmp(topicType, WA_PUB_REGISTER_TOPIC) == 0) {
-                printf("!!!------------------------------------------------!!!\n");
+	if(strcmp(topicType, AGENTACTIONREQ_TOPIC) == 0) {;
 		printf("[%s][%s]\033[33m #receive agentactionreq topic# \033[0m\n",__FILE__, __func__);
                 printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
  
                 int SusiCommand=-1;
                 if ( GetSusiCommand(json, &SusiCommand) == 0){
+                    printf("------------------------------------------------\n");
                     printf("SusiCommand = %d\n", SusiCommand);
 
                     switch(SusiCommand){
@@ -209,29 +222,16 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                                 break;
                             }
                     }
+                    printf("\n------------------------------------------------\n");
                 }
                 //
-                memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		JSON_Get(json, OBJ_IOTGW_INFO_SPEC, nodeContent, sizeof(nodeContent));
-                if(strcmp(nodeContent, "NULL") != 0){
+                if(isRegisterConnectivity(json) == 0){
                     printf("------------------------------------------------\n");
-		    printf("[%s][%s]\033[33m #Register connectivity capability# \033[0m\n",__FILE__, __func__);
+		    printf("[%s][%s]\033[33m #Register connectivity# \033[0m\n",__FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-
-                    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		    JSON_Get(json, OBJ_INFO_SPEC, nodeContent, sizeof(nodeContent));
-                    if(strcmp(nodeContent, "NULL") != 0){
-                        printf(nodeContent);
-                        RegisterCapability(CONNECTIVITY_CAPABILITY,nodeContent,strlen(nodeContent)+1);
-                        //strcpy(g_connectivity_capability,nodeContent);
-                    }
-                    else{
-			printf("capability content is NULL !\n");
-                    }
+                    RegisterCapability(json);
                     printf("\n------------------------------------------------\n"); 
                 }
-                
-                
 		//JSON_Print(json);
 #if 0
 		// Check Publish response about SenHub
