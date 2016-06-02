@@ -34,6 +34,7 @@
 #include "MqttHal.h"
 #include "SensorNetwork_APIex.h"
 #include "unistd.h"
+#include "IoTGWHandler.h"
 
 #define MQTT_RESPONSE_TIMEOUT 3
 
@@ -106,6 +107,72 @@ bool isResponseTimeout(time_t _inTime)
 	}
 }
 
+int GetSusiCommand(JSONode *json, int* piSusiCommand){
+
+    char nodeContent[MAX_JSON_NODE_SIZE]={0};
+
+    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+    JSON_Get(json, OBJ_SUSI_COMMAND, nodeContent, sizeof(nodeContent));
+
+    if(strcmp(nodeContent, "NULL") == 0){
+        return -1;
+    }
+
+    *piSusiCommand=atoi(nodeContent);
+    return 0;
+}
+
+int GetSensorReply(char* ptopic, JSONode *json){
+
+    char nodeContent[MAX_JSON_NODE_SIZE];
+    char sessionID[256]={0};
+    char sensorInfoList[256]={0};
+    char tmp_sensorHubUID[64]={0};
+    char sensorHubUID[64]={0};
+    char respone_data[1024]={0};
+
+    //message topic
+    printf("topic = %s\n", ptopic);
+
+    //Get sensorHub UID
+    sscanf(ptopic, "/%*[^/]/%*[^/]%s", tmp_sensorHubUID);
+    printf("tmp_sensorHubUID: %s \n", tmp_sensorHubUID);
+    //sscanf(tmp_sensorHubUID,"%*[^/]/%[^/]%s", sensorHubUID);
+    strcpy(sensorHubUID,tmp_sensorHubUID+1);
+    char* ptmp_ptr=strstr(sensorHubUID,"/");
+    if ( ptmp_ptr == NULL){
+        return -1;
+    }   
+    *ptmp_ptr=0; 
+    printf("sensorHubUID=%s, len=%d\n", sensorHubUID, strlen(sensorHubUID));
+
+    //Get sessionID
+    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+    JSON_Get(json, "[susiCommData][sessionID]", nodeContent, sizeof(nodeContent));
+    if(strcmp(nodeContent, "NULL") == 0){
+        return -1;
+    }
+    strcpy(sessionID,nodeContent);
+    printf("sessionID = %s\n", sessionID);
+
+    //Get sensorInfoList
+    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+    JSON_Get(json, "[susiCommData][sensorInfoList]", nodeContent, sizeof(nodeContent));
+    if(strcmp(nodeContent, "NULL") == 0){
+        return -1;
+    }
+    strcpy(sensorInfoList,nodeContent);
+    printf("sensorInfoList = %s\n", sensorInfoList);
+
+    //
+    sprintf(respone_data,"{\"sessionID\":\"%s\",\"sensorInfoList\":%s}",sessionID,sensorInfoList);
+    printf("response data=%s\n",respone_data);
+    ResponseGetData(ptopic, sensorHubUID, respone_data, strlen(respone_data));
+
+    return 0;
+
+}
+
 int MqttHal_Message_Process(const struct mosquitto_message *message)
 {
 	char topicType[32];
@@ -126,48 +193,22 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 printf("!!!------------------------------------------------!!!\n");
 		printf("[%s][%s]\033[33m #receive agentactionreq topic# \033[0m\n",__FILE__, __func__);
                 printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+ 
+                int SusiCommand=-1;
+                if ( GetSusiCommand(json, &SusiCommand) == 0){
+                    printf("SusiCommand = %d\n", SusiCommand);
 
-                memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		JSON_Get(json, OBJ_SUSI_COMMAND, nodeContent, sizeof(nodeContent));
-                if (strcmp(nodeContent, "524") == 0){
-                    printf("INFO value\n");
-                    char sessionID[256]={0};
-                    char sensorInfoList[256]={0};
-                    char tmp_sensorHubUID[64]={0};
-                    char sensorHubUID[2000];
-                    //message topic
-                    printf("message->topic = %s\n", message->topic);
-                    //Get sensorHub UID
-
-                    sscanf(message->topic, "/%*[^/]/%*[^/]%s", tmp_sensorHubUID);
-	            printf("tmp_sensorHubUID: %s \n", tmp_sensorHubUID);
-		   
-		    sscanf(tmp_sensorHubUID,"%*[^/]/%[^/]%s", sensorHubUID);
-		    printf("sensorHubUID=%s, len=%d\n", sensorHubUID, strlen(sensorHubUID));
-
-                    //Get sessionID
-                    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		    JSON_Get(json, "[susiCommData][sessionID]", nodeContent, sizeof(nodeContent));
-                    if(strcmp(nodeContent, "NULL") == 0){
-                        return -1;
+                    switch(SusiCommand){
+                        case IOTGW_GET_SENSOR_REPLY:
+                            {
+                                GetSensorReply(message->topic,json);
+                                break;
+                            }
+                        default:
+                            {
+                                break;
+                            }
                     }
-                    strcpy(sessionID,nodeContent);
-                    printf("sessionID = %s\n", sessionID);
-
-                    //Get sensorInfoList
-                    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		    JSON_Get(json, "[susiCommData][sensorInfoList]", nodeContent, sizeof(nodeContent));
-                    if(strcmp(nodeContent, "NULL") == 0){
-                        return -1;
-                    }                    
-                    strcpy(sensorInfoList,nodeContent);
-                    printf("sensorInfoList = %s\n", sensorInfoList);
-
-                    //
-                    char respone_data[1024]={0};
-                    sprintf(respone_data,"{\"sessionID\":\"%s\",\"sensorInfoList\":%s}",sessionID,sensorInfoList);
-                    printf("response data=%s\n",respone_data);
-                    ResponseGetData(message->topic, sensorHubUID, respone_data, strlen(respone_data));
                 }
                 //
                 memset(nodeContent, 0, MAX_JSON_NODE_SIZE);

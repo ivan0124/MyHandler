@@ -1189,33 +1189,26 @@ int UpdateSensorHubData( const char* pSensroHubUID, const char *pInJson, const i
 	return 0;
 }
 
-#if 1
 int ResponseGetData(char* topic, char* sensor_hub_id, char* presponse_data, int response_data_size){
 
-    printf("+++++++++++++01\n");
     int index=-1;
-    char SenHubUID[MAX_SN_UID]={"0017000E40000000"};
-    printf("+++++++++++++02\n");
     if( ( index = GetSenHubAgentInfobyUID(&g_SenHubAgentInfo, MAX_SENNODES, sensor_hub_id) ) == -1 ) {
         printf("[%s][%s] Can't find SenHub UID in Table =%s\r\n",__FILE__, __func__, sensor_hub_id );
 	return -1;
     }
-    printf("[ivan][%s][%s] g_SenPluginInfo[index] index = %d\n", __FILE__, __func__, index);
+    PRINTF("[ivan][%s][%s] g_SenPluginInfo[index] index = %d\n", __FILE__, __func__, index);
     Handler_info  *pSenHander = NULL;
     pSenHander = &g_SenPluginInfo[index];
 
-#if 1
-    //char mydata[1024]={"{\"sessionID\":\"49D7B6965BE8C1B4FFABC32391CE3169\", \"sensorInfoList\":{\"e\":[{\"n\":\"SenHub/Info/sw\", \"sv\":\"1.0.00\",\"StatusCode\": 200 }]} }"};
+#if 0
     char mydata[1024]={"{\"sessionID\":\"49D7B6965BE8C1B4FFABC32391CE3169\", \"sensorInfoList\":{\"e\":[{\"n\":\"/Info/sw\", \"sv\":\"1.0.00\",\"StatusCode\": 200 }]} }"};
-    //g_sendcustcbf(pSenHander,IOTGW_GET_SENSOR_REPLY, "/cagent/admin/0017000E40000000/agentactionreq", presponse_data, response_data_size , NULL, NULL);
+    g_sendcustcbf(pSenHander,IOTGW_GET_SENSOR_REPLY, "/cagent/admin/0017000E40000000/agentactionreq", presponse_data, response_data_size , NULL, NULL);
+#else
     g_sendcustcbf(pSenHander,IOTGW_GET_SENSOR_REPLY,topic, presponse_data, response_data_size , NULL, NULL);
-#endif
-    //g_sendcbf(&g_PluginInfo,IOTGW_GET_SENSOR_REPLY, "{\"a\":\"1.2.5\"}", //strlen("{\"a\":\"1.2.5\"}")+1, NULL, NULL);
-    printf("+++++++++++++5\n"); 
+#endif 
 
     return 0;
 }
-#endif
 
 
 // <IoTGW>
