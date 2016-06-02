@@ -122,7 +122,7 @@ int GetSusiCommand(JSONode *json, int* piSusiCommand){
     return 0;
 }
 
-int GetSensorReply(char* ptopic, JSONode *json){
+int GetSensorReply(char* ptopic, JSONode *json, int cmdID){
 
     char nodeContent[MAX_JSON_NODE_SIZE];
     char sessionID[256]={0};
@@ -167,7 +167,7 @@ int GetSensorReply(char* ptopic, JSONode *json){
     //
     sprintf(respone_data,"{\"sessionID\":\"%s\",\"sensorInfoList\":%s}",sessionID,sensorInfoList);
     printf("response data=%s\n",respone_data);
-    ResponseGetData(ptopic, sensorHubUID, respone_data, strlen(respone_data));
+    ResponseGetData(ptopic, cmdID, sensorHubUID, respone_data, strlen(respone_data));
 
     return 0;
 
@@ -214,7 +214,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     switch(SusiCommand){
                         case IOTGW_GET_SENSOR_REPLY:
                             {
-                                GetSensorReply(message->topic,json);
+                                GetSensorReply(message->topic,json, IOTGW_GET_SENSOR_REPLY);
                                 break;
                             }
                         default:

@@ -1199,7 +1199,7 @@ int UpdateSensorHubData( const char* pSensroHubUID, const char *pInJson, const i
 	return 0;
 }
 
-int ResponseGetData(char* topic, char* sensor_hub_id, char* presponse_data, int response_data_size){
+int ResponseGetData(char* topic, int cmdID, char* sensor_hub_id, char* presponse_data, int response_data_size){
 
     int index=-1;
     if( ( index = GetSenHubAgentInfobyUID(&g_SenHubAgentInfo, MAX_SENNODES, sensor_hub_id) ) == -1 ) {
@@ -1214,7 +1214,7 @@ int ResponseGetData(char* topic, char* sensor_hub_id, char* presponse_data, int 
     char mydata[1024]={"{\"sessionID\":\"49D7B6965BE8C1B4FFABC32391CE3169\", \"sensorInfoList\":{\"e\":[{\"n\":\"/Info/sw\", \"sv\":\"1.0.00\",\"StatusCode\": 200 }]} }"};
     g_sendcustcbf(pSenHander,IOTGW_GET_SENSOR_REPLY, "/cagent/admin/0017000E40000000/agentactionreq", presponse_data, response_data_size , NULL, NULL);
 #else
-    g_sendcustcbf(pSenHander,IOTGW_GET_SENSOR_REPLY,topic, presponse_data, response_data_size , NULL, NULL);
+    g_sendcustcbf(pSenHander,cmdID,topic, presponse_data, response_data_size , NULL, NULL);
 #endif 
 
     return 0;
