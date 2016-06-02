@@ -123,6 +123,52 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	ADV_TRACE("Topic type: %s \n", topicType);
 	printf("Topic type: %s \n", topicType);
 	if(strcmp(topicType, WA_PUB_REGISTER_TOPIC) == 0) {
+                printf("!!!------------------------------------------------!!!\n");
+		printf("[%s][%s]\033[33m #receive agentactionreq topic# \033[0m\n",__FILE__, __func__);
+                printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+
+                memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		JSON_Get(json, OBJ_SUSI_COMMAND, nodeContent, sizeof(nodeContent));
+                if (strcmp(nodeContent, "524") == 0){
+                    printf("INFO value\n");
+                    char sessionID[256]={0};
+                    char sensorInfoList[256]={0};
+                    char tmp_sensorHubUID[64]={0};
+                    char sensorHubUID[2000];
+                    //message topic
+                    printf("message->topic = %s\n", message->topic);
+                    //Get sensorHub UID
+
+                    sscanf(message->topic, "/%*[^/]/%*[^/]%s", tmp_sensorHubUID);
+	            printf("tmp_sensorHubUID: %s \n", tmp_sensorHubUID);
+		   
+		    sscanf(tmp_sensorHubUID,"%*[^/]/%[^/]%s", sensorHubUID);
+		    printf("sensorHubUID=%s, len=%d\n", sensorHubUID, strlen(sensorHubUID));
+
+                    //Get sessionID
+                    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		    JSON_Get(json, "[susiCommData][sessionID]", nodeContent, sizeof(nodeContent));
+                    if(strcmp(nodeContent, "NULL") == 0){
+                        return -1;
+                    }
+                    strcpy(sessionID,nodeContent);
+                    printf("sessionID = %s\n", sessionID);
+
+                    //Get sensorInfoList
+                    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		    JSON_Get(json, "[susiCommData][sensorInfoList]", nodeContent, sizeof(nodeContent));
+                    if(strcmp(nodeContent, "NULL") == 0){
+                        return -1;
+                    }                    
+                    strcpy(sensorInfoList,nodeContent);
+                    printf("sensorInfoList = %s\n", sensorInfoList);
+
+                    //
+                    char respone_data[1024]={0};
+                    sprintf(respone_data,"{\"sessionID\":\"%s\",\"sensorInfoList\":%s}",sessionID,sensorInfoList);
+                    printf("response data=%s\n",respone_data);
+                    ResponseGetData(message->topic, sensorHubUID, respone_data, strlen(respone_data));
+                }
                 //
                 memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		JSON_Get(json, OBJ_IOTGW_INFO_SPEC, nodeContent, sizeof(nodeContent));
@@ -872,5 +918,73 @@ int MqttHal_Publish(char *macAddr, int cmdType, char *strName, char *strValue)
 		return -2;
 	}
 
+	return 0;
+}
+
+int MqttHal_PublishV2(char *macAddr, int cmdType, const char *pData)
+{
+	int rc = MOSQ_ERR_SUCCESS;
+	char topic[128];
+	char message[1024];
+	int msglen = 0;
+	time_t currTime;
+	//char seesionID[34];
+        printf("-----------------------------------------------------------------------------------\n");
+	printf("\033[33m %s(%d):\033[0m\n", __func__, __LINE__);
+	#ifndef WIN32
+	srandom(time(NULL));
+	#endif
+        printf("++++++++++++++++1\n");
+	memset(topic, 0, sizeof(topic));
+        printf("++++++++++++++++2\n");
+	memset(message, 0, sizeof(message));
+        printf("++++++++++++++++3\n");
+        strcpy(message,pData);
+        printf("++++++++++++++++4\n");
+	//memset(g_sessionID, 0, sizeof(g_sessionID));
+	//sprintf(g_sessionID, "99C21CCBBFE40F528C0EDDF9%08X", rand());
+#if 0
+	switch(cmdType) {
+		case Mote_Cmd_SetSensorValue:
+			sprintf(message, SET_SENHUB_V_JSON, strValue, "SenData", strName, g_sessionID);
+			break;
+		case Mote_Cmd_SetMoteName:
+			//sprintf(message, SET_SENHUB_SV_JSON, strValue, "Info", strName, g_sessionID);
+			sprintf(message, SET_DEVNAME_JSON, g_sessionID, strValue);
+			break;
+		case Mote_Cmd_SetMoteReset:
+			sprintf(message, SET_SENHUB_BV_JSON, strValue, "Info", strName, g_sessionID);
+			break;
+		case Mote_Cmd_SetAutoReport:
+			sprintf(message, SET_SENHUB_BV_JSON, strValue, "Action", strName, g_sessionID);
+			break;
+		default:
+			printf("%s: not support this cmd=%d!\n", __func__, cmdType);
+			return -1;
+	}
+#endif	
+	printf("\033[33m %s: %s \033[0m\n", __func__, message);
+	sprintf(topic, "/cagent/admin/%s/%s", macAddr, WA_SUB_CBK_TOPIC);
+	msglen = strlen(message);
+	rc = mosquitto_publish(g_mosq, &g_mid_sent, topic, msglen, message, g_mosq_cfg.qos, g_mosq_cfg.retain);
+        printf("####-----------------------------------------------------------------------------------####\n");
+#if 0
+	if(rc == MOSQ_ERR_SUCCESS) {
+		time(&currTime);
+		g_pubResp = 0;
+		while(!g_pubResp) {
+			//printf("%s: wait \n", __func__);
+			if(isResponseTimeout(currTime)) {
+				printf("%s: pub timeout!\n", __func__);
+				break;
+			}
+		}
+		//printf("\033[33m %s: got respone(%d) \033[0m\n", __func__, g_pubResp);
+	}
+
+	if(g_pubResp != SET_SUCCESS_CODE) {
+		return -2;
+	}
+#endif
 	return 0;
 }

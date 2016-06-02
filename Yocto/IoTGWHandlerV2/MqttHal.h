@@ -45,6 +45,7 @@
 #define OBJ_E_NET_HEALTH_SENHUB    "[SenHub][Net][e][0][v]"
 #define OBJ_E_NET_NEIGHBORS_SENHUB "[SenHub][Net][e][1][sv]"
 #define OBJ_E_NET_SWVER_SENHUB     "[SenHub][Net][e][2][sv]"
+#define OBJ_SUSI_COMMAND           "[susiCommData][commCmd]"
 
 #define MAX_HOSTNAME_LEN         32
 #define MAX_PRODUCTNAME_LEN	     32
