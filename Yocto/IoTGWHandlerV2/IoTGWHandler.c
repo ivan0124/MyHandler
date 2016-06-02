@@ -1212,7 +1212,7 @@ int ResponseGetData(char* topic, int cmdID, char* sensor_hub_id, char* presponse
 
 #if 0
     char mydata[1024]={"{\"sessionID\":\"49D7B6965BE8C1B4FFABC32391CE3169\", \"sensorInfoList\":{\"e\":[{\"n\":\"/Info/sw\", \"sv\":\"1.0.00\",\"StatusCode\": 200 }]} }"};
-    g_sendcustcbf(pSenHander,IOTGW_GET_SENSOR_REPLY, "/cagent/admin/0017000E40000000/agentactionreq", presponse_data, response_data_size , NULL, NULL);
+    g_sendcustcbf(pSenHander,IOTGW_GET_SENSOR_REPLY, "/cagent/admin/0017000E40000000/agentactionreq", mydata, strlen(mydata) , NULL, NULL);
 #else
     g_sendcustcbf(pSenHander,cmdID,topic, presponse_data, response_data_size , NULL, NULL);
 #endif 
