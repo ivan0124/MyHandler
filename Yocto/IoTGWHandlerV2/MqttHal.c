@@ -186,6 +186,7 @@ int isRegisterConnectivity(JSONode *json){
     return 0;
 }
 
+
 int MqttHal_Message_Process(const struct mosquitto_message *message)
 {
 	char topicType[32];
@@ -204,7 +205,6 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	printf("Topic type: %s \n", topicType);
 	if(strcmp(topicType, AGENTACTIONREQ_TOPIC) == 0) {;
 		printf("[%s][%s]\033[33m #receive agentactionreq topic# \033[0m\n",__FILE__, __func__);
-                printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
  
                 int SusiCommand=-1;
                 if ( GetSusiCommand(json, &SusiCommand) == 0){
@@ -225,24 +225,28 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         case IOTGW_HANDLER_GET_CAPABILITY_REPLY:
                             {
                                 printf("Get capability reply\n");
+
 				if(isRegisterConnectivity(json) == 0){
 				    printf("------------------------------------------------\n");
-				    printf("[%s][%s]\033[33m #Register connectivity# \033[0m\n",__FILE__, __func__);
+				    printf("[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n",__FILE__, __func__);
 				    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 				    RegisterCapability(json);
 				    printf("\n------------------------------------------------\n"); 
 				}
+
                                 break;
                             }
                         default:
                             {
-                                 printf("SusiCommand = %d not supported\n", SusiCommand);
+                                printf("SusiCommand = %d not supported\n", SusiCommand);
+                                printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                                 break;
                             }
                     }
                     printf("\n------------------------------------------------\n");
                 }
                 //
+
 		//JSON_Print(json);
 #if 0
 		// Check Publish response about SenHub
@@ -315,7 +319,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		JSON_Get(json, OBJ_IOTGW_DATA, nodeContent, sizeof(nodeContent));
                 if(strcmp(nodeContent, "NULL") != 0){
                     printf("------------------------------------------------\n");
-		    printf("[%s][%s]\033[33m #Update connectivity# \033[0m\n", __FILE__, __func__);
+		    printf("[%s][%s]\033[33m #Update Gateway Data# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     //printf(nodeContent);
                     memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
@@ -333,7 +337,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    JSON_Get(json, OBJ_SENHUB_DATA, nodeContent, sizeof(nodeContent));
                     if(strcmp(nodeContent, "NULL") != 0){
                         printf("------------------------------------------------\n");
-		        printf("[%s][%s]\033[33m #Update SensorHub# \033[0m\n", __FILE__, __func__);
+		        printf("[%s][%s]\033[33m #Update SensorHub Data# \033[0m\n", __FILE__, __func__);
                         PRINTF("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                         
                         //Get SensorHub ID

@@ -1085,10 +1085,6 @@ Exit_ProcSet:
 	return rc;
 }
 
-#if 0
-int RegisterCapability(int type, char* pszCapability, int iCapabilitySize){
-#endif
-
 int RegisterCapability(JSONode *json){
 #if 0
 char Capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"LAN\":{\"LAN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":-1,\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"LAN0\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.4.5\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":0,\"asm\":\"r\"}],\"bn\":\"Info\"},\"bn\":\"0000080027549767\",\"ver\":1},\"LAN1\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":-1,\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"LAN1\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.4.5\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":0,\"asm\":\"r\"}],\"bn\":\"Info\"},\"bn\":\"0000080027549768\",\"ver\":1},\"bn\":\"LAN\",\"ver\":1},\"ver\":1}}"};
@@ -1106,7 +1102,7 @@ char Capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"LAN\":{\"LAN0\":{\"Info\":{\"e\":
 #endif
 
     return 0;
-} 
+}
 
 int UpdateConnectivityInfo(char* pszConnectivityInfo, int iSizeConnectivityInfo){
 
@@ -1120,6 +1116,7 @@ char ConnectivityInfo[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\"
 #endif
 
 }
+
 
 int RegisterSensorHub(void *pRev1)
 {
