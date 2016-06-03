@@ -217,8 +217,14 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                                 GetSensorReply(message->topic,json, IOTGW_GET_SENSOR_REPLY);
                                 break;
                             }
+                        case IOTGW_SET_SENSOR_REPLY:
+                            {
+                                GetSensorReply(message->topic,json, IOTGW_SET_SENSOR_REPLY);
+                                break;
+                            }
                         default:
                             {
+                                 printf("SusiCommand = %d not supported\n", SusiCommand);
                                 break;
                             }
                     }
@@ -975,13 +981,9 @@ int MqttHal_PublishV2(char *macAddr, int cmdType, const char *pData)
 	#ifndef WIN32
 	srandom(time(NULL));
 	#endif
-        printf("++++++++++++++++1\n");
-	memset(topic, 0, sizeof(topic));
-        printf("++++++++++++++++2\n");
+	memset(topic, 0, sizeof(topic));;
 	memset(message, 0, sizeof(message));
-        printf("++++++++++++++++3\n");
         strcpy(message,pData);
-        printf("++++++++++++++++4\n");
 	//memset(g_sessionID, 0, sizeof(g_sessionID));
 	//sprintf(g_sessionID, "99C21CCBBFE40F528C0EDDF9%08X", rand());
 #if 0

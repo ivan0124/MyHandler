@@ -775,7 +775,7 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 	case IOTGW_GET_SENSOR_REQUEST:
 		{
 			// { "sessionID":"XXX", "sensorInfoList":{"e":[{"n":"SenData/dout","bv":1,"StatusCode":200}]} }
-			printf("===============[%s][%s]IOTGW_GET_SENSOR_REQUEST data=%s\r\n===================================",__FILE__, __func__, data );
+			printf("[%s][%s]IOTGW_GET_SENSOR_REQUEST data=%s\r\n",__FILE__, __func__, data );
 
                         printf("Topic == %s\n",Topic);
                         MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);			
@@ -794,6 +794,7 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 			// { "sessionID":"XXX", "sensorInfoList":{"e":[ {"n":"SenData/dout", "sv":"Setting", "StatusCode": 202 } ] } }
 			// { "sessionID":"XXX", "sensorInfoList":{"e":[{"n":"SenData/din","sv":"Read Only","StatusCode":405} ] } }
 			printf("[%s][%s]IOTGW_SET_SENSOR_REQUEST data=%s\r\n",__FILE__, __func__, data );
+                        MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);
 #if 0
 			len = ProcSetSenHubValue(SenHubUID, szSessionId, data, index, Topic, buffer, sizeof(buffer));
 			//PRINTF("len=%d Ret=%s\n",len,buffer);
