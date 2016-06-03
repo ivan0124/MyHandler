@@ -222,6 +222,17 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                                 GetSensorReply(message->topic,json, IOTGW_SET_SENSOR_REPLY);
                                 break;
                             }
+                        case IOTGW_HANDLER_GET_CAPABILITY_REPLY:
+                            {
+                                printf("Get capability reply\n");
+				if(isRegisterConnectivity(json) == 0){
+				    printf("------------------------------------------------\n");
+				    printf("[%s][%s]\033[33m #Register connectivity# \033[0m\n",__FILE__, __func__);
+				    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+				    RegisterCapability(json);
+				    printf("\n------------------------------------------------\n"); 
+				}
+                            }
                         default:
                             {
                                  printf("SusiCommand = %d not supported\n", SusiCommand);
@@ -231,13 +242,6 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("\n------------------------------------------------\n");
                 }
                 //
-                if(isRegisterConnectivity(json) == 0){
-                    printf("------------------------------------------------\n");
-		    printf("[%s][%s]\033[33m #Register connectivity# \033[0m\n",__FILE__, __func__);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-                    RegisterCapability(json);
-                    printf("\n------------------------------------------------\n"); 
-                }
 		//JSON_Print(json);
 #if 0
 		// Check Publish response about SenHub
