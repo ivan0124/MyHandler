@@ -366,64 +366,6 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     }
                 }
                 //
-
-#if 0
-		senhub_info_t shinfo;
-                memset(&shinfo,0,sizeof(senhub_info_t));
-                strcpy(shinfo.macAddress, "000E40000009");
-                strcpy(shinfo.hostName, "AA9");
-                strcpy(shinfo.productName, "BB9");
-                strcpy(shinfo.softwareVersion, "BC9");
-                shinfo.jsonNode = NULL;
-                shinfo.id=1;
-		SensorHub_Data(&shinfo);
-#endif
-#if 0
-		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		JSON_Get(json, OBJ_IOTGW_DATA, nodeContent, sizeof(nodeContent));
-		//JSON_Print(json);
-		if(strcmp(nodeContent, "NULL") != 0) {
-			//printf("device type: IoTGW\n");
-			JSON_Destory(&json);
-			return 0;
-		}
-		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		JSON_Get(json, OBJ_SENHUB_DATA, nodeContent, sizeof(nodeContent));
-		if(strcmp(nodeContent, "NULL") != 0) {
-			// CmdID=2002
-			printf("device type: SenHub\n");
-			memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-			JSON_Get(json, OBJ_AGENT_ID, nodeContent, sizeof(nodeContent));
-			printf("AgentId : %s\n",nodeContent);
-			pshinfo = (senhub_info_t *)senhub_list_find_by_mac(g_SensorHubList, nodeContent);
-			if(NULL == pshinfo) {
-                                printf("[%s][%s] pshinfo == NULL\n", __FILE__, __func__);
-				JSON_Destory(&json);
-				return -3;
-			}
-			//printf("found id =%d\n", pshinfo->id);
-#if 0
-			if(pshinfo->state == Mote_Report_CMD2000) {
-				//printf("%s: !!! id=%d state=%d, no report 2001 xxxxxxxxxxxxxx\n", __func__, pshinfo->id, pshinfo->state);
-				g_doUpdateInterface = 1;
-				SensorHub_DisConn(pshinfo);
-				g_SensorHubList = SENHUB_LIST_RM(g_SensorHubList, pshinfo->id, &pshinfo);
-				free(pshinfo);
-			} else
-#endif
-			{
-				memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-				JSON_Get(json, OBJ_DATA, nodeContent, sizeof(nodeContent));
-				if(pshinfo->jsonNode != NULL) {
-					JSON_Destory(&pshinfo->jsonNode);
-				}
-				pshinfo->jsonNode = JSON_Parser(nodeContent);
-				pshinfo->state = Mote_Report_CMD2002;
-			
-				SensorHub_Data(pshinfo);
-			}
-		}
-#endif
 	} else if(strcmp(topicType, WA_PUB_CONNECT_TOPIC) == 0) {
 
 		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
@@ -435,122 +377,14 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 
 		    senhub_info_t shinfo;
                     memset(&shinfo,0,sizeof(senhub_info_t));
-                    PrepareInfoToRegisterSensorHub(json,&shinfo);
+                    if ( PrepareInfoToRegisterSensorHub(json,&shinfo) < 0){
+                        JSON_Destory(&json);
+                        return -1;
+                    }
                     RegisterSensorHub(&shinfo);
                     printf("\n------------------------------------------------\n");
                 }
-                
-#if 0
-                //g_doUpdateInterface = 1;
-                memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		JSON_Get(json, OBJ_IOTGW_DATA, nodeContent, sizeof(nodeContent));
-                if(strcmp(nodeContent, "NULL") != 0){
-                }
-#endif
-#if 0
-		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		JSON_Get(json, OBJ_DEVICE_TYPE, nodeContent, sizeof(nodeContent));
-		printf("==================>device type : %s\n",nodeContent);
 
-		senhub_info_t shinfo;
-                memset(&shinfo,0,sizeof(senhub_info_t));
-                strcpy(shinfo.macAddress, "000E40000009");
-                strcpy(shinfo.hostName, "AA9");
-                strcpy(shinfo.productName, "BB9");
-                strcpy(shinfo.softwareVersion, "BC9");
-                shinfo.jsonNode = NULL;
-                shinfo.id=1;
-		SensorHub_Register(&shinfo);
-#endif
-#if 0
-		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		JSON_Get(json, OBJ_DEVICE_TYPE, nodeContent, sizeof(nodeContent));
-		//printf("device type : %s\n",nodeContent);
-		//JSON_Print(json);
-		if(strcmp(nodeContent, "IoTGW") == 0) {
-			char macAddr[MAX_MACADDRESS_LEN];
-			memset(macAddr, 0, MAX_MACADDRESS_LEN);
-			memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-			JSON_Get(json, OBJ_DEVICE_MAC, nodeContent, sizeof(nodeContent));
-			sprintf(macAddr, "0017%s", nodeContent);
-			//printf("%s: mac=%s -> %s\n", __func__, nodeContent, macAddr);
-
-			pshinfo = (senhub_info_t *)senhub_list_find_by_mac(g_SensorHubList, macAddr);
-			if(NULL != pshinfo) {
-				g_doUpdateInterface = 1;
-				SensorHub_DisConn(pshinfo);
-			} else {
-				pshinfo = malloc(sizeof(senhub_info_t));
-				memset(pshinfo, 0, sizeof(senhub_info_t));
-
-				strcpy(pshinfo->macAddress, macAddr);
-
-				memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-				JSON_Get(json, OBJ_DEVICE_HOSTNAME, nodeContent, sizeof(nodeContent));
-				//printf("hostname: %s\n", nodeContent);
-				strcpy(pshinfo->hostName, nodeContent);
-
-				pshinfo->jsonNode = NULL;
-
-				pshinfo->id = senhub_list_newId(g_SensorHubList);
-				//printf("%s: list add id=%d\n", __func__, pshinfo->id);
-				g_SensorHubList = SENHUB_LIST_ADD(g_SensorHubList, pshinfo);
-			}
-		} else if(strcmp(nodeContent, "SenHub") == 0) {
-			g_doUpdateInterface = 1;
-			// CmdID=2000
-			memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-			JSON_Get(json, OBJ_DEVICE_MAC, nodeContent, sizeof(nodeContent));
-			//printf("%s: mac=%s\n", __func__, nodeContent);
-
-			pshinfo = (senhub_info_t *)senhub_list_find_by_mac(g_SensorHubList, nodeContent);
-			if(pshinfo) {
-				memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-				JSON_Get(json, OBJ_DEVICE_PRODUCTNAME, nodeContent, sizeof(nodeContent));
-				//printf("productName: %s\n", nodeContent);
-				strcpy(pshinfo->productName, nodeContent);
-				pshinfo->state = Mote_Report_CMD2000;
-/*ivan del start 20160521*/
-#if 0
-				SensorHub_Register(pshinfo);
-#endif
-/*ivan del end*/
-			}
-/*ivan add start 20160521*/
-#if 1 
-                        else{
-
-			        char macAddr[MAX_MACADDRESS_LEN];
-			        memset(macAddr, 0, MAX_MACADDRESS_LEN);
-			        //memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-			        sprintf(macAddr, "%s", nodeContent);
-
-		                printf("\033[33m #Connect Topic+5# \033[0m\n");
-				pshinfo = malloc(sizeof(senhub_info_t));
-				memset(pshinfo, 0, sizeof(senhub_info_t));
-
-				strcpy(pshinfo->macAddress, macAddr);
-
-				memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-				JSON_Get(json, OBJ_DEVICE_PRODUCTNAME, nodeContent, sizeof(nodeContent));
-				printf("productName: %s\n", nodeContent);
-				strcpy(pshinfo->productName, nodeContent);
-				pshinfo->state = Mote_Report_CMD2000;
-
-				pshinfo->jsonNode = NULL;
-
-				pshinfo->id = senhub_list_newId(g_SensorHubList);
-				printf("%s: list add id=%d\n", __func__, pshinfo->id);
-                                
-		                printf("type:SenHub, SENHUB_LIST_ADD(mac=%s)==========================================================>\n",pshinfo->macAddress);
-				g_SensorHubList = SENHUB_LIST_ADD(g_SensorHubList, pshinfo);
-                        }
-                        
-		        SensorHub_Register(pshinfo);
-#endif
-/*ivan add end*/
-		}
-#endif
 	} else if(strcmp(topicType, WA_PUB_WILL_TOPIC) == 0) {
 		// CmdID=2003
 		PRINTF("[%s][%s] Receive messages from will topic!!\n", __FILE__, __func__);
