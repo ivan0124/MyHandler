@@ -255,6 +255,10 @@ int PrepareInfoToRegisterSensorHub(JSONode *json, senhub_info_t* pshinfo){
     return 0;
 }
 
+int GetAction(char* ptopic, JSONode *json){
+    return -1;
+}
+
 int MqttHal_Message_Process(const struct mosquitto_message *message)
 {
 	char topicType[32];
@@ -271,7 +275,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	sscanf(message->topic, "/%*[^/]/%*[^/]/%*[^/]/%s", topicType);
 	ADV_TRACE("Topic type: %s \n", topicType);
 	printf("Topic type: %s \n", topicType);
-	if(strcmp(topicType, AGENTACTIONREQ_TOPIC) == 0) {;
+	if(strcmp(topicType, AGENTACTIONREQ_TOPIC) == 0) {
 		printf("[%s][%s]\033[33m #receive agentactionreq topic# \033[0m\n",__FILE__, __func__);
  
                 int SusiCommand=-1;
