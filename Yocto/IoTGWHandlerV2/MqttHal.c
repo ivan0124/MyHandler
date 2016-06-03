@@ -173,7 +173,7 @@ int GetSensorReply(char* ptopic, JSONode *json, int cmdID){
 
 }
 
-int isRegisterConnectivity(JSONode *json){
+int isRegisterGatewayCapability(JSONode *json){
 
     char nodeContent[MAX_JSON_NODE_SIZE]={0};
 
@@ -226,11 +226,11 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                             {
                                 printf("Get capability reply\n");
 
-				if(isRegisterConnectivity(json) == 0){
+				if(isRegisterGatewayCapability(json) == 0){
 				    printf("------------------------------------------------\n");
 				    printf("[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n",__FILE__, __func__);
 				    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-				    RegisterCapability(json);
+				    RegisterGatewayCapability(json);
 				    printf("\n------------------------------------------------\n"); 
 				}
 
