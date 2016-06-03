@@ -186,6 +186,9 @@ int isRegisterGatewayCapability(JSONode *json){
     return 0;
 }
 
+int PrepareRegisterSensorHubInfo(JSONode *json, senhub_info_t* pshinfo){
+    return 0;
+}
 
 int MqttHal_Message_Process(const struct mosquitto_message *message)
 {
@@ -246,74 +249,6 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("\n------------------------------------------------\n");
                 }
                 //
-
-		//JSON_Print(json);
-#if 0
-		// Check Publish response about SenHub
-		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		JSON_Get(json, OBJ_STATUS_CODE, nodeContent, sizeof(nodeContent));
-		if(strcmp(nodeContent, "NULL") != 0 /* && session id*/) {
-			//printf("publish response: SenHub\n");
-			ret = atoi(nodeContent);
-			memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-			JSON_Get(json, OBJ_SESSION_ID, nodeContent, sizeof(nodeContent));
-			//printf("status code:%d, sessionID:%s/%s\n", g_pubResp, g_sessionID, nodeContent);
-			if(strcmp(nodeContent, g_sessionID) == 0) {
-				g_pubResp = ret;
-			}
-			JSON_Destory(&json);
-			return 0;
-		}
-
-		// Check Publish response about general
-		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		JSON_Get(json, OBJ_RESULT_STR, nodeContent, sizeof(nodeContent));
-		if(strcmp(nodeContent, "SUCCESS") == 0) {
-			//printf("publish response: general\n");
-			memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-			JSON_Get(json, OBJ_SESSION_ID, nodeContent, sizeof(nodeContent));
-			if(strcmp(nodeContent, g_sessionID) == 0) {
-				g_pubResp = SET_SUCCESS_CODE;
-			}
-			JSON_Destory(&json);
-			return 0;
-		}
-
-		// Check Publish Data about IoTGW
-		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		JSON_Get(json, OBJ_IOTGW_INFO_SPEC, nodeContent, sizeof(nodeContent));
-		if(strcmp(nodeContent, "NULL") != 0) {
-			//printf("device type: IoTGW\n");
-			JSON_Destory(&json);
-			return 0;
-		}
-		// Check Publish Data about SensorHub
-		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		JSON_Get(json, OBJ_SENHUB_INFO_SPEC, nodeContent, sizeof(nodeContent));
-		if(strcmp(nodeContent, "NULL") != 0) {
-			// CmdID=2001
-			//printf("device type: SenHub\n");
-			memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-			JSON_Get(json, OBJ_AGENT_ID, nodeContent, sizeof(nodeContent));
-			//printf("AgentId : %s\n",nodeContent);
-			pshinfo = (senhub_info_t *)senhub_list_find_by_mac(g_SensorHubList, nodeContent);
-			if(NULL == pshinfo) {
-				JSON_Destory(&json);
-				return -2;
-			}
-
-			memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-			JSON_Get(json, OBJ_INFO_SPEC, nodeContent, sizeof(nodeContent));
-			if(pshinfo->jsonNode != NULL) {
-				JSON_Destory(&pshinfo->jsonNode);
-			}
-			replaceName(nodeContent, pshinfo->hostName);
-			pshinfo->jsonNode = JSON_Parser(nodeContent);
-			pshinfo->state = Mote_Report_CMD2001;
-
-			SensorHub_InfoSpec(pshinfo);
-		}
-#endif
 	} else if(strcmp(topicType, WA_PUB_DEVINFO_TOPIC) == 0) {
                 memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		JSON_Get(json, OBJ_IOTGW_DATA, nodeContent, sizeof(nodeContent));
@@ -325,7 +260,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		    JSON_Get(json, OBJ_DATA, nodeContent, sizeof(nodeContent));
                     if(strcmp(nodeContent, "NULL") != 0){
-                        UpdateConnectivityInfo(nodeContent, strlen(nodeContent));
+                        UpdateGatewayData(nodeContent, strlen(nodeContent));
                     }
                     else{
 	                printf("update connectivity info is NULL !\n");

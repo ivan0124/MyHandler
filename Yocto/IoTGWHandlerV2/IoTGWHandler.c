@@ -1104,7 +1104,7 @@ char Capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"LAN\":{\"LAN0\":{\"Info\":{\"e\":
     return 0;
 }
 
-int UpdateConnectivityInfo(char* pszConnectivityInfo, int iSizeConnectivityInfo){
+int UpdateGatewayData(char* pszConnectivityInfo, int iSizeConnectivityInfo){
 
 #if 0
 char ConnectivityInfo[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000006\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549767\",\"ver\": 1},\"LAN1\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000007\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549768\",\"ver\": 1},\"LAN2\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000007\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549737\",\"ver\": 1},\"bn\": \"LAN\"},\"ver\": 1}}"};
@@ -1126,11 +1126,6 @@ int RegisterSensorHub(void *pRev1)
         PRINTF("[ivan][%s][%s] ---------------------------------=====>\n", __FILE__, __func__ );
 	senhub_info_t *pSenHubInfo = (senhub_info_t*)pRev1;
 
-#if 0
-	PRINTF("[ivan][%s][%s] MAC=%s HostName=%s SN=%s Product=%s\n",__FILE__,__func__,		pSenHubInfo->sUID,
-	pSenHubInfo->sHostName,										pSenHubInfo->sSN,										pSenHubInfo->sProduct);
-#endif
-
 	Handler_info  *pSenHander = NULL;
 
 	if( pSenHubInfo == NULL ) {
@@ -1149,9 +1144,6 @@ int RegisterSensorHub(void *pRev1)
 
 	// 2. Prepare Sensor Node Handler_info data
         PackSensorHubPlugInfo(pSenHander, &g_PluginInfo, pSenHubInfo);
-#if 0
-	PackSenHubPlugInfo( pSenHander, &g_PluginInfo, pSenHubInfo->macAddress, pSenHubInfo->hostName, pSenHubInfo->productName, 1 );
-#endif
 
 	// 3. Register to WISECloud
 	rc = SenHubConnectToWISECloud( pSenHander );
