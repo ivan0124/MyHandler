@@ -232,6 +232,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 				    RegisterCapability(json);
 				    printf("\n------------------------------------------------\n"); 
 				}
+                                break;
                             }
                         default:
                             {
