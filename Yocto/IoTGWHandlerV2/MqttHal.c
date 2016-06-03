@@ -186,7 +186,72 @@ int isRegisterGatewayCapability(JSONode *json){
     return 0;
 }
 
-int PrepareRegisterSensorHubInfo(JSONode *json, senhub_info_t* pshinfo){
+int PrepareInfoToRegisterSensorHub(JSONode *json, senhub_info_t* pshinfo){
+
+    char nodeContent[MAX_JSON_NODE_SIZE]={0};
+
+    if ( pshinfo == NULL || json == NULL ){
+        return -1;
+    }
+
+    pshinfo->state=Mote_Report_CMD2001;
+    pshinfo->jsonNode = NULL;
+    pshinfo->id=1;
+
+    /*Get devID*/
+    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+    JSON_Get(json, OBJ_DEVICE_ID, nodeContent, sizeof(nodeContent));
+    if(strcmp(nodeContent, "NULL") == 0){
+        return -1;
+    }
+    printf("%s: DevID=%s\n", __func__, nodeContent);
+    strcpy(pshinfo->devID, nodeContent);
+
+    /*Get MAC*/
+    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+    JSON_Get(json, OBJ_DEVICE_MAC, nodeContent, sizeof(nodeContent));
+    if(strcmp(nodeContent, "NULL") == 0){
+        return -1;
+    }
+    printf("%s: mac=%s\n", __func__, nodeContent);
+    strcpy(pshinfo->macAddress, nodeContent);
+
+    /*Get SN*/
+    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+    JSON_Get(json, OBJ_DEVICE_SN, nodeContent, sizeof(nodeContent));
+    if(strcmp(nodeContent, "NULL") == 0){
+        return -1;
+    }
+    printf("%s: sn=%s\n", __func__, nodeContent);
+    strcpy(pshinfo->sn, nodeContent);
+
+    /*Get hostname*/
+    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+    JSON_Get(json, OBJ_DEVICE_HOSTNAME, nodeContent, sizeof(nodeContent));
+    if(strcmp(nodeContent, "NULL") == 0){
+        return -1;
+    }
+    printf("%s: hostName=%s\n", __func__, nodeContent);
+    strcpy(pshinfo->hostName, nodeContent);
+
+    //Get productName
+    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+    JSON_Get(json, OBJ_DEVICE_PRODUCTNAME, nodeContent, sizeof(nodeContent));
+    if(strcmp(nodeContent, "NULL") == 0){
+        return -1;
+    }
+    printf("%s: productName=%s\n", __func__, nodeContent);
+    strcpy(pshinfo->productName, nodeContent);
+
+    //Get version
+    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+    JSON_Get(json, OBJ_DEVICE_VERSION, nodeContent, sizeof(nodeContent));
+    if(strcmp(nodeContent, "NULL") == 0){
+        return -1;
+    }
+    printf("%s: version=%s\n", __func__, nodeContent);
+    strcpy(pshinfo->version, nodeContent);
+
     return 0;
 }
 
@@ -370,69 +435,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 
 		    senhub_info_t shinfo;
                     memset(&shinfo,0,sizeof(senhub_info_t));
-                    shinfo.state=Mote_Report_CMD2001;
-                    shinfo.jsonNode = NULL;
-                    shinfo.id=1;
-                    /*Get devID*/
-	            memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		    JSON_Get(json, OBJ_DEVICE_ID, nodeContent, sizeof(nodeContent));
-                    if(strcmp(nodeContent, "NULL") == 0){
-                        return -1;
-                    }
-                    printf("%s: DevID=%s\n", __func__, nodeContent);
-                    strcpy(shinfo.devID, nodeContent);
-
-                    /*Get MAC*/
-	            memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		    JSON_Get(json, OBJ_DEVICE_MAC, nodeContent, sizeof(nodeContent));
-                    if(strcmp(nodeContent, "NULL") == 0){
-                        return -1;
-                    }
-                    printf("%s: mac=%s\n", __func__, nodeContent);
-                    strcpy(shinfo.macAddress, nodeContent);
-
-                    /*Get SN*/
-	            memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		    JSON_Get(json, OBJ_DEVICE_SN, nodeContent, sizeof(nodeContent));
-                    if(strcmp(nodeContent, "NULL") == 0){
-                        return -1;
-                    }
-                    printf("%s: sn=%s\n", __func__, nodeContent);
-                    strcpy(shinfo.sn, nodeContent);
-
-                    /*Get hostname*/
-	            memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		    JSON_Get(json, OBJ_DEVICE_HOSTNAME, nodeContent, sizeof(nodeContent));
-                    if(strcmp(nodeContent, "NULL") == 0){
-		        return -1;
-                    }
-                    printf("%s: hostName=%s\n", __func__, nodeContent);
-                    strcpy(shinfo.hostName, nodeContent);
-
-                    //Get productName
-	            memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		    JSON_Get(json, OBJ_DEVICE_PRODUCTNAME, nodeContent, sizeof(nodeContent));
-                    if(strcmp(nodeContent, "NULL") == 0){
-		        return -1;
-                    }
-                    printf("%s: productName=%s\n", __func__, nodeContent);
-                    strcpy(shinfo.productName, nodeContent);
-
-                    //Get version
-	            memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		    JSON_Get(json, OBJ_DEVICE_VERSION, nodeContent, sizeof(nodeContent));
-                    if(strcmp(nodeContent, "NULL") == 0){
-		        return -1;
-                    }
-                    printf("%s: version=%s\n", __func__, nodeContent);
-                    strcpy(shinfo.version, nodeContent);
-                    //
-#if 0
-                    strcpy(shinfo.macAddress,"000E40000000");
-                    strcpy(shinfo.hostName, "AA9");
-                    strcpy(shinfo.productName, "BB9");
-                    strcpy(shinfo.version, "BC9");
-#endif
+                    PrepareInfoToRegisterSensorHub(json,&shinfo);
                     RegisterSensorHub(&shinfo);
                     printf("\n------------------------------------------------\n");
                 }
