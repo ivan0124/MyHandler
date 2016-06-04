@@ -16,7 +16,7 @@
 //-----------------------------------------------------------------------------
 #define WA_PUB_CONNECT_TOPIC "agentinfoack"
 #define AGENTACTIONREQ_TOPIC  "agentactionreq"
-#define WA_PUB_DEVINFO_TOPIC "deviceinfo"
+#define DEVICEINFO_TOPIC      "deviceinfo"
 #define WA_PUB_WILL_TOPIC    "willmessage"
 #define WA_SUB_CBK_TOPIC     "agentcallbackreq"
 
@@ -68,7 +68,9 @@ typedef enum {
 	REGISTER_GATEWAY_CAPABILITY = 0,
 	UPDATE_GATEWAY_DATA,
 	REGISTER_SENSOR_HUB,
-	UPDATE_SENSOR_HUB_DATA
+	UPDATE_SENSOR_HUB_DATA,
+        GET_SENSOR_REPLY,
+        SET_SENSOR_REPLY
 } MQTT_ACTION;
 
 typedef enum {

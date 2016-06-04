@@ -255,8 +255,51 @@ int PrepareInfoToRegisterSensorHub(JSONode *json, senhub_info_t* pshinfo){
     return 0;
 }
 
-int GetAction(char* ptopic, JSONode *json){
+int ParseAgentactionreqTopic(JSONode *json){
+
+    int SusiCommand=-1;
+
+    if ( GetSusiCommand(json, &SusiCommand) == 0){
+        printf("SusiCommand = %d\n", SusiCommand);
+        switch(SusiCommand){
+            case IOTGW_GET_SENSOR_REPLY:
+                return GET_SENSOR_REPLY;
+            case IOTGW_SET_SENSOR_REPLY:
+                return SET_SENSOR_REPLY;
+            case IOTGW_HANDLER_GET_CAPABILITY_REPLY:
+                {
+                    printf("Get capability reply\n");
+		    if(isRegisterGatewayCapability(json) == 0){
+                        return REGISTER_GATEWAY_CAPABILITY;
+		    }
+                    break;
+                }
+            default:
+                {
+                    printf("SusiCommand = %d not supported\n", SusiCommand);
+                    break;
+                }
+        }
+    }
     return -1;
+}
+
+int ParseMQTTMessage(char* ptopic, JSONode *json){
+
+    int res = -1;
+    int SusiCommand=-1;
+
+    //agentactionreq topic
+    if(strcmp(ptopic, AGENTACTIONREQ_TOPIC) == 0) {
+        res = ParseAgentactionreqTopic(json);
+        if ( res >= 0 ){
+            return res;
+        }
+    }
+
+    if(strcmp(ptopic, DEVICEINFO_TOPIC) == 0) {
+    }
+    return res;
 }
 
 int MqttHal_Message_Process(const struct mosquitto_message *message)
@@ -265,7 +308,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	JSONode *json;
 	char nodeContent[MAX_JSON_NODE_SIZE];
 	senhub_info_t *pshinfo;
-	int ret = 0;
+	int action = 0;
         //printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 	if((json = JSON_Parser(message->payload)) == NULL) {
 		printf("json parse err!\n");
@@ -275,6 +318,35 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	sscanf(message->topic, "/%*[^/]/%*[^/]/%*[^/]/%s", topicType);
 	ADV_TRACE("Topic type: %s \n", topicType);
 	printf("Topic type: %s \n", topicType);
+
+        action = ParseMQTTMessage(topicType,json);
+#if 0
+        if ( action < 0){
+            JSON_Destory(&json);
+            return -1;
+        }
+#endif
+        
+        switch(action){
+            case REGISTER_GATEWAY_CAPABILITY:
+                {
+                    RegisterGatewayCapability(json);
+                    break;
+                }
+            case GET_SENSOR_REPLY:
+                {
+                    GetSensorReply(message->topic,json, IOTGW_GET_SENSOR_REPLY);
+                    break;
+                }
+            case SET_SENSOR_REPLY:
+                {
+                    GetSensorReply(message->topic,json, IOTGW_SET_SENSOR_REPLY);
+                    break;
+                }
+            default:
+                break;
+        }
+#if 0
 	if(strcmp(topicType, AGENTACTIONREQ_TOPIC) == 0) {
 		printf("[%s][%s]\033[33m #receive agentactionreq topic# \033[0m\n",__FILE__, __func__);
  
@@ -318,7 +390,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("\n------------------------------------------------\n");
                 }
                 //
-	} else if(strcmp(topicType, WA_PUB_DEVINFO_TOPIC) == 0) {
+	} else
+#endif 
+        if(strcmp(topicType, DEVICEINFO_TOPIC) == 0) {
                 memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		JSON_Get(json, OBJ_IOTGW_DATA, nodeContent, sizeof(nodeContent));
                 if(strcmp(nodeContent, "NULL") != 0){
