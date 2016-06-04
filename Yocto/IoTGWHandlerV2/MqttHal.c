@@ -263,9 +263,9 @@ int ParseAgentactionreqTopic(JSONode *json){
         printf("SusiCommand = %d\n", SusiCommand);
         switch(SusiCommand){
             case IOTGW_GET_SENSOR_REPLY:
-                return GET_SENSOR_REPLY;
+                return REPLY_GET_SENSOR_REQUEST;
             case IOTGW_SET_SENSOR_REPLY:
-                return SET_SENSOR_REPLY;
+                return REPLY_SET_SENSOR_REQUEST;
             case IOTGW_HANDLER_GET_CAPABILITY_REPLY:
                 {
                     printf("Get capability reply\n");
@@ -333,12 +333,12 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     RegisterGatewayCapability(json);
                     break;
                 }
-            case GET_SENSOR_REPLY:
+            case REPLY_GET_SENSOR_REQUEST:
                 {
                     GetSensorReply(message->topic,json, IOTGW_GET_SENSOR_REPLY);
                     break;
                 }
-            case SET_SENSOR_REPLY:
+            case REPLY_SET_SENSOR_REQUEST:
                 {
                     GetSensorReply(message->topic,json, IOTGW_SET_SENSOR_REPLY);
                     break;
