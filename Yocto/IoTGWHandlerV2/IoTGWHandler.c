@@ -1126,15 +1126,21 @@ char ConnectivityInfo[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\"
 }
 
 
-int RegisterSensorHub(void *pRev1)
+int RegisterSensorHub(JSONode *json)
 {
 	int rc = 0;
 	int index = 0;
+        senhub_info_t shinfo;
+	senhub_info_t *pSenHubInfo = NULL;
+	Handler_info  *pSenHander = NULL;
+
+        memset(&shinfo,0,sizeof(senhub_info_t));
+        if ( PrepareInfoToRegisterSensorHub(json,&shinfo) < 0){
+            return -1;
+        }
 
         PRINTF("[ivan][%s][%s] ---------------------------------=====>\n", __FILE__, __func__ );
-	senhub_info_t *pSenHubInfo = (senhub_info_t*)pRev1;
-
-	Handler_info  *pSenHander = NULL;
+	pSenHubInfo = &shinfo;
 
 	if( pSenHubInfo == NULL ) {
 		PRINTF("[%s][%s] SensorHub is NULL\r\n", __FILE__, __func__);

@@ -397,14 +397,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("------------------------------------------------\n");
                     printf("[%s][%s]\033[33m #Register SensorHub# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-
-		    senhub_info_t shinfo;
-                    memset(&shinfo,0,sizeof(senhub_info_t));
-                    if ( PrepareInfoToRegisterSensorHub(json,&shinfo) < 0){
-                        JSON_Destory(&json);
-                        return -1;
-                    }
-                    RegisterSensorHub(&shinfo);
+                    RegisterSensorHub(json);
                     printf("\n------------------------------------------------\n");
                 }
 
