@@ -321,7 +321,6 @@ int ParseAgentinfoackTopic(JSONode *json){
 int ParseMQTTMessage(char* ptopic, JSONode *json){
 
     int res = -1;
-    int SusiCommand=-1;
 
     //agentactionreq topic
     if(strcmp(ptopic, AGENTACTIONREQ_TOPIC) == 0) {
