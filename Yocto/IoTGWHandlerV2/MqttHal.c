@@ -284,6 +284,26 @@ int ParseAgentactionreqTopic(JSONode *json){
     return -1;
 }
 
+int ParseDeviceinfoTopic(JSONode *json){
+    
+    char nodeContent[MAX_JSON_NODE_SIZE]={0};
+
+    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+    JSON_Get(json, OBJ_IOTGW_DATA, nodeContent, sizeof(nodeContent));
+
+    if(strcmp(nodeContent, "NULL") != 0){
+        return UPDATE_GATEWAY_DATA;
+    }
+    //
+    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+    JSON_Get(json, OBJ_SENHUB_DATA, nodeContent, sizeof(nodeContent));
+    if(strcmp(nodeContent, "NULL") != 0){
+        return UPDATE_SENSOR_HUB_DATA;
+    }
+
+    return -1;
+}
+
 int ParseMQTTMessage(char* ptopic, JSONode *json){
 
     int res = -1;
@@ -296,9 +316,14 @@ int ParseMQTTMessage(char* ptopic, JSONode *json){
             return res;
         }
     }
-
+    //deviceinfo topic
     if(strcmp(ptopic, DEVICEINFO_TOPIC) == 0) {
+        res = ParseDeviceinfoTopic(json);
+        if ( res >= 0){
+            return res;
+        }
     }
+
     return res;
 }
 
@@ -329,7 +354,10 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
         switch(action){
             case REGISTER_GATEWAY_CAPABILITY:
                 {
+                    printf("------------------------------------------------\n");
+		    printf("[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n", __FILE__, __func__);
                     RegisterGatewayCapability(json);
+                    printf("------------------------------------------------\n");
                     break;
                 }
             case REPLY_GET_SENSOR_REQUEST:
@@ -342,37 +370,26 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     GetSensorReply(message->topic,json, IOTGW_SET_SENSOR_REPLY);
                     break;
                 }
+            case UPDATE_GATEWAY_DATA:
+                {
+                    printf("------------------------------------------------\n");
+		    printf("[%s][%s]\033[33m #Update Gateway Data# \033[0m\n", __FILE__, __func__);
+                    UpdateGatewayData(json);
+                    printf("------------------------------------------------\n");
+                    break;
+                }
+            case UPDATE_SENSOR_HUB_DATA:
+                {
+                    printf("------------------------------------------------\n");
+		    printf("[%s][%s]\033[33m #Update SensorHub Data# \033[0m\n", __FILE__, __func__);
+                    UpdateSensorHubData(json);
+                    printf("------------------------------------------------\n");
+                }
             default:
                 break;
         }
 
-        if(strcmp(topicType, DEVICEINFO_TOPIC) == 0) {
-                memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		JSON_Get(json, OBJ_IOTGW_DATA, nodeContent, sizeof(nodeContent));
-                if(strcmp(nodeContent, "NULL") != 0){
-                    printf("------------------------------------------------\n");
-		    printf("[%s][%s]\033[33m #Update Gateway Data# \033[0m\n", __FILE__, __func__);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-                    //printf(nodeContent);
-                    UpdateGatewayData(json);
-                    printf("\n------------------------------------------------\n");
-                }
-		else{
-                    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		    JSON_Get(json, OBJ_SENHUB_DATA, nodeContent, sizeof(nodeContent));
-                    if(strcmp(nodeContent, "NULL") != 0){
-                        printf("------------------------------------------------\n");
-		        printf("[%s][%s]\033[33m #Update SensorHub Data# \033[0m\n", __FILE__, __func__);
-                        PRINTF("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-                        UpdateSensorHubData(json);
-                        printf("\n------------------------------------------------\n");
-                    }
-		    else{
-                        printf("update SensorHub info is NULL !\n");
-                    }
-                }
-                //
-	} else if(strcmp(topicType, WA_PUB_CONNECT_TOPIC) == 0) {
+        if(strcmp(topicType, WA_PUB_CONNECT_TOPIC) == 0) {
 
 		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		JSON_Get(json, OBJ_DEVICE_TYPE, nodeContent, sizeof(nodeContent));
