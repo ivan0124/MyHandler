@@ -326,7 +326,6 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
             return -1;
         }
 #endif
-        
         switch(action){
             case REGISTER_GATEWAY_CAPABILITY:
                 {
@@ -346,52 +345,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
             default:
                 break;
         }
-#if 0
-	if(strcmp(topicType, AGENTACTIONREQ_TOPIC) == 0) {
-		printf("[%s][%s]\033[33m #receive agentactionreq topic# \033[0m\n",__FILE__, __func__);
- 
-                int SusiCommand=-1;
-                if ( GetSusiCommand(json, &SusiCommand) == 0){
-                    printf("------------------------------------------------\n");
-                    printf("SusiCommand = %d\n", SusiCommand);
 
-                    switch(SusiCommand){
-                        case IOTGW_GET_SENSOR_REPLY:
-                            {
-                                GetSensorReply(message->topic,json, IOTGW_GET_SENSOR_REPLY);
-                                break;
-                            }
-                        case IOTGW_SET_SENSOR_REPLY:
-                            {
-                                GetSensorReply(message->topic,json, IOTGW_SET_SENSOR_REPLY);
-                                break;
-                            }
-                        case IOTGW_HANDLER_GET_CAPABILITY_REPLY:
-                            {
-                                printf("Get capability reply\n");
-
-				if(isRegisterGatewayCapability(json) == 0){
-				    printf("------------------------------------------------\n");
-				    printf("[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n",__FILE__, __func__);
-				    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-				    RegisterGatewayCapability(json);
-				    printf("\n------------------------------------------------\n"); 
-				}
-
-                                break;
-                            }
-                        default:
-                            {
-                                printf("SusiCommand = %d not supported\n", SusiCommand);
-                                printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-                                break;
-                            }
-                    }
-                    printf("\n------------------------------------------------\n");
-                }
-                //
-	} else
-#endif 
         if(strcmp(topicType, DEVICEINFO_TOPIC) == 0) {
                 memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		JSON_Get(json, OBJ_IOTGW_DATA, nodeContent, sizeof(nodeContent));
@@ -400,14 +354,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    printf("[%s][%s]\033[33m #Update Gateway Data# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     //printf(nodeContent);
-                    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		    JSON_Get(json, OBJ_DATA, nodeContent, sizeof(nodeContent));
-                    if(strcmp(nodeContent, "NULL") != 0){
-                        UpdateGatewayData(nodeContent, strlen(nodeContent));
-                    }
-                    else{
-	                printf("update connectivity info is NULL !\n");
-                    }
+                    UpdateGatewayData(json);
                     printf("\n------------------------------------------------\n");
                 }
 		else{
@@ -417,26 +364,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         printf("------------------------------------------------\n");
 		        printf("[%s][%s]\033[33m #Update SensorHub Data# \033[0m\n", __FILE__, __func__);
                         PRINTF("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-                        
-                        //Get SensorHub ID
-                        memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		        JSON_Get(json, OBJ_SENHUB_ID, nodeContent, sizeof(nodeContent));
-                        if(strcmp(nodeContent, "NULL") == 0){
-                            return -1;
-                        }
-                        char devID[MAX_DEVICE_ID_LEN]={0};
-                        strcpy(devID,nodeContent);
-                        PRINTF("%s: SensorHub devID=%s\n", __func__, nodeContent);
-
-                        //Get SensorHub Data
-                        memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		        JSON_Get(json, OBJ_DATA, nodeContent, sizeof(nodeContent));
-                        if(strcmp(nodeContent, "NULL") == 0){
-                            return -1;
-                        }
-                        PRINTF("%s: SensorHub data=%s\n", __func__, nodeContent);
-                        
-                        UpdateSensorHubData(devID,nodeContent,strlen(nodeContent));
+                        UpdateSensorHubData(json);
                         printf("\n------------------------------------------------\n");
                     }
 		    else{

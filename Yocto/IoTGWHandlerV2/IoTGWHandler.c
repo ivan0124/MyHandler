@@ -1104,7 +1104,15 @@ char Capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"LAN\":{\"LAN0\":{\"Info\":{\"e\":
     return 0;
 }
 
-int UpdateGatewayData(char* pszConnectivityInfo, int iSizeConnectivityInfo){
+int UpdateGatewayData(JSONode *json){
+
+    char nodeContent[MAX_JSON_NODE_SIZE]={0};
+
+    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+    JSON_Get(json, OBJ_DATA, nodeContent, sizeof(nodeContent));
+    if(strcmp(nodeContent, "NULL") == 0){
+        return -1;
+    }
 
 #if 0
 char ConnectivityInfo[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000006\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549767\",\"ver\": 1},\"LAN1\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000007\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549768\",\"ver\": 1},\"LAN2\": {\"Info\":{ \"e\":[{\"n\":\"SenHubList\",\"sv\":\"000E40000007\"},{\"n\":\"Neighbor\", \"sv\":\"\"},{\"n\":\"Health\",\"v\":100},{\"n\":\"sw\", \"sv\":\"1.4.5\"},{\"n\":\"reset\", \"bv\":0}],\"bn\":\"Info\"},\"Action\":{ \"e\":[{\"n\":\"AutoReport\",\"bv\":1,\"asm\":\"rw\"}],\"bn\":\"Action\"},\"bn\": \"0000080027549737\",\"ver\": 1},\"bn\": \"LAN\"},\"ver\": 1}}"};
@@ -1112,7 +1120,7 @@ char ConnectivityInfo[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\"
     return UpdateInterfaceData(ConnectivityInfo, strlen(ConnectivityInfo));
 
 #else
-    return UpdateInterfaceData(pszConnectivityInfo, iSizeConnectivityInfo);
+    return UpdateInterfaceData(nodeContent, strlen(nodeContent));
 #endif
 
 }
@@ -1151,22 +1159,39 @@ int RegisterSensorHub(void *pRev1)
 	return rc;
 }
 
+#if 0
 int UpdateSensorHubData( const char* pSensroHubUID, const char *pInJson, const int InDataLen)
+#endif
+int UpdateSensorHubData( JSONode *json )
 {
 	int rc = 0;
         int index = -1;
+        char nodeContent[MAX_JSON_NODE_SIZE]={0};
+        char devID[MAX_DEVICE_ID_LEN]={0};
 
-        if (pSensroHubUID == NULL){
-	    return -1;
+        //Get SensorHub ID
+        memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+        JSON_Get(json, OBJ_SENHUB_ID, nodeContent, sizeof(nodeContent));
+        if(strcmp(nodeContent, "NULL") == 0){
+            return -1;
+        }
+        strcpy(devID,nodeContent);
+        PRINTF("%s: SensorHub devID=%s\n", __func__, nodeContent);
+
+        //Get SensorHub Data
+        memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+        JSON_Get(json, OBJ_DATA, nodeContent, sizeof(nodeContent));
+        if(strcmp(nodeContent, "NULL") == 0){
+            return -1;
         }
 
-	if( ( index = GetSenHubAgentInfobyUID(&g_SenHubAgentInfo, 256, pSensroHubUID/*SenHubUID*/) ) == -1 ) {
-		printf(" Can't find SenHub UID in Table =%s\r\n", pSensroHubUID );
+	if( ( index = GetSenHubAgentInfobyUID(&g_SenHubAgentInfo, 256, devID/*SenHubUID*/) ) == -1 ) {
+		printf(" Can't find SenHub UID in Table =%s\r\n", devID );
 		return -1;
 	}
 
-        PRINTF("find SenHub UID in Table =%s, index=%d\r\n",pSensroHubUID, index );
-        PRINTF("Sensor Hub data=%s\n", pInJson);
+        PRINTF("find SenHub UID in Table =%s, index=%d\r\n",devID, index );
+        PRINTF("Sensor Hub data=%s\n", nodeContent);
 
 #if 0
 	//Handler_info *pHandler_info = (Handler_info*)pInParam;
@@ -1179,7 +1204,7 @@ int UpdateSensorHubData( const char* pSensroHubUID, const char *pInJson, const i
 
 
 	if( g_sendreportcbf ) {
-		g_sendreportcbf( pHandler_info, pInJson, InDataLen, NULL, NULL );
+		g_sendreportcbf( pHandler_info, nodeContent, strlen(nodeContent), NULL, NULL );
 		rc = 1;
 	}
 
