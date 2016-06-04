@@ -122,7 +122,7 @@ int GetSusiCommand(JSONode *json, int* piSusiCommand){
     return 0;
 }
 
-int GetSensorReply(char* ptopic, JSONode *json, int cmdID){
+int ReplyGetSetRequest(char* ptopic, JSONode *json, int cmdID){
 
     char nodeContent[MAX_JSON_NODE_SIZE];
     char sessionID[256]={0};
@@ -362,12 +362,12 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 }
             case REPLY_GET_SENSOR_REQUEST:
                 {
-                    GetSensorReply(message->topic,json, IOTGW_GET_SENSOR_REPLY);
+                    ReplyGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY);
                     break;
                 }
             case REPLY_SET_SENSOR_REQUEST:
                 {
-                    GetSensorReply(message->topic,json, IOTGW_SET_SENSOR_REPLY);
+                    ReplyGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY);
                     break;
                 }
             case UPDATE_GATEWAY_DATA:
