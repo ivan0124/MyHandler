@@ -667,9 +667,9 @@ static int SendMsgToSUSIAccess(  const char* Data, unsigned int const DataLen, v
 {
 	if( g_sendreportcbf ) {
 		g_sendreportcbf( &g_PluginInfo, Data, DataLen, pRev1, pRev2);
-		return 1;
+		return 0;
 	}
-	return 0;
+	return -1;
 }
 
 
@@ -1128,7 +1128,7 @@ char ConnectivityInfo[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\"
 
 int RegisterSensorHub(JSONode *json)
 {
-	int rc = 0;
+	int rc = -1;
 	int index = 0;
         senhub_info_t shinfo;
 	senhub_info_t *pSenHubInfo = NULL;
@@ -1162,7 +1162,7 @@ int RegisterSensorHub(JSONode *json)
 	// 3. Register to WISECloud
 	rc = SenHubConnectToWISECloud( pSenHander );
 
-	return rc;
+	return 0;
 }
 
 int UpdateSensorHubData( JSONode *json )
