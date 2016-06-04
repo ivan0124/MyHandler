@@ -819,58 +819,16 @@ int MqttHal_PublishV2(char *macAddr, int cmdType, const char *pData)
 	int msglen = 0;
 	time_t currTime;
 	//char seesionID[34];
-        printf("-----------------------------------------------------------------------------------\n");
-	printf("\033[33m %s(%d):\033[0m\n", __func__, __LINE__);
 	#ifndef WIN32
 	srandom(time(NULL));
 	#endif
 	memset(topic, 0, sizeof(topic));;
 	memset(message, 0, sizeof(message));
         strcpy(message,pData);
-	//memset(g_sessionID, 0, sizeof(g_sessionID));
-	//sprintf(g_sessionID, "99C21CCBBFE40F528C0EDDF9%08X", rand());
-#if 0
-	switch(cmdType) {
-		case Mote_Cmd_SetSensorValue:
-			sprintf(message, SET_SENHUB_V_JSON, strValue, "SenData", strName, g_sessionID);
-			break;
-		case Mote_Cmd_SetMoteName:
-			//sprintf(message, SET_SENHUB_SV_JSON, strValue, "Info", strName, g_sessionID);
-			sprintf(message, SET_DEVNAME_JSON, g_sessionID, strValue);
-			break;
-		case Mote_Cmd_SetMoteReset:
-			sprintf(message, SET_SENHUB_BV_JSON, strValue, "Info", strName, g_sessionID);
-			break;
-		case Mote_Cmd_SetAutoReport:
-			sprintf(message, SET_SENHUB_BV_JSON, strValue, "Action", strName, g_sessionID);
-			break;
-		default:
-			printf("%s: not support this cmd=%d!\n", __func__, cmdType);
-			return -1;
-	}
-#endif	
-	printf("\033[33m %s: %s \033[0m\n", __func__, message);
+
 	sprintf(topic, "/cagent/admin/%s/%s", macAddr, WA_SUB_CBK_TOPIC);
 	msglen = strlen(message);
 	rc = mosquitto_publish(g_mosq, &g_mid_sent, topic, msglen, message, g_mosq_cfg.qos, g_mosq_cfg.retain);
-        printf("####-----------------------------------------------------------------------------------####\n");
-#if 0
-	if(rc == MOSQ_ERR_SUCCESS) {
-		time(&currTime);
-		g_pubResp = 0;
-		while(!g_pubResp) {
-			//printf("%s: wait \n", __func__);
-			if(isResponseTimeout(currTime)) {
-				printf("%s: pub timeout!\n", __func__);
-				break;
-			}
-		}
-		//printf("\033[33m %s: got respone(%d) \033[0m\n", __func__, g_pubResp);
-	}
 
-	if(g_pubResp != SET_SUCCESS_CODE) {
-		return -2;
-	}
-#endif
 	return 0;
 }

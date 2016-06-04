@@ -677,7 +677,6 @@ static int SendMsgToSUSIAccess(  const char* Data, unsigned int const DataLen, v
 void HandlerCustMessageRecv(char * const topic, void* const data, const size_t datalen, void *pRev1, void* pRev2)
 {
         printf("---------------------------------------------------------------\n");
-        printf("[ivan] HandlerCustMessageRecv =============================>\n");
 	int cmdID = 0;
 	char SenHubUID[MAX_SN_UID]={0};
 	char buffer[MAX_BUFFER_SIZE]={0};
@@ -690,7 +689,7 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 
 	int i = 0;
 	// Recv Remot Server Command to process
-	printf("[%s][%s]%s>Recv Cust Topic [%s] Data %s\r\n", __FILE__, __func__, strPluginName, topic, (char*) data );
+	PRINTF("[%s][%s]%s>Recv Cust Topic [%s] Data %s\r\n", __FILE__, __func__, strPluginName, topic, (char*) data );
 
 	if(!ParseReceivedData(data, datalen, &cmdID,szSessionId,sizeof(szSessionId))) {
 		PRINTF("[%s][%s] Can't find cmdID\r\n", __FILE__, __func__ );
@@ -707,7 +706,6 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 		return;
 	}
 
-        printf("[ivan][%s][%s] g_SenPluginInfo[index] index = %d\n", __FILE__, __func__, index);
 	pSenHander = &g_SenPluginInfo[index];
 
 	if( pSenHander ) {
@@ -721,7 +719,7 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 	memset(Topic,0,sizeof(Topic));
 	snprintf(Topic,sizeof(Topic), SENHUB_CALLBACKREQ_TOPIC, SenHubUID );
 		
-	printf("[%s][%s] HandlerCustMessageRecv Cmd =%d\r\n",__FILE__, __func__, cmdID);
+	PRINTF("[%s][%s] HandlerCustMessageRecv Cmd =%d\r\n",__FILE__, __func__, cmdID);
 
 /*ivan del*/
 #if 1
@@ -771,46 +769,28 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 #endif
 	case IOTGW_GET_SENSOR_REQUEST:
 		{
-			// { "sessionID":"XXX", "sensorInfoList":{"e":[{"n":"SenData/dout","bv":1,"StatusCode":200}]} }
-			printf("[%s][%s]IOTGW_GET_SENSOR_REQUEST data=%s\r\n",__FILE__, __func__, data );
-
+			printf("[%s][%s]IOTGW_GET_SENSOR_REQUEST \r\n",__FILE__, __func__);
                         printf("Topic == %s\n",Topic);
                         MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);			
-			//len = ProcGetSenHubValue(SenHubUID, szSessionId, data, buffer, sizeof(buffer));
-#if 0
-    char mydata[1024]={"{\"sessionID\":\"49D7B6965BE8C1B4FFABC32391CE3169\", \"sensorInfoList\":{\"e\":[{\"n\":\"SenHub/Info/sw\", \"sv\":\"1.0.00\",\"StatusCode\": 200 }]} }"};
-			printf("len=%d Ret=%s\n",len,buffer);
 
-			//if( len > 0 )
-				g_sendcustcbf(pSenHander,IOTGW_GET_SENSOR_REPLY, Topic, mydata, strlen(mydata)+1 , NULL, NULL);
-#endif
 		}
 		break;
 	case IOTGW_SET_SENSOR_REQUEST:
 		{
-			// { "sessionID":"XXX", "sensorInfoList":{"e":[ {"n":"SenData/dout", "sv":"Setting", "StatusCode": 202 } ] } }
-			// { "sessionID":"XXX", "sensorInfoList":{"e":[{"n":"SenData/din","sv":"Read Only","StatusCode":405} ] } }
-			printf("[%s][%s]IOTGW_SET_SENSOR_REQUEST data=%s\r\n",__FILE__, __func__, data );
+			printf("[%s][%s]IOTGW_SET_SENSOR_REQUEST\r\n",__FILE__, __func__);
                         MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);
-#if 0
-			len = ProcSetSenHubValue(SenHubUID, szSessionId, data, index, Topic, buffer, sizeof(buffer));
-			//PRINTF("len=%d Ret=%s\n",len,buffer);
-			if( len > 0 )
-				g_sendcustcbf(pSenHander,IOTGW_SET_SENSOR_REPLY, Topic, buffer, len+1 , NULL, NULL);
-#endif
 		}
 		break;
 	default:
 		{
 			printf("[%s][%s]Unknow CMD ID=%d\r\n", __FILE__, __func__, cmdID );
-#if 0
+
 			/*  {"sessionID":"1234","errorRep":"Unknown cmd!"}  */
 			if(strlen(szSessionId)>0)
 				snprintf(buffer, sizeof(buffer), "{\"%s\":\"%s\",\"sessionID\":\"%s\"}", SN_ERROR_REP, "Unknown cmd!", szSessionId);
 			else
 				snprintf(buffer, sizeof(buffer), "{\"%s\":\"%s\"}", SN_ERROR_REP, "Unknown cmd!");
 			g_sendcustcbf(pSenHander,IOTGW_ERROR_REPLY, Topic, buffer, strlen(buffer)+1 , NULL, NULL);
-#endif
 		}
 		break;
 	}
