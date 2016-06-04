@@ -304,6 +304,20 @@ int ParseDeviceinfoTopic(JSONode *json){
     return -1;
 }
 
+int ParseAgentinfoackTopic(JSONode *json){
+
+    char nodeContent[MAX_JSON_NODE_SIZE]={0};
+
+    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+    JSON_Get(json, OBJ_DEVICE_TYPE, nodeContent, sizeof(nodeContent));
+
+    if(strcmp(nodeContent, "SenHub") == 0){
+        return REGISTER_SENSOR_HUB;
+    }
+
+    return -1;
+}
+
 int ParseMQTTMessage(char* ptopic, JSONode *json){
 
     int res = -1;
@@ -319,6 +333,13 @@ int ParseMQTTMessage(char* ptopic, JSONode *json){
     //deviceinfo topic
     if(strcmp(ptopic, DEVICEINFO_TOPIC) == 0) {
         res = ParseDeviceinfoTopic(json);
+        if ( res >= 0){
+            return res;
+        }
+    }
+    //agentinfoack topic
+    if(strcmp(ptopic, AGENTINFOACK_TOPIC) == 0) {
+        res = ParseAgentinfoackTopic(json);
         if ( res >= 0){
             return res;
         }
@@ -360,14 +381,28 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("------------------------------------------------\n");
                     break;
                 }
+            case REGISTER_SENSOR_HUB:
+                {
+                    printf("------------------------------------------------\n");
+                    printf("[%s][%s]\033[33m #Register SensorHub# \033[0m\n", __FILE__, __func__);
+                    RegisterSensorHub(json);
+                    printf("------------------------------------------------\n");
+                    break;
+                }
             case REPLY_GET_SENSOR_REQUEST:
                 {
+                    printf("------------------------------------------------\n");
+                    printf("[%s][%s]\033[33m #Reply Get Sensor Request# \033[0m\n", __FILE__, __func__);
                     ReplyGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY);
+                    printf("------------------------------------------------\n");
                     break;
                 }
             case REPLY_SET_SENSOR_REQUEST:
                 {
+                    printf("------------------------------------------------\n");
+                    printf("[%s][%s]\033[33m #Reply Set Sensor Request# \033[0m\n", __FILE__, __func__);
                     ReplyGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY);
+                    printf("------------------------------------------------\n");
                     break;
                 }
             case UPDATE_GATEWAY_DATA:
@@ -389,19 +424,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 break;
         }
 
-        if(strcmp(topicType, WA_PUB_CONNECT_TOPIC) == 0) {
-
-		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		JSON_Get(json, OBJ_DEVICE_TYPE, nodeContent, sizeof(nodeContent));
-                if(strcmp(nodeContent, "SenHub") == 0){
-                    printf("------------------------------------------------\n");
-                    printf("[%s][%s]\033[33m #Register SensorHub# \033[0m\n", __FILE__, __func__);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-                    RegisterSensorHub(json);
-                    printf("\n------------------------------------------------\n");
-                }
-
-	} else if(strcmp(topicType, WA_PUB_WILL_TOPIC) == 0) {
+        if(strcmp(topicType, WA_PUB_WILL_TOPIC) == 0) {
 		// CmdID=2003
 		PRINTF("[%s][%s] Receive messages from will topic!!\n", __FILE__, __func__);
 		char macAddr[MAX_MACADDRESS_LEN];
