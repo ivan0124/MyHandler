@@ -1165,9 +1165,6 @@ int RegisterSensorHub(JSONode *json)
 	return rc;
 }
 
-#if 0
-int UpdateSensorHubData( const char* pSensroHubUID, const char *pInJson, const int InDataLen)
-#endif
 int UpdateSensorHubData( JSONode *json )
 {
 	int rc = 0;
