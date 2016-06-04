@@ -800,64 +800,37 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 
 int SenHubConnectToWISECloud( Handler_info *pSenHubHandler)
 {
-    PRINTF("[ivan][%s][%s]SenHubConnectToWISECloud ====>\n", __FILE__, __func__);
-#if 1
+        PRINTF("[%s][%s]SenHubConnectToWISECloud Enter\n", __FILE__, __func__);
+
 	char Topic[MAX_TOPIC_SIZE]={0};
 	char JSONData[MAX_FUNSET_DATA_SIZE]={0};
 	int   datalen = 0;
 	int   rc = 1;
 
-#if 1
+
 	datalen = GetAgentInfoData(JSONData,sizeof(JSONData),pSenHubHandler);
 
 	if(datalen <20 )
 		rc = 0;
-#endif
-      
-#if 0
-	snprintf( pSenHubHandler->agentInfo->hostname, DEF_HOSTNAME_LENGTH, "%s", hostname );
-	snprintf( pSenHubHandler->agentInfo->devId, DEF_DEVID_LENGTH, "%s", mac );
-	snprintf( pSenHubHandler->agentInfo->sn, DEF_SN_LENGTH, "%s", mac );
-	snprintf( pSenHubHandler->agentInfo->mac, DEF_MAC_LENGTH, "%s", mac );
-	snprintf( pSenHubHandler->agentInfo->type, DEF_MAX_STRING_LENGTH, "SenHub");
-	snprintf( pSenHubHandler->agentInfo->product, DEF_MAX_STRING_LENGTH, "%s",product);
-	pSenHubHandler->agentInfo->status = status;
-#endif
 
-#if 0  
-        strcpy(JSONData,"{\"devID\":\"000E40000005\",\"hostname\":\"AA1\",\"sn\":\"000E40000005\",\"mac\":\"000E40000005\",\"version\":\"3.1.30.5434\",\"type\":\"SenHub\",\"product\":\"BB1\",\"manufacture\":\"\",\"status\":\"1\"}");
-#endif
-
-#if 0
-        sprintf(JSONData,"{\"devID\":\"%s\",\"hostname\":\"%s\",\"sn\":\"%s\",\"mac\":\"%s\",\"version\":\"3.1.30.5434\",\"type\":\"SenHub\",\"product\":\"%s\",\"manufacture\":\"\",\"status\":\"1\"}",
-        pSenHubHandler->agentInfo->devId,
-        pSenHubHandler->agentInfo->hostname,
-        pSenHubHandler->agentInfo->sn,
-        pSenHubHandler->agentInfo->mac,
-        pSenHubHandler->agentInfo->product);
-
-        strcpy(g_mac_to_register,pSenHubHandler->agentInfo->mac);
-#endif
 
         datalen=strlen(JSONData);
 	// 1. Subscribe Topic2 -> Create SenHub <-> WISECloud communication channel
 	memset(Topic,0,sizeof(Topic));
-	snprintf( Topic, sizeof(Topic), "/cagent/admin/%s/agentcallbackreq", /*"000E40000005"*/pSenHubHandler->agentInfo->devId );
+	snprintf( Topic, sizeof(Topic), "/cagent/admin/%s/agentcallbackreq", pSenHubHandler->agentInfo->devId );
 	if( g_subscribecustcbf ){
-                PRINTF("[ivan][%s][%s] g_subscribecustcbf =================>\n", __FILE__, __func__);
 		g_subscribecustcbf( Topic, &HandlerCustMessageRecv );
         }
 	PRINTF("[%s][%s]Subscribe SenHub Topic:%s \n", __FILE__, __func__, Topic);
 	// 2. SendAgentInfo online
 	memset(Topic,0,sizeof(Topic));
-	snprintf(Topic,sizeof(Topic),"/cagent/admin/%s/agentinfoack",/*"000E40000005"*/pSenHubHandler->agentInfo->devId);
+	snprintf(Topic,sizeof(Topic),"/cagent/admin/%s/agentinfoack",pSenHubHandler->agentInfo->devId);
 	if( g_sendcustcbf ){
-                PRINTF("[ivan]g_sendcustcbf ppppppppppppppppppppppppppppppp>\n");
 		g_sendcustcbf(pSenHubHandler,1,Topic,JSONData, datalen, NULL, NULL);
         }
 	printf("[%s][%s]Send SenHub AgentInfo:%s \n", __FILE__, __func__, JSONData);
-	//PRINTF("SenHubConnectToWISECloud Leave\n");
-#endif
+	PRINTF("SenHubConnectToWISECloud Leave\n");
+
 	return 1;
 
 }
