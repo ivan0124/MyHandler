@@ -441,7 +441,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         JSON_Destory(&json);
                         return -1;
                     }
-                    printf("------------------------------------------------\n");
+                    printf("\n------------------------------------------------\n");
                 }
             default:
                 break;
@@ -449,7 +449,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 
         if(strcmp(topicType, WA_PUB_WILL_TOPIC) == 0) {
 		// CmdID=2003
-		PRINTF("[%s][%s] Receive messages from will topic!!\n", __FILE__, __func__);
+		printf("[%s][%s] Receive messages from will topic!!\n", __FILE__, __func__);
+                printf("topic = %s\n", message->topic);
+#if 0
 		char macAddr[MAX_MACADDRESS_LEN];
 		//JSON_Print(json);
 		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
@@ -465,6 +467,17 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 			g_SensorHubList = SENHUB_LIST_RM(g_SensorHubList, pshinfo->id, &pshinfo);
 			free(pshinfo);
 		}
+#endif
+                senhub_info_t shinfo={0};
+                memset(&shinfo, 0, sizeof(senhub_info_t));
+                strcpy(shinfo.devID, "0017000E40000001");
+                strcpy(shinfo.macAddress,"0017000E40000001");
+                strcpy(shinfo.sn,"0017000E40000001");
+                strcpy(shinfo.hostName,"AAA");
+                strcpy(shinfo.productName,"WISE-1020");
+                strcpy(shinfo.version,"3.1.2");
+
+                DisconnectSensorHub();
 	}
 	
 	// CmdID=1000

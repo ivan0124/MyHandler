@@ -173,7 +173,7 @@ int LoadcSNAPILib( const char *path, SNAPI_Interface *pAPI_Loader )
 
 SN_CODE ProcUpdateSNDataCbf( const int cmdId, const void *pInData, const int InDatalen, void *pUserData, void *pOutParam, void *pRev1, void *pRev2 )
 {
-	PRINTF("[%s][%s] ****************************************>>>> \n", __FILE__, __func__);
+	printf("[%s][%s] ****************************************>>>> \n", __FILE__, __func__);
 #if 1
 	int rc = SN_ER_FAILED;	
 	int len = 0;
@@ -339,22 +339,22 @@ SN_CODE ProcUpdateSNDataCbf( const int cmdId, const void *pInData, const int InD
 		break;
 	case SN_SenHub_Disconnect:  // Ok
 		{
-                        PRINTF("[%s][%s]SN_SenHub_Disconnect****************************************>>>> \n", __FILE__, __func__);
-			InSenData *pInSenData = (InSenData*)pInData;
-			SenHubCache *pSenHubCache = NULL;
+                        printf("[%s][%s]SN_SenHub_Disconnect****************************************>>>> \n", __FILE__, __func__);
+			//InSenData *pInSenData = (InSenData*)pInData;
+			//SenHubCache *pSenHubCache = NULL;
 
-			if( pInSenData != NULL ) {
-				pSenHubCache = (SenHubCache *)HashTableGet( g_snmSystem.pSenHubHashTable, pInSenData->sUID );
+			//if( pInSenData != NULL ) {
+				//pSenHubCache = (SenHubCache *)HashTableGet( g_snmSystem.pSenHubHashTable, //pInSenData->sUID );
 
-				ADV_TRACE("Cmd = SenHub_Disconnect  MAC=%s\n",pInSenData->sUID);
+				//ADV_TRACE("Cmd = SenHub_Disconnect  MAC=%s\n",pInSenData->sUID);
 
-				if( g_ReportSNManagerCbf && pSenHubCache ) {
-					rc = g_ReportSNManagerCbf(cmdId, NULL, 0, &pSenHubCache->pUserData, (void *)pInData, NULL );					 
-					FreeSenHubResource( pSenHubCache );
-					HashTablePut( g_snmSystem.pSenHubHashTable, pInSenData->sUID, NULL  );
+				//if( g_ReportSNManagerCbf && pSenHubCache ) {
+					rc = ProceSNManagerDataCbf(cmdId, NULL, 0, 0, 0, NULL );					 
+					//FreeSenHubResource( pSenHubCache );
+					//HashTablePut( g_snmSystem.pSenHubHashTable, pInSenData->sUID, NULL  );
 					rc = SN_OK;
-				}
-			}
+				//}
+			//}
 		}
 		break;
 	default:

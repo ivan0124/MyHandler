@@ -375,6 +375,8 @@ int SensorHub_Data(senhub_info_t *pMote)
 // CmdID = 2003, Sensor Hub disconnect
 int SensorHub_DisConn(senhub_info_t *pMote)
 {
+
+        printf("[ivan] SensorHub_DisConn =================>\n");
 	InSenData       SenData;
 
 	if (NULL == pMote) {
@@ -382,11 +384,14 @@ int SensorHub_DisConn(senhub_info_t *pMote)
 		return -1;
 	}
 
+#if 0
 	if(g_UpdateDataCbf == NULL) {
 		ADV_ERROR("%s: g_UpdateDataCbf is NULL\n", __func__);
 		return -1;
 	}
+#endif
 
+        printf("[ivan] SensorHub_DisConn =================> +1\n");
 	//ADV_INFO("%s: 2003 --------------------------\n", __func__);
 	memset(&SenData, 0, sizeof(InSenData));
 	snprintf(SenData.sUID, sizeof(SenData.sUID),
@@ -396,7 +401,7 @@ int SensorHub_DisConn(senhub_info_t *pMote)
 	SenData.inDataClass.iTypeCount = 0;
 	SenData.pExtened = NULL;
 
-	g_UpdateDataCbf(SN_SenHub_Disconnect, &SenData, sizeof(InSenData), g_UserData, NULL, NULL, NULL);	
+	ProcUpdateSNDataCbf(SN_SenHub_Disconnect, &SenData, sizeof(InSenData), g_UserData, NULL, NULL, NULL);	
 
 	return 0;
 }

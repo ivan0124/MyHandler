@@ -605,7 +605,7 @@ static int ProcSet_Result( const char *pInJson, const int InDataLen, void *pInPa
 
 SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int InDatalen, void **pOutParam, void *pRev1, void *pRev2 )
 {
-        PRINTF("[ivan][%s][%s] ======================>\n",__FILE__, __func__);
+        printf("[ivan][%s][%s] ======================>\n",__FILE__, __func__);
 	int rc = 0;
 
 	switch( cmdId)
@@ -653,8 +653,8 @@ SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int 
 		break;
 	case SN_SenHub_Disconnect:
 		{
-                        PRINTF("[ivan][%s][%s] SN_SenHub_Disconnect======================>\n",__FILE__, __func__);
-			rc = Disconnect_SenHub( *pOutParam );
+                        printf("[ivan][%s][%s] SN_SenHub_Disconnect======================>\n",__FILE__, __func__);
+			rc = Disconnect_SenHub( 0 );
 		}
 		break;	
 	default:
@@ -901,13 +901,17 @@ static int Register_SenHub( const char *pJSON, const int nLen, void **pOutParam,
 
 static int Disconnect_SenHub( void *pInParam )
 {
+        printf("[ivan] Disconnect_SenHub ==================>\n");
 	int rc = 0;
+#if 0
 	Handler_info *pHandler_info = (Handler_info*)pInParam;
 	if( pHandler_info == NULL )  {
 		PRINTF("[Disconnect_SenHub]: pOutParam is NULL\r\n");
 		return rc;
 	}
-
+#endif
+        Handler_info *pHandler_info = NULL;
+        pHandler_info = &g_SenPluginInfo[1];
 	pHandler_info->agentInfo->status = 0;
 	rc = SenHubDisconnectWISECloud( pHandler_info );
 	return rc;
@@ -1073,6 +1077,7 @@ char ConnectivityInfo[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\"
     return UpdateInterfaceData(ConnectivityInfo, strlen(ConnectivityInfo));
 
 #else
+    printf(nodeContent);
     return UpdateInterfaceData(nodeContent, strlen(nodeContent));
 #endif
 
@@ -1118,6 +1123,18 @@ int RegisterSensorHub(JSONode *json)
 	return 0;
 }
 
+int DisconnectSensorHub()
+{
+        printf("[ivan] DisconnectSensorHub ==================>\n");
+	int rc = 0;
+
+        Handler_info *pHandler_info = NULL;
+        pHandler_info = &g_SenPluginInfo[1];
+	pHandler_info->agentInfo->status = 0;
+	rc = SenHubDisconnectWISECloud( pHandler_info );
+	return rc;
+}
+
 int UpdateSensorHubData( JSONode *json )
 {
 	int rc = 0;
@@ -1158,7 +1175,7 @@ int UpdateSensorHubData( JSONode *json )
 
 	if( pHandler_info == NULL ) return -1;
 
-
+        printf(nodeContent);
 	if( g_sendreportcbf ) {
 		g_sendreportcbf( pHandler_info, nodeContent, strlen(nodeContent), NULL, NULL );
 		rc = 1;
