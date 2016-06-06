@@ -186,6 +186,19 @@ int isRegisterGatewayCapability(JSONode *json){
     return 0;
 }
 
+int isRegisterSensorHubCapability(JSONode *json){
+
+    char nodeContent[MAX_JSON_NODE_SIZE]={0};
+
+    JSON_Get(json, OBJ_SENHUB_INFO_SPEC, nodeContent, sizeof(nodeContent));
+
+    if(strcmp(nodeContent, "NULL") == 0){
+        return -1;
+    }
+
+    return 0;
+}
+
 int PrepareInfoToRegisterSensorHub(JSONode *json, senhub_info_t* pshinfo){
 
     char nodeContent[MAX_JSON_NODE_SIZE]={0};
@@ -272,6 +285,10 @@ int ParseAgentactionreqTopic(JSONode *json){
 		    if(isRegisterGatewayCapability(json) == 0){
                         return REGISTER_GATEWAY_CAPABILITY;
 		    }
+
+                    if(isRegisterSensorHubCapability(json) == 0){
+                        return REGISTER_SENSOR_HUB_CAPABILITY;
+                    }
                     break;
                 }
             default:
@@ -390,6 +407,19 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s]\033[33m #Register SensorHub# \033[0m\n", __FILE__, __func__);
                     if ( RegisterSensorHub(json) < 0){
                         printf("[%s][%s] Register SensorHub FAIL !!!\n", __FILE__, __func__);
+                        JSON_Destory(&json);
+                        return -1;
+                    }
+                    printf("------------------------------------------------\n");
+                    break;
+                }
+            case REGISTER_SENSOR_HUB_CAPABILITY:
+                {
+                    printf("------------------------------------------------\n");
+		    printf("[%s][%s]\033[33m #Register SensorHub Capability# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    if(RegisterSensorHubCapability(message->topic, json) < 0){
+                        printf("[%s][%s] Register SensorHub Capability FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;
                     }

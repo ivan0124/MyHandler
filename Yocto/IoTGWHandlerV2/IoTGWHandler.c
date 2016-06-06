@@ -734,8 +734,8 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 		{
 			// { "sessionID":"XXX", "StatusCode":200, "SenHub": { xxxx_JSON_Object } }
 			printf("[%s][%s] IOTGW_GET_CAPABILITY_REQUEST: %s\r\n",__FILE__, __func__, SenHubUID);
-                        //MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);
-#if 1
+                        MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);
+#if 0
 			//len = ProcGetSenHubCapability(SenHubUID, data, buffer, sizeof(buffer));
 			//PRINTF("len=%d Ret=%s\n",len,buffer);
 			//if( len > 0 )
@@ -753,7 +753,7 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
                         printf("---------------------------------------------------------------\n");
 		}
                 break;
-#if 0
+#if 1
 	case IOTGW_GET_CAPABILITY_REQUEST:
 		{
 			// { "sessionID":"XXX", "StatusCode":200, "SenHub": { xxxx_JSON_Object } }
@@ -1121,6 +1121,49 @@ int RegisterSensorHub(JSONode *json)
 	rc = SenHubConnectToWISECloud( pSenHander );
 
 	return 0;
+}
+
+int RegisterSensorHubCapability(char* ptopic, JSONode *json){
+
+    int index=-1;
+    char nodeContent[MAX_JSON_NODE_SIZE]={0};
+    char infosepc_data[MAX_JSON_NODE_SIZE]={0};
+    char sensorHubUID[64]={0};
+    Handler_info  *pSenHander = NULL;
+
+    if ( GetSensorHubUIDfromTopic(ptopic, sensorHubUID, sizeof(sensorHubUID)) < 0){
+        printf("[%s][%s] Can't find SenHubID Topic=%s\r\n",__FILE__, __func__, ptopic );
+	return -1;
+    }
+
+    if( ( index = GetSenHubAgentInfobyUID(&g_SenHubAgentInfo, MAX_SENNODES, sensorHubUID) ) == -1 ) {
+        printf("[%s][%s] Can't find SenHub UID in Table =%s\r\n",__FILE__, __func__, sensorHubUID );
+	return -1;
+    }
+
+    PRINTF("sensorHubUID=%s, index=%d\n", sensorHubUID, index);
+    pSenHander = &g_SenPluginInfo[index];
+
+    //Get SensorHub capability
+    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+    JSON_Get(json, OBJ_INFO_SPEC, nodeContent, sizeof(nodeContent));
+    if(strcmp(nodeContent, "NULL") == 0){
+        printf("[%s][%s] Can't find SensorHub capability\r\n",__FILE__, __func__);
+        return -1;
+    }
+    PRINTF("%s: info spec=%s\n", __func__, nodeContent);
+    //Prepare data to RMM
+    sprintf(infosepc_data, "{\"infoSpec\":%s}",nodeContent);
+			
+    Handler_info tmpHandler;
+    memcpy(&tmpHandler, pSenHander, sizeof(Handler_info));
+    strcpy(tmpHandler.Name, "general");
+    tmpHandler.RequestID=1001;
+    tmpHandler.ActionID=2001;
+
+    g_sendcustcbf(&tmpHandler,IOTGW_HANDLER_GET_CAPABILITY_REPLY, ptopic, infosepc_data, strlen(infosepc_data) , NULL, NULL);
+
+    return 0;
 }
 
 int DisconnectSensorHub()

@@ -40,6 +40,27 @@ int ParseReceivedData(void* data, int datalen, int * cmdID, char *sessionId, int
 	return 1;
 }
 
+int GetSensorHubUIDfromTopic(const char *ptopic, char *uid , const int size )
+{
+    char tmp_sensorHubUID[64]={0};
+    char sensorHubUID[64]={0};
+
+    //Get sensorHub UID
+    sscanf(ptopic, "/%*[^/]/%*[^/]%s", tmp_sensorHubUID);
+    printf("tmp_sensorHubUID: %s \n", tmp_sensorHubUID);
+    //sscanf(tmp_sensorHubUID,"%*[^/]/%[^/]%s", sensorHubUID);
+    strcpy(sensorHubUID,tmp_sensorHubUID+1);
+    char* ptmp_ptr=strstr(sensorHubUID,"/");
+    if ( ptmp_ptr == NULL){
+        return -1;
+    }   
+    *ptmp_ptr=0;
+
+    strcpy(uid,sensorHubUID);
+    printf("sensorHubUID=%s, len=%d\n", uid, strlen(uid));
+
+    return 0;
+}
 //   topic: /cagent/admin/%s/agentcallbackreq
 int GetSenHubUIDfromTopic(const char *topic, char *uid , const int size )
 {
