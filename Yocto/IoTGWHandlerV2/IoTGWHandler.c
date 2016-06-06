@@ -721,12 +721,9 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 		
 	PRINTF("[%s][%s] HandlerCustMessageRecv Cmd =%d\r\n",__FILE__, __func__, cmdID);
 
-/*ivan del*/
-#if 1
 
 #if 1
-        char mydata[2024]={"{\"infoSpec\":{\"SenHub\":{\"SenData\":{\"e\":[{\"n\":\"Temperature\",\"u\":\"Cel\",\"v\":0.000000,\"min\":-100.000000,\"max\":200.000000,\"asm\":\"r\",\"type\":\"d\",\"rt\":\"ucum.Cel\",\"st\":\"ipso\",\"exten\":\"\"},{\"n\":\"Humidity\",\"u\":\"%\",\"v\":0.000000,\"min\":0.000000,\"max\":100.000000,\"asm\":\"r\",\"type\":\"d\",\"rt\":\"ucum.%\",\"st\":\"ipso\",\"exten\":\"\"},{\"n\":\"GPIO1\",\"u\":\"\",\"bv\":0,\"min\":0.000000,\"max\":1.000000,\"asm\":\"rw\",\"type\":\"b\",\"rt\":\"\",\"st\":\"ipso\",\"exten\":\"\"},{\"n\":\"GPIO2\",\"u\":\"\",\"bv\":0,\"min\":0.000000,\"max\":1.000000,\"asm\":\"rw\",\"type\":\"b\",\"rt\":\"\",\"st\":\"ipso\",\"exten\":\"\"}],\"bn\":\"SenData\"},\"Info\":{\"e\":[{\"n\":\"Name\",\"sv\":\"AAA\",\"asm\":\"rw\"},{\"n\":\"sw\",\"sv\":\"1.0.00\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"Net\":{\"e\":[{\"n\":\"sw\",\"sv\":\"1.0.00\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"}],\"bn\":\"Net\"},\"Action\":{\"e\":[{\"n\":\"AutoReport\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Action\"},\"ver\":1}}}"};
-#endif
+
 
 	switch (cmdID)
 	{
@@ -735,25 +732,10 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 			// { "sessionID":"XXX", "StatusCode":200, "SenHub": { xxxx_JSON_Object } }
 			printf("[%s][%s] IOTGW_GET_CAPABILITY_REQUEST: %s\r\n",__FILE__, __func__, SenHubUID);
                         MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);
-#if 0
-			//len = ProcGetSenHubCapability(SenHubUID, data, buffer, sizeof(buffer));
-			//PRINTF("len=%d Ret=%s\n",len,buffer);
-			//if( len > 0 )
-			{
-				Handler_info tmpHandler;
-				memcpy(&tmpHandler, pSenHander, sizeof(Handler_info));
-				strcpy(tmpHandler.Name, "general");
-				tmpHandler.RequestID=1001;
-				tmpHandler.ActionID=2001;
-				//PRINTF("Handler Name=%s RequestID=%d ActionID=%d\n",tmpHandler.Name ,tmpHandler.RequestID,tmpHandler.ActionID);
-                                printf("Topic = %s\n", Topic);
-				g_sendcustcbf(&tmpHandler,IOTGW_HANDLER_GET_CAPABILITY_REPLY, Topic, mydata, strlen(mydata)+1 , NULL, NULL);
-			}
-#endif
                         printf("---------------------------------------------------------------\n");
 		}
                 break;
-#if 1
+#if 0
 	case IOTGW_GET_CAPABILITY_REQUEST:
 		{
 			// { "sessionID":"XXX", "StatusCode":200, "SenHub": { xxxx_JSON_Object } }
@@ -1140,6 +1122,11 @@ int RegisterSensorHubCapability(char* ptopic, JSONode *json){
         printf("[%s][%s] Can't find SenHub UID in Table =%s\r\n",__FILE__, __func__, sensorHubUID );
 	return -1;
     }
+
+#if 0
+//SensorHub capability sample:
+        char mydata[2024]={"{\"infoSpec\":{\"SenHub\":{\"SenData\":{\"e\":[{\"n\":\"Temperature\",\"u\":\"Cel\",\"v\":0.000000,\"min\":-100.000000,\"max\":200.000000,\"asm\":\"r\",\"type\":\"d\",\"rt\":\"ucum.Cel\",\"st\":\"ipso\",\"exten\":\"\"},{\"n\":\"Humidity\",\"u\":\"%\",\"v\":0.000000,\"min\":0.000000,\"max\":100.000000,\"asm\":\"r\",\"type\":\"d\",\"rt\":\"ucum.%\",\"st\":\"ipso\",\"exten\":\"\"},{\"n\":\"GPIO1\",\"u\":\"\",\"bv\":0,\"min\":0.000000,\"max\":1.000000,\"asm\":\"rw\",\"type\":\"b\",\"rt\":\"\",\"st\":\"ipso\",\"exten\":\"\"},{\"n\":\"GPIO2\",\"u\":\"\",\"bv\":0,\"min\":0.000000,\"max\":1.000000,\"asm\":\"rw\",\"type\":\"b\",\"rt\":\"\",\"st\":\"ipso\",\"exten\":\"\"}],\"bn\":\"SenData\"},\"Info\":{\"e\":[{\"n\":\"Name\",\"sv\":\"AAA\",\"asm\":\"rw\"},{\"n\":\"sw\",\"sv\":\"1.0.00\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"Net\":{\"e\":[{\"n\":\"sw\",\"sv\":\"1.0.00\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"}],\"bn\":\"Net\"},\"Action\":{\"e\":[{\"n\":\"AutoReport\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Action\"},\"ver\":1}}}"};
+#endif
 
     PRINTF("sensorHubUID=%s, index=%d\n", sensorHubUID, index);
     pSenHander = &g_SenPluginInfo[index];
