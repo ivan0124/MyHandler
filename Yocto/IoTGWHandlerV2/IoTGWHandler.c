@@ -32,7 +32,7 @@
 //-----------------------------------------------------------------------------
 #define cagent_request_custom 2002
 #define cagent_custom_action 30002
-const char strPluginName[MAX_TOPIC_LEN] = {"IoTGWv2"};
+const char strPluginName[MAX_TOPIC_LEN] = {"IoTGW"};
 const int iRequestID = cagent_request_custom;
 const int iActionID = cagent_custom_action;
 
@@ -405,6 +405,7 @@ int HANDLER_API Handler_Stop( void )
  * ***************************************************************************************/
 void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t datalen, void *pRev1, void* pRev2  )
 {
+        printf("+++++++++++++++ Handler_Recv ++++++++++++++++++++++++++++>");
 	int cmdID = 0;
 	int len = 0;
 	char szSessionId[MAX_SIZE_SESSIONID]={0};
@@ -416,6 +417,7 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 		return;
 
 	PRINTF("Cmd ID=%d\r\n",cmdID);
+#if 0
 	switch (cmdID)
 	{
 	case IOTGW_GET_CAPABILITY_REQUEST:
@@ -469,6 +471,7 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 		}
 		break;
 	}
+#endif
 }
 
 /* **************************************************************************************
