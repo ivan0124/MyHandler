@@ -441,7 +441,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #if 1
                     if ( GetUIDType(DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
                         printf("found 0000000E40ABCDEF connectivity mac\n");
-                        ReplyConnectivityGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY);
+                        ReplyGatewayGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY);
                         return 0;
                     }
 #endif
@@ -470,7 +470,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #if 1
                     if ( GetUIDType(DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
                         printf("found 0000000E40ABCDEF connectivity mac\n");
-                        ReplyConnectivityGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY);
+                        ReplyGatewayGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY);
                         return 0;
                     }
 #endif

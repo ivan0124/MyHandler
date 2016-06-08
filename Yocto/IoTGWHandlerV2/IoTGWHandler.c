@@ -1261,7 +1261,7 @@ int ResponseGetData(char* topic, int cmdID, char* sensor_hub_id, char* presponse
     return 0;
 }
 
-int ReplyConnectivityGetSetRequest(char* ptopic, JSONode *json, int cmdID){
+int ReplyGatewayGetSetRequest(char* ptopic, JSONode *json, int cmdID){
 
     char nodeContent[MAX_JSON_NODE_SIZE];
     char sessionID[256]={0};
