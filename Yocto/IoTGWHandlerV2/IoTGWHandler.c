@@ -417,11 +417,11 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 		return;
 
 	PRINTF("Cmd ID=%d\r\n",cmdID);
-#if 0
 	switch (cmdID)
 	{
 	case IOTGW_GET_CAPABILITY_REQUEST:
-		{			
+		{
+#if 0			
 			char *pszCapability = NULL;
 			pszCapability = GetCapability();
 			if( pszCapability != NULL ) {
@@ -436,30 +436,33 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 			} else {
 				g_sendcbf(&g_PluginInfo, IOTGW_ERROR_REPLY, g_szErrorCapability, strlen( g_szErrorCapability )+1, NULL, NULL);
 			}
+#endif
 		}
 		break;
 	case IOTGW_GET_SENSOR_REQUEST:
 		{
-			// { "sessionID":"XXX", "sensorInfoList":{"e":[{"n":"WSN/0000852CF4B7B0E8/Info/Health","v":80,"StatusCode":200}]} }
-			PRINTF("IOTGW_GET_SENSOR_REQUEST data=%s\r\n",data );			
-			len = ProcGetInterfaceValue(szSessionId, data, buffer, sizeof(buffer));
-			PRINTF("len=%d Ret=%s\r\n",len,buffer);
-			if( len > 0 )
-				g_sendcbf(&g_PluginInfo,IOTGW_GET_SENSOR_REPLY, buffer, len+1, NULL, NULL);
+#if 1
+		    printf("IOTGW_GET_SENSOR_REQUEST data=%s\r\n",data );			
+                    char data[1024]={"{\"sessionID\":\"801E411759DE2D1C6E441A541EEDCAB5\",\"sensorInfoList\":{\"e\":[{\"n\":\"IoTGW/WSN/0001852CF4B7B0E7/Info/Health\",\"v\":30,\"StatusCode\":200}]}}"};
+		    g_sendcbf(&g_PluginInfo,IOTGW_GET_SENSOR_REPLY, data, strlen(data), NULL, NULL);
+#endif
 		}
 		break;
 	case IOTGW_SET_SENSOR_REQUEST:
 		{
+#if 0
 			// { "sessionID":"XXX", "sensorInfoList":{"e":[{"n":"WSN/0000852CF4B7B0E8/Info/Health","v":80,"StatusCode":200}]} }
 			PRINTF("IOTGW_SET_SENSOR_REQUEST data=%s\r\n",data );			
 			len = ProcSetInterfaceValue(szSessionId, data, buffer, sizeof(buffer));
 			PRINTF("len=%d Ret=%s\r\n",len,buffer);
 			if( len > 0 )
 				g_sendcbf(&g_PluginInfo,IOTGW_GET_SENSOR_REPLY, buffer, len+1, NULL, NULL);
+#endif
 		}
 		break;
 	default:
 		{
+#if 0
 			PRINTF("Unknow CMD ID=%d\r\n", cmdID );
 			/*  {"sessionID":"1234","errorRep":"Unknown cmd!"}  */
 			if(strlen(szSessionId)>0)
@@ -468,10 +471,11 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 				snprintf(buffer, sizeof(buffer), "{\"%s\":\"%s\"}", SN_ERROR_REP, "Unknown cmd!");
 			g_sendcbf(&g_PluginInfo, IOTGW_ERROR_REPLY, buffer, strlen(buffer)+1, NULL, NULL);
 			break;
+#endif
 		}
 		break;
 	}
-#endif
+
 }
 
 /* **************************************************************************************
