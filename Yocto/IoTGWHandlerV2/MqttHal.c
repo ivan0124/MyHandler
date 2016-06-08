@@ -393,11 +393,13 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
 		    printf("[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n", __FILE__, __func__);
+#if 1
                     if ( RegisterGatewayCapability(json) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;
                     }
+#endif
                     printf("------------------------------------------------\n");
                     break;
                 }
@@ -405,11 +407,13 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
                     printf("[%s][%s]\033[33m #Register SensorHub# \033[0m\n", __FILE__, __func__);
+#if 1
                     if ( RegisterSensorHub(json) < 0){
                         printf("[%s][%s] Register SensorHub FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;
                     }
+#endif
                     printf("------------------------------------------------\n");
                     break;
                 }
@@ -417,12 +421,14 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
 		    printf("[%s][%s]\033[33m #Register SensorHub Capability# \033[0m\n", __FILE__, __func__);
+#if 1
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     if(RegisterSensorHubCapability(message->topic, json) < 0){
                         printf("[%s][%s] Register SensorHub Capability FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;
                     }
+#endif
                     printf("------------------------------------------------\n");
                     break;
                 }
@@ -430,11 +436,13 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
                     printf("[%s][%s]\033[33m #Reply Get Sensor Request# \033[0m\n", __FILE__, __func__);
+#if 1
                     if ( ReplyGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY) < 0){
                         printf("[%s][%s] Reply Get Sensor Request FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;
                     }
+#endif
                     printf("------------------------------------------------\n");
                     break;
                 }
@@ -442,11 +450,13 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
                     printf("[%s][%s]\033[33m #Reply Set Sensor Request# \033[0m\n", __FILE__, __func__);
+#if 1
                     if ( ReplyGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY) < 0){
                         printf("[%s][%s] Reply Set Sensor Request FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;
                     }
+#endif
                     printf("------------------------------------------------\n");
                     break;
                 }
@@ -454,11 +464,13 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
 		    printf("[%s][%s]\033[33m #Update Gateway Data# \033[0m\n", __FILE__, __func__);
+#if 1
                     if ( UpdateGatewayData(json) < 0){
                         printf("[%s][%s] Update Gateway Data FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;
                     }
+#endif
                     printf("------------------------------------------------\n");
                     break;
                 }
@@ -466,11 +478,13 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
 		    printf("[%s][%s]\033[33m #Update SensorHub Data# \033[0m\n", __FILE__, __func__);
+#if 1
                     if ( UpdateSensorHubData(json) < 0){
                         printf("[%s][%s] Update SensorHub Data FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;
                     }
+#endif
                     printf("\n------------------------------------------------\n");
                 }
             default:
