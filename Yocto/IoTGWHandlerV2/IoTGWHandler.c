@@ -444,24 +444,34 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 
 		    printf("IOTGW_GET_SENSOR_REQUEST data=%s\r\n",data );
 #if 0			
+                    /*example data to test*/
                     char mydata[1024]={"{\"sessionID\":\"801E411759DE2D1C6E441A541EEDCAB5\",\"sensorInfoList\":{\"e\":[{\"n\":\"IoTGW/WSN/0001852CF4B7B0E7/Info/Health\",\"v\":30,\"StatusCode\":200}]}}"};
 		    g_sendcbf(&g_PluginInfo,IOTGW_GET_SENSOR_REPLY, mydata, strlen(mydata), NULL, NULL);
 #endif
-                    char sensorHubUID[64]={0};
-                    if ( GetConnectivityUIDfromTopic(topic, sensorHubUID, sizeof(sensorHubUID)) < 0){
-                        printf("[%s][%s] Can't find SenHubID Topic=%s\r\n",__FILE__, __func__, topic );
+                    char VirtualGatewayUID[64]={0};
+                    if ( GetVirtualGatewayUIDUIDfromTopic(topic, VirtualGatewayUID, sizeof(VirtualGatewayUID)) < 0){
+                        printf("[%s][%s] Can't find VirtualGatewayUID Topic=%s\r\n",__FILE__, __func__, topic );
 	                return;
                     }
                     printf("topic = %s\n", topic);
                     //printf(" sensorHubUID = %s\n", sensorHubUID);
-                    MqttHal_PublishV2(sensorHubUID,Mote_Cmd_SetMoteReset,data);
+                    MqttHal_PublishV2(VirtualGatewayUID,Mote_Cmd_SetMoteReset,data);
 		}
 		break;
 	case IOTGW_SET_SENSOR_REQUEST:
 		{
-#if 0
-			// { "sessionID":"XXX", "sensorInfoList":{"e":[{"n":"WSN/0000852CF4B7B0E8/Info/Health","v":80,"StatusCode":200}]} }
-			PRINTF("IOTGW_SET_SENSOR_REQUEST data=%s\r\n",data );			
+		    printf("IOTGW_SET_SENSOR_REQUEST data=%s\r\n",data );
+
+                    char VirtualGatewayUID[64]={0};
+                    if ( GetVirtualGatewayUIDUIDfromTopic(topic, VirtualGatewayUID, sizeof(VirtualGatewayUID)) < 0){
+                        printf("[%s][%s] Can't find VirtualGatewayUID Topic=%s\r\n",__FILE__, __func__, topic );
+	                return;
+                    }
+                    printf("topic = %s\n", topic);
+                    //printf(" sensorHubUID = %s\n", sensorHubUID);
+                    MqttHal_PublishV2(VirtualGatewayUID,Mote_Cmd_SetMoteReset,data);
+	
+#if 0		
 			len = ProcSetInterfaceValue(szSessionId, data, buffer, sizeof(buffer));
 			PRINTF("len=%d Ret=%s\r\n",len,buffer);
 			if( len > 0 )

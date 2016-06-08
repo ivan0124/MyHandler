@@ -52,7 +52,7 @@ typedef enum{
 
 typedef enum{
         TYPE_UNKNOWN = 0,
-	TYPE_CONNECTIVITY = 1,
+	TYPE_VIRTUAL_GATEWAY = 1,
 	TYPE_SENSORHUB  =2,
        
 }device_type_t;
