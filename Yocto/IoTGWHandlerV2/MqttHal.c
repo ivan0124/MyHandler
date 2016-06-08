@@ -460,6 +460,21 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
                     printf("[%s][%s]\033[33m #Reply Set Sensor Request# \033[0m\n", __FILE__, __func__);
+
+                    char DeviceUID[64]={0};
+		    if ( GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID)) < 0){
+		        printf("[%s][%s] Can't find DeviceUID topic=%s\r\n",__FILE__, __func__, message->topic);
+			return -1;
+		    }
+                    printf("DeviceUID = %s\n", DeviceUID);
+#if 1
+                    if ( GetUIDType(DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
+                        printf("found 0000000E40ABCDEF connectivity mac\n");
+                        ReplyConnectivityGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY);
+                        return 0;
+                    }
+#endif
+
 #if 1
                     if ( ReplyGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY) < 0){
                         printf("[%s][%s] Reply Set Sensor Request FAIL !!!\n", __FILE__, __func__);
