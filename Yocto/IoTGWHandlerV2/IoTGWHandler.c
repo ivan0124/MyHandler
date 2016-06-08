@@ -1129,7 +1129,7 @@ int RegisterSensorHubCapability(char* ptopic, JSONode *json){
     char sensorHubUID[64]={0};
     Handler_info  *pSenHander = NULL;
 
-    if ( GetSensorHubUIDfromTopic(ptopic, sensorHubUID, sizeof(sensorHubUID)) < 0){
+    if ( GetUIDfromTopic(ptopic, sensorHubUID, sizeof(sensorHubUID)) < 0){
         printf("[%s][%s] Can't find SenHubID Topic=%s\r\n",__FILE__, __func__, ptopic );
 	return -1;
     }

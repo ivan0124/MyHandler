@@ -74,7 +74,7 @@ int ParseReceivedData(void* data, int datalen, int * cmdID, char *sessionId, int
 
 
 // Sensor Hub
-int GetSensorHubUIDfromTopic(const char *topic, char *uid , const int size );
+int GetUIDfromTopic(const char *topic, char *uid , const int size );
 int GetConnectivityUIDfromTopic(const char *topic, char *uid , const int size );
 int GetSenHubUIDfromTopic(const char *topic, char *uid , const int size );
 

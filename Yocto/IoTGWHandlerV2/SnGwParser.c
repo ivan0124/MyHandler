@@ -40,7 +40,7 @@ int ParseReceivedData(void* data, int datalen, int * cmdID, char *sessionId, int
 	return 1;
 }
 
-int GetSensorHubUIDfromTopic(const char *ptopic, char *uid , const int size )
+int GetUIDfromTopic(const char *ptopic, char *uid , const int size )
 {
     char tmp_sensorHubUID[64]={0};
     char sensorHubUID[64]={0};

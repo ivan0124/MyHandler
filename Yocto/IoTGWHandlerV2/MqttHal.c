@@ -135,16 +135,10 @@ int ReplyGetSetRequest(char* ptopic, JSONode *json, int cmdID){
     printf("topic = %s\n", ptopic);
 
     //Get sensorHub UID
-    sscanf(ptopic, "/%*[^/]/%*[^/]%s", tmp_sensorHubUID);
-    printf("tmp_sensorHubUID: %s \n", tmp_sensorHubUID);
-    //sscanf(tmp_sensorHubUID,"%*[^/]/%[^/]%s", sensorHubUID);
-    strcpy(sensorHubUID,tmp_sensorHubUID+1);
-    char* ptmp_ptr=strstr(sensorHubUID,"/");
-    if ( ptmp_ptr == NULL){
-        return -1;
-    }   
-    *ptmp_ptr=0; 
-    printf("sensorHubUID=%s, len=%d\n", sensorHubUID, strlen(sensorHubUID));
+    if ( GetUIDfromTopic(ptopic, sensorHubUID, sizeof(sensorHubUID)) < 0){
+        printf("[%s][%s] Can't find sensorHubUID Topic=%s\r\n",__FILE__, __func__, ptopic );
+	return -1;
+    }
 
     //Get sessionID
     memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
