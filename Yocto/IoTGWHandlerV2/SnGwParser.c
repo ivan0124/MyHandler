@@ -42,22 +42,20 @@ int ParseReceivedData(void* data, int datalen, int * cmdID, char *sessionId, int
 
 int GetUIDfromTopic(const char *ptopic, char *uid , const int size )
 {
-    char tmp_sensorHubUID[64]={0};
-    char sensorHubUID[64]={0};
+    char tmp_UID[64]={0};
+    char UID[64]={0};
 
     //Get sensorHub UID
-    sscanf(ptopic, "/%*[^/]/%*[^/]%s", tmp_sensorHubUID);
-    printf("tmp_sensorHubUID: %s \n", tmp_sensorHubUID);
-    //sscanf(tmp_sensorHubUID,"%*[^/]/%[^/]%s", sensorHubUID);
-    strcpy(sensorHubUID,tmp_sensorHubUID+1);
-    char* ptmp_ptr=strstr(sensorHubUID,"/");
+    sscanf(ptopic, "/%*[^/]/%*[^/]%s", tmp_UID);
+    strcpy(UID,tmp_UID+1);
+    char* ptmp_ptr=strstr(UID,"/");
     if ( ptmp_ptr == NULL){
         return -1;
     }   
     *ptmp_ptr=0;
 
-    strcpy(uid,sensorHubUID);
-    printf("sensorHubUID=%s, len=%d\n", uid, strlen(uid));
+    strcpy(uid,UID);
+    printf("UID=%s, len=%d\n", uid, strlen(uid));
 
     return 0;
 }
