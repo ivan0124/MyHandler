@@ -61,6 +61,12 @@ int GetSensorHubUIDfromTopic(const char *ptopic, char *uid , const int size )
 
     return 0;
 }
+
+int GetConnectivityUIDfromTopic(const char *topic, char *uid , const int size ){
+    
+    strcpy(uid,"0000000E40ABCDEF");
+    return 0;
+}
 //   topic: /cagent/admin/%s/agentcallbackreq
 int GetSenHubUIDfromTopic(const char *topic, char *uid , const int size )
 {

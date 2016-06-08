@@ -405,7 +405,7 @@ int HANDLER_API Handler_Stop( void )
  * ***************************************************************************************/
 void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t datalen, void *pRev1, void* pRev2  )
 {
-        printf("+++++++++++++++ Handler_Recv ++++++++++++++++++++++++++++>");
+        printf("+++++++++++++++ Handler_Recv ++++++++++++++++++++++++++++>\n");
 	int cmdID = 0;
 	int len = 0;
 	char szSessionId[MAX_SIZE_SESSIONID]={0};
@@ -441,11 +441,20 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 		break;
 	case IOTGW_GET_SENSOR_REQUEST:
 		{
-#if 1
-		    printf("IOTGW_GET_SENSOR_REQUEST data=%s\r\n",data );			
-                    char data[1024]={"{\"sessionID\":\"801E411759DE2D1C6E441A541EEDCAB5\",\"sensorInfoList\":{\"e\":[{\"n\":\"IoTGW/WSN/0001852CF4B7B0E7/Info/Health\",\"v\":30,\"StatusCode\":200}]}}"};
-		    g_sendcbf(&g_PluginInfo,IOTGW_GET_SENSOR_REPLY, data, strlen(data), NULL, NULL);
+
+		    printf("IOTGW_GET_SENSOR_REQUEST data=%s\r\n",data );
+#if 0			
+                    char mydata[1024]={"{\"sessionID\":\"801E411759DE2D1C6E441A541EEDCAB5\",\"sensorInfoList\":{\"e\":[{\"n\":\"IoTGW/WSN/0001852CF4B7B0E7/Info/Health\",\"v\":30,\"StatusCode\":200}]}}"};
+		    g_sendcbf(&g_PluginInfo,IOTGW_GET_SENSOR_REPLY, mydata, strlen(mydata), NULL, NULL);
 #endif
+                    char sensorHubUID[64]={0};
+                    if ( GetConnectivityUIDfromTopic(topic, sensorHubUID, sizeof(sensorHubUID)) < 0){
+                        printf("[%s][%s] Can't find SenHubID Topic=%s\r\n",__FILE__, __func__, topic );
+	                return;
+                    }
+                    printf("topic = %s\n", topic);
+                    //printf(" sensorHubUID = %s\n", sensorHubUID);
+                    MqttHal_PublishV2(sensorHubUID,Mote_Cmd_SetMoteReset,data);
 		}
 		break;
 	case IOTGW_SET_SENSOR_REQUEST:
@@ -759,7 +768,7 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 	case IOTGW_GET_SENSOR_REQUEST:
 		{
 			printf("[%s][%s]IOTGW_GET_SENSOR_REQUEST \r\n",__FILE__, __func__);
-                        printf("Topic == %s\n",Topic);
+                        printf("topic == %s\n data=%s\n",topic, data);
                         MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);			
 
 		}
@@ -1043,7 +1052,7 @@ char Capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"LAN\":{\"LAN0\":{\"Info\":{\"e\":
          return -1;
      }
          
-     printf(nodeContent);
+     //printf(nodeContent);
      g_sendinfospeccbf( &g_PluginInfo, nodeContent, strlen(nodeContent)+1, NULL, NULL);
 #endif
 
@@ -1066,7 +1075,7 @@ char ConnectivityInfo[1024]={"{\"IoTGW\": {\"LAN\": {\"LAN0\": {\"Info\":{ \"e\"
     return UpdateInterfaceData(ConnectivityInfo, strlen(ConnectivityInfo));
 
 #else
-    printf(nodeContent);
+    //printf(nodeContent);
     return UpdateInterfaceData(nodeContent, strlen(nodeContent));
 #endif
 

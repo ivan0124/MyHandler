@@ -393,6 +393,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
 		    printf("[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 #if 1
                     if ( RegisterGatewayCapability(json) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
@@ -436,6 +437,12 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
                     printf("[%s][%s]\033[33m #Reply Get Sensor Request# \033[0m\n", __FILE__, __func__);
+#if 0
+                    if ( strstr(message->topic, "0000000E40ABCDEF")){
+                        printf("found 0000000E40ABCDEF connectivity mac\n");
+                    }
+#endif
+
 #if 1
                     if ( ReplyGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY) < 0){
                         printf("[%s][%s] Reply Get Sensor Request FAIL !!!\n", __FILE__, __func__);
@@ -464,6 +471,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
 		    printf("[%s][%s]\033[33m #Update Gateway Data# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 #if 1
                     if ( UpdateGatewayData(json) < 0){
                         printf("[%s][%s] Update Gateway Data FAIL !!!\n", __FILE__, __func__);
