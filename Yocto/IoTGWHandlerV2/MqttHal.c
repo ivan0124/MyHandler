@@ -167,6 +167,7 @@ int ReplyGetSetRequest(char* ptopic, JSONode *json, int cmdID){
 
 }
 
+
 int isRegisterGatewayCapability(JSONode *json){
 
     char nodeContent[MAX_JSON_NODE_SIZE]={0};
@@ -437,9 +438,11 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 			return -1;
 		    }
                     printf("DeviceUID = %s\n", DeviceUID);
-#if 0
+#if 1
                     if ( strstr(message->topic, "0000000E40ABCDEF")){
                         printf("found 0000000E40ABCDEF connectivity mac\n");
+                        ReplyConnectivityGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY);
+                        return 0;
                     }
 #endif
 

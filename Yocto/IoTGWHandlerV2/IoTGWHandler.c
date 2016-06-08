@@ -1251,6 +1251,47 @@ int ResponseGetData(char* topic, int cmdID, char* sensor_hub_id, char* presponse
     return 0;
 }
 
+int ReplyConnectivityGetSetRequest(char* ptopic, JSONode *json, int cmdID){
+
+    char nodeContent[MAX_JSON_NODE_SIZE];
+    char sessionID[256]={0};
+    char sensorInfoList[256]={0};
+#if 0
+    char tmp_sensorHubUID[64]={0};
+    char sensorHubUID[64]={0};
+#endif
+    char respone_data[1024]={0};
+
+    //message topic
+    printf("topic = %s\n", ptopic);
+
+    //Get sessionID
+    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+    JSON_Get(json, "[susiCommData][sessionID]", nodeContent, sizeof(nodeContent));
+    if(strcmp(nodeContent, "NULL") == 0){
+        return -1;
+    }
+    strcpy(sessionID,nodeContent);
+    printf("sessionID = %s\n", sessionID);
+
+    //Get sensorInfoList
+    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+    JSON_Get(json, "[susiCommData][sensorInfoList]", nodeContent, sizeof(nodeContent));
+    if(strcmp(nodeContent, "NULL") == 0){
+        return -1;
+    }
+    strcpy(sensorInfoList,nodeContent);
+    printf("sensorInfoList = %s\n", sensorInfoList);
+
+    //
+    sprintf(respone_data,"{\"sessionID\":\"%s\",\"sensorInfoList\":%s}",sessionID,sensorInfoList);
+    printf("response data=%s\n",respone_data);
+
+    g_sendcbf(&g_PluginInfo,cmdID, respone_data, strlen(respone_data), NULL, NULL);
+
+    return 0;
+}
+
 
 // <IoTGW>
 int InitSNGWHandler()
