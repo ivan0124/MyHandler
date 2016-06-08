@@ -70,9 +70,11 @@ typedef enum{
 	PFT_ID     =2,
 }path_find_t;
 
+
 int ParseReceivedData(void* data, int datalen, int * cmdID, char *sessionId, int nLenSessionId );
 
-
+//
+int GetUIDType(const char *topic);
 // Sensor Hub
 int GetUIDfromTopic(const char *topic, char *uid , const int size );
 int GetConnectivityUIDfromTopic(const char *topic, char *uid , const int size );

@@ -60,6 +60,15 @@ int GetUIDfromTopic(const char *ptopic, char *uid , const int size )
     return 0;
 }
 
+int GetUIDType(const char *uid){
+
+    if ( strcmp(uid, "0000000E40ABCDEF") == 0 ){
+        return TYPE_CONNECTIVITY;
+    }
+
+    return TYPE_UNKNOWN;
+}
+
 int GetConnectivityUIDfromTopic(const char *topic, char *uid , const int size ){
     
     strcpy(uid,"0000000E40ABCDEF");

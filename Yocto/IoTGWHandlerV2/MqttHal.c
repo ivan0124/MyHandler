@@ -439,7 +439,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    }
                     printf("DeviceUID = %s\n", DeviceUID);
 #if 1
-                    if ( strstr(message->topic, "0000000E40ABCDEF")){
+                    if ( GetUIDType(DeviceUID) == TYPE_CONNECTIVITY ){
                         printf("found 0000000E40ABCDEF connectivity mac\n");
                         ReplyConnectivityGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY);
                         return 0;

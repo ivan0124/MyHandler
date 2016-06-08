@@ -50,6 +50,12 @@ typedef enum{
 	//-----------------------------------------------------------------------------------------
 }IOTGW_CMD_ID;
 
+typedef enum{
+        TYPE_UNKNOWN = 0,
+	TYPE_CONNECTIVITY = 1,
+	TYPE_SENSORHUB  =2,
+       
+}device_type_t;
 
 // AsynSetParam
 typedef struct AsynSetParam {
