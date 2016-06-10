@@ -74,31 +74,55 @@ char g_connectivity_capability[1024]={0};
 struct node
 {
     int data;
+    char devID[MAX_DEVICE_ID_LEN];
+    char* message;
     struct node *next;
 };
 
 static struct node* head=NULL;
 
-#if 0
-void append(int num)
-{
-    struct node *temp,*right;
-    temp= (struct node *)malloc(sizeof(struct node));
-    temp->data=num;
-    right=(struct node *)head;
-    while(right->next != NULL)
-    right=right->next;
-    right->next =temp;
-    right=temp;
-    right->next=NULL;
-}
-#endif
+int delete(char* devID);
 
-void add(int num )
+struct node * GetDeviceNode(char* devID)
+{
+    struct node * r;
+    r=head;
+
+    if(r==NULL)
+    {
+    return NULL;
+    }
+    while(r!=NULL)
+    {
+    if (strcmp(r->devID, devID) == 0){
+         printf("found [%s],msg:%s\n",r->devID, r->message );
+        return r;
+    }
+    r=r->next;
+    }
+
+    return NULL;
+    printf("\n");
+}
+
+void add(char* devID, char* pMessage, int iSizeMessage)
 {
     struct node *temp=NULL;
+    //
+    temp=GetDeviceNode(devID);
+    //
+    if (temp != NULL){
+        delete(devID);
+        temp=NULL;
+    }
+    //
     temp=(struct node *)malloc(sizeof(struct node));
-    temp->data=num;
+    memset(temp,0,sizeof(struct node));
+    temp->message=(char*)malloc(iSizeMessage+1);
+    strcpy(temp->devID,devID);
+    strcpy(temp->message,pMessage);
+
+    //temp->data=num;
     if (head== NULL)
     {
     head=temp;
@@ -109,75 +133,28 @@ void add(int num )
     temp->next=head;
     head=temp;
     }
-    
-    //return temp;
-}
 
-#if 0
-void addafter(int num, int loc)
-{
-    int i;
-    struct node *temp,*left,*right;
-    right=head;
-    for(i=1;i<loc;i++)
-    {
-    left=right;
-    right=right->next;
-    }
-    temp=(struct node *)malloc(sizeof(struct node));
-    temp->data=num;
-    left->next=temp;
-    left=temp;
-    left->next=right;
-    return;
-}
+} 
  
- 
- 
-void insert(int num)
-{
-    int c=0;
-    struct node *temp;
-    temp=head;
-    if(temp==NULL)
-    {
-    add(num);
-    }
-    else
-    {
-    while(temp!=NULL)
-    {
-        if(temp->data<num)
-        c++;
-        temp=temp->next;
-    }
-    if(c==0)
-        add(num);
-    else if(c<count())
-        addafter(num,++c);
-    else
-        append(num);
-    }
-}
-#endif 
- 
-int delete(int num)
+int delete(char* devID)
 {
     struct node *temp, *prev;
     temp=head;
     while(temp!=NULL)
     {
-    if(temp->data==num)
+    if( strcmp(temp->devID,devID) == 0 )
     {
         if(temp==head)
         {
         head=temp->next;
+        free(temp->message);
         free(temp);
         return 1;
         }
         else
         {
         prev->next=temp->next;
+        free(temp->message);
         free(temp);
         return 1;
         }
@@ -195,15 +172,13 @@ int delete(int num)
 void  display(struct node* head, struct node *r)
 {
     r=head;
-    //printf("display: r=%p\n", r);
     if(r==NULL)
     {
     return;
     }
     while(r!=NULL)
     {
-    //printf("display: r=%p\n", r);
-    printf("%d ",r->data);
+    printf("[%s],msg:%s\n",r->devID, r->message );
     r=r->next;
     }
     printf("\n");
@@ -229,33 +204,35 @@ void test_link_list(){
     struct node *n;
     printf("initital head = %p\n",head);
     printf("-----------count = %d\n", cnt);
-    add(1);
+    add("0000112233445566","12345", strlen("12345"));
     cnt=count(head);
     printf("add1, head = %p\n",head);
     printf("-----------count = %d\n", cnt);
 
-    add(2);
+    add("0007112233445566","67",strlen("67"));
     cnt=count(head);
     printf("add2, head = %p\n",head);
     printf("-----------count = %d\n", cnt);
 
-    add(3);
+    add("0017112233445566","890",strlen("890"));
     cnt=count(head);
     printf("add3, head = %p\n",head);
     printf("-----------count = %d\n", cnt);
-
+    add("0017112233445566","77777",strlen("77777"));
+    printf("-----------count = %d\n", cnt);
     display(head, n);
-    delete(3);
+
+    delete("0017112233445566");
     cnt=count(head);
     printf("del3, head = %p\n",head);
     printf("-----------count = %d\n", cnt);
     //
-    delete(2);
+    delete("0007112233445566");
     cnt=count(head);
     printf("del2, head = %p\n",head);
     printf("-----------count = %d\n", cnt);
     //
-    delete(1);
+    delete("0000112233445566");
     cnt=count(head);
     printf("del1, head = %p\n",head);
     printf("-----------count = %d\n", cnt);
