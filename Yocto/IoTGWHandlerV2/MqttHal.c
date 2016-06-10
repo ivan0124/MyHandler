@@ -79,14 +79,14 @@ struct node
     struct node *next;
 };
 
-static struct node* head=NULL;
+static struct node* g_pVirtualGatewayDataListHead=NULL;
 
 int delete(char* devID);
 
 struct node * GetDeviceNode(char* devID)
 {
     struct node * r;
-    r=head;
+    r=g_pVirtualGatewayDataListHead;
 
     if(r==NULL)
     {
@@ -123,15 +123,15 @@ void add(char* devID, char* pMessage, int iSizeMessage)
     strcpy(temp->message,pMessage);
 
     //temp->data=num;
-    if (head== NULL)
+    if (g_pVirtualGatewayDataListHead == NULL)
     {
-    head=temp;
-    head->next=NULL;
+    g_pVirtualGatewayDataListHead=temp;
+    g_pVirtualGatewayDataListHead->next=NULL;
     }
     else
     {
-    temp->next=head;
-    head=temp;
+    temp->next=g_pVirtualGatewayDataListHead;
+    g_pVirtualGatewayDataListHead=temp;
     }
 
 } 
@@ -139,14 +139,14 @@ void add(char* devID, char* pMessage, int iSizeMessage)
 int delete(char* devID)
 {
     struct node *temp, *prev;
-    temp=head;
+    temp=g_pVirtualGatewayDataListHead;
     while(temp!=NULL)
     {
     if( strcmp(temp->devID,devID) == 0 )
     {
-        if(temp==head)
+        if(temp==g_pVirtualGatewayDataListHead)
         {
-        head=temp->next;
+        g_pVirtualGatewayDataListHead=temp->next;
         free(temp->message);
         free(temp);
         return 1;
@@ -202,41 +202,41 @@ void test_link_list(){
 
     int cnt=0;
     struct node *n;
-    printf("initital head = %p\n",head);
+    printf("initital g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     add("0000112233445566","12345", strlen("12345"));
-    cnt=count(head);
-    printf("add1, head = %p\n",head);
+    cnt=count(g_pVirtualGatewayDataListHead);
+    printf("add1, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
 
     add("0007112233445566","67",strlen("67"));
-    cnt=count(head);
-    printf("add2, head = %p\n",head);
+    cnt=count(g_pVirtualGatewayDataListHead);
+    printf("add2, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
 
     add("0017112233445566","890",strlen("890"));
-    cnt=count(head);
-    printf("add3, head = %p\n",head);
+    cnt=count(g_pVirtualGatewayDataListHead);
+    printf("add3, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     add("0017112233445566","77777",strlen("77777"));
     printf("-----------count = %d\n", cnt);
-    display(head, n);
+    display(g_pVirtualGatewayDataListHead, n);
 
     delete("0017112233445566");
-    cnt=count(head);
-    printf("del3, head = %p\n",head);
+    cnt=count(g_pVirtualGatewayDataListHead);
+    printf("del3, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //
     delete("0007112233445566");
-    cnt=count(head);
-    printf("del2, head = %p\n",head);
+    cnt=count(g_pVirtualGatewayDataListHead);
+    printf("del2, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //
     delete("0000112233445566");
-    cnt=count(head);
-    printf("del1, head = %p\n",head);
+    cnt=count(g_pVirtualGatewayDataListHead);
+    printf("del1, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
-    display(head, n);
+    display(g_pVirtualGatewayDataListHead, n);
 }
 
 /******************************************************/
