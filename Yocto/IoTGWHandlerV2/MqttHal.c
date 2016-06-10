@@ -69,6 +69,201 @@ char g_connectivity_capability[1024]={0};
 #define NAME_START "{\"n\":\"Name\""
 #define NAME_SV ",\"sv\":"
 #define NAME_ASM ",\"asm\""
+
+/******************************************************/
+struct node
+{
+    int data;
+    struct node *next;
+};
+
+static struct node* head=NULL;
+
+#if 0
+void append(int num)
+{
+    struct node *temp,*right;
+    temp= (struct node *)malloc(sizeof(struct node));
+    temp->data=num;
+    right=(struct node *)head;
+    while(right->next != NULL)
+    right=right->next;
+    right->next =temp;
+    right=temp;
+    right->next=NULL;
+}
+#endif
+
+void add(int num )
+{
+    struct node *temp=NULL;
+    temp=(struct node *)malloc(sizeof(struct node));
+    temp->data=num;
+    if (head== NULL)
+    {
+    head=temp;
+    head->next=NULL;
+    }
+    else
+    {
+    temp->next=head;
+    head=temp;
+    }
+    
+    //return temp;
+}
+
+#if 0
+void addafter(int num, int loc)
+{
+    int i;
+    struct node *temp,*left,*right;
+    right=head;
+    for(i=1;i<loc;i++)
+    {
+    left=right;
+    right=right->next;
+    }
+    temp=(struct node *)malloc(sizeof(struct node));
+    temp->data=num;
+    left->next=temp;
+    left=temp;
+    left->next=right;
+    return;
+}
+ 
+ 
+ 
+void insert(int num)
+{
+    int c=0;
+    struct node *temp;
+    temp=head;
+    if(temp==NULL)
+    {
+    add(num);
+    }
+    else
+    {
+    while(temp!=NULL)
+    {
+        if(temp->data<num)
+        c++;
+        temp=temp->next;
+    }
+    if(c==0)
+        add(num);
+    else if(c<count())
+        addafter(num,++c);
+    else
+        append(num);
+    }
+}
+#endif 
+ 
+int delete(int num)
+{
+    struct node *temp, *prev;
+    temp=head;
+    while(temp!=NULL)
+    {
+    if(temp->data==num)
+    {
+        if(temp==head)
+        {
+        head=temp->next;
+        free(temp);
+        return 1;
+        }
+        else
+        {
+        prev->next=temp->next;
+        free(temp);
+        return 1;
+        }
+    }
+    else
+    {
+        prev=temp;
+        temp= temp->next;
+    }
+    }
+
+    return 0;
+}
+
+void  display(struct node* head, struct node *r)
+{
+    r=head;
+    //printf("display: r=%p\n", r);
+    if(r==NULL)
+    {
+    return;
+    }
+    while(r!=NULL)
+    {
+    //printf("display: r=%p\n", r);
+    printf("%d ",r->data);
+    r=r->next;
+    }
+    printf("\n");
+}
+ 
+
+int count(struct node* head)
+{
+    struct node *n;
+    int c=0;
+    n=head;
+    while(n!=NULL)
+    {
+    n=n->next;
+    c++;
+    }
+    return c;
+}
+
+void test_link_list(){
+
+    int cnt=0;
+    struct node *n;
+    printf("initital head = %p\n",head);
+    printf("-----------count = %d\n", cnt);
+    add(1);
+    cnt=count(head);
+    printf("add1, head = %p\n",head);
+    printf("-----------count = %d\n", cnt);
+
+    add(2);
+    cnt=count(head);
+    printf("add2, head = %p\n",head);
+    printf("-----------count = %d\n", cnt);
+
+    add(3);
+    cnt=count(head);
+    printf("add3, head = %p\n",head);
+    printf("-----------count = %d\n", cnt);
+
+    display(head, n);
+    delete(3);
+    cnt=count(head);
+    printf("del3, head = %p\n",head);
+    printf("-----------count = %d\n", cnt);
+    //
+    delete(2);
+    cnt=count(head);
+    printf("del2, head = %p\n",head);
+    printf("-----------count = %d\n", cnt);
+    //
+    delete(1);
+    cnt=count(head);
+    printf("del1, head = %p\n",head);
+    printf("-----------count = %d\n", cnt);
+    display(head, n);
+}
+
+/******************************************************/
+
 int replaceName(char *_input, char *_strName)
 {
 	char tmp[1024];
@@ -389,6 +584,8 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("------------------------------------------------\n");
 		    printf("[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    test_link_list();
+
 #if 1
                     if ( RegisterGatewayCapability(json) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
@@ -915,3 +1112,5 @@ int MqttHal_PublishV2(char *macAddr, int cmdType, const char *pData)
 
 	return 0;
 }
+
+
