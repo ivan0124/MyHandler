@@ -106,7 +106,7 @@ struct node * GetVirtualGatewayDataListNode(char* devID)
     printf("\n");
 }
 
-void AddVirtualGatewayDataListNode(char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize)
+void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, int iConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize)
 {
     struct node *temp=NULL;
     //
@@ -122,6 +122,8 @@ void AddVirtualGatewayDataListNode(char* pConnectivityDevID, char* pConnectivity
     temp->connectivityInfo=(char*)malloc(iConnectivityInfoSize+1);
     strcpy(temp->connectivityDevID,pConnectivityDevID);
     strcpy(temp->connectivityInfo,pConnectivityInfo);
+    strcpy(temp->virtualGatewayDevID, pVirtualGatewayDevID);
+    temp->connectivityType = iConnectivityType;
 
     //temp->data=num;
     if (g_pVirtualGatewayDataListHead == NULL)
@@ -211,37 +213,37 @@ void test_link_list(){
     printf("initital g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //add1
-    AddVirtualGatewayDataListNode("0000112233445566","12345", strlen("12345"));
+    AddVirtualGatewayDataListNode("0000772233445599",0,"0007112233445501","12345", strlen("12345"));
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("add1, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //add2
-    AddVirtualGatewayDataListNode("0007112233445566","67",strlen("67"));
+    AddVirtualGatewayDataListNode("0000772233445599",0,"0007112233445502","67",strlen("67"));
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("add2, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //add3
-    AddVirtualGatewayDataListNode("0017112233445566","890",strlen("890"));
+    AddVirtualGatewayDataListNode("0000772233445599",0,"0007112233445503","890",strlen("890"));
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("add3, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //add3 again: we will delete3 then add3 again
-    AddVirtualGatewayDataListNode("0017112233445566","77777",strlen("77777"));
+    AddVirtualGatewayDataListNode("0000772233445599",0,"0007112233445503","77777",strlen("77777"));
     printf("-----------count = %d\n", cnt);
     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
 
     //del3
-    DeleteVirtualGatewayDataListNode("0017112233445566");
+    DeleteVirtualGatewayDataListNode("0007112233445503");
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("del3, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //del2
-    DeleteVirtualGatewayDataListNode("0007112233445566");
+    DeleteVirtualGatewayDataListNode("0007112233445502");
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("del2, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //del1
-    DeleteVirtualGatewayDataListNode("0000112233445566");
+    DeleteVirtualGatewayDataListNode("0007112233445501");
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("del1, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
@@ -643,9 +645,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("------------------------------------------------\n");
 		    printf("[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-                    //test_link_list();
+                    test_link_list();
                     //UpdateVirtualGatewayDataListNode(json, message->payload);
-#if 1
+#if 0
                     if ( RegisterGatewayCapability(json) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
