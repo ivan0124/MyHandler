@@ -106,22 +106,22 @@ struct node * GetVirtualGatewayDataListNode(char* devID)
     printf("\n");
 }
 
-void AddVirtualGatewayDataListNode(char* devID, char* pMessage, int iSizeMessage)
+void AddVirtualGatewayDataListNode(char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize)
 {
     struct node *temp=NULL;
     //
-    temp=GetVirtualGatewayDataListNode(devID);
+    temp=GetVirtualGatewayDataListNode(pConnectivityDevID);
     //
     if (temp != NULL){
-        DeleteVirtualGatewayDataListNode(devID);
+        DeleteVirtualGatewayDataListNode(pConnectivityDevID);
         temp=NULL;
     }
     //
     temp=(struct node *)malloc(sizeof(struct node));
     memset(temp,0,sizeof(struct node));
-    temp->connectivityInfo=(char*)malloc(iSizeMessage+1);
-    strcpy(temp->connectivityDevID,devID);
-    strcpy(temp->connectivityInfo,pMessage);
+    temp->connectivityInfo=(char*)malloc(iConnectivityInfoSize+1);
+    strcpy(temp->connectivityDevID,pConnectivityDevID);
+    strcpy(temp->connectivityInfo,pConnectivityInfo);
 
     //temp->data=num;
     if (g_pVirtualGatewayDataListHead == NULL)
@@ -179,7 +179,12 @@ void  DisplayAllVirtualGatewayDataListNode(struct node* head, struct node *r)
     }
     while(r!=NULL)
     {
-    printf("[%s],msg:%s\n",r->connectivityDevID, r->connectivityInfo );
+    printf("[%s][%s]\n----------------------------------\n", __FILE__, __func__);
+    printf("virtualGatewayDevID:%s\n",r->virtualGatewayDevID);
+    printf("connectivityType:%d\n",r->connectivityType);
+    printf("connectivityDevID:%s\n",r->connectivityDevID);
+    printf("connectivityInfo:%s\n",r->connectivityInfo);
+    printf("----------------------------------\n", __FILE__, __func__);
     r=r->next;
     }
     printf("\n");
