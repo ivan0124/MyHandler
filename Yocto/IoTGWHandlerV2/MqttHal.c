@@ -269,7 +269,7 @@ int UpdateVirtualGatewayDataListNode(JSONode *json){
 
     struct node *n;
     int cnt=0;
-    int i=0;
+    int i=0, j=0;
     char connectivity_type[256]={0};
     char connectivity_base_name[256]={0};
     char nodeContent[MAX_JSON_NODE_SIZE]={0};
@@ -284,11 +284,15 @@ int UpdateVirtualGatewayDataListNode(JSONode *json){
     strcpy(virtualGatewayDevID,nodeContent);
 
     //
-
+    char* cType[]={"WSN",
+                   "BLE"};
+    printf("sizeof(cType)=%d, sizeof(char*)=%d\n", sizeof(cType), sizeof(char*));
+    for (j=0; j < sizeof(cType)/sizeof(char*); j++)
+    {
     while(1){
         //Get connectivity Info
-        sprintf(connectivity_type,"[susiCommData][infoSpec][IoTGW][WSN][WSN%d]",i);
-   
+        sprintf(connectivity_type,"[susiCommData][infoSpec][IoTGW][%s][%s%d]",cType[j],cType[j],i);
+
         memset(nodeContent,0,sizeof(nodeContent));
         JSON_Get(json, connectivity_type, nodeContent, sizeof(nodeContent));
         if(strcmp(nodeContent, "NULL") == 0){
@@ -310,16 +314,18 @@ int UpdateVirtualGatewayDataListNode(JSONode *json){
         printf("connectivity Info: "); printf(connectivityInfo); printf("\n");
         printf("connectivity DevID: "); printf(connectivityDevID);
         printf("\n********************************************\n");
+        //Add Node
+        AddVirtualGatewayDataListNode(virtualGatewayDevID,0,connectivityDevID,connectivityInfo, strlen(connectivityInfo));
+        cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
+        printf("count = %d\n", cnt);
+#if 1
+        DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
+#endif
         i++;
     }
+    }
 
-    //Add Node
-    AddVirtualGatewayDataListNode(virtualGatewayDevID,0,connectivityDevID,connectivityInfo, strlen(connectivityInfo));
-#if 0
-    cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
-    printf("count = %d\n", cnt);
-    DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
-#endif
+
     return 0;
 }
 /******************************************************/
@@ -645,8 +651,8 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    printf("[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     //test_link_list();
-                    //UpdateVirtualGatewayDataListNode(json);
-#if 1
+                    UpdateVirtualGatewayDataListNode(json);
+#if 0
                     if ( RegisterGatewayCapability(json) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
