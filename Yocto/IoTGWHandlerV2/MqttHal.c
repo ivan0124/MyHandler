@@ -250,7 +250,7 @@ void test_link_list(){
     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
 }
 
-int UpdateVirtualGatewayDataListNode(JSONode *json, char* pMessage){
+int UpdateVirtualGatewayDataListNode(JSONode *json){
 
 #if 0
 //sample message:
@@ -645,7 +645,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    printf("[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     //test_link_list();
-                    //UpdateVirtualGatewayDataListNode(json, message->payload);
+                    //UpdateVirtualGatewayDataListNode(json);
 #if 1
                     if ( RegisterGatewayCapability(json) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
