@@ -73,7 +73,7 @@ char g_connectivity_capability[1024]={0};
 /******************************************************/
 struct node
 {
-    int data;
+    //int data;
     char devID[MAX_DEVICE_ID_LEN];
     char* message;
     struct node *next;
@@ -204,34 +204,37 @@ void test_link_list(){
     struct node *n;
     printf("initital g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
+    //add1
     AddVirtualGatewayDataListNode("0000112233445566","12345", strlen("12345"));
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("add1, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
-
+    //add2
     AddVirtualGatewayDataListNode("0007112233445566","67",strlen("67"));
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("add2, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
-
+    //add3
     AddVirtualGatewayDataListNode("0017112233445566","890",strlen("890"));
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("add3, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
+    //add3 again: we will delete3 then add3 again
     AddVirtualGatewayDataListNode("0017112233445566","77777",strlen("77777"));
     printf("-----------count = %d\n", cnt);
     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
 
+    //del3
     DeleteVirtualGatewayDataListNode("0017112233445566");
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("del3, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
-    //
+    //del2
     DeleteVirtualGatewayDataListNode("0007112233445566");
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("del2, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
-    //
+    //del1
     DeleteVirtualGatewayDataListNode("0000112233445566");
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("del1, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
@@ -239,6 +242,68 @@ void test_link_list(){
     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
 }
 
+int UpdateVirtualGatewayDataListNode(JSONode *json, char* pMessage){
+
+#if 0
+//sample message:
+{"susiCommData":{"data":{"IoTGW":{"WSN":{"WSN0":{"Info":{"e":[{"n":"SenHubList","sv":""},{"n":"Neighbor","sv":""},{"n":"Name","sv":"WSN0"},{"n":"Health","v":"100.000000"},{"n":"sw","sv":"1.2.1.12"},{"n":"reset","bv":"0"}],"bn":"Info"},"bn":"0007000E40ABCDEF","ver":1},"bn":"WSN"},"ver":1}},"commCmd":2055,"requestID":2001,"agentID":"0000000E40ABCDEF","handlerName":"general","sendTS":160081021}}
+#endif
+    struct node *n;
+    int cnt=0;
+    int i=0;
+    char connectivity_type[256]={0};
+    char connectivity_base_name[256]={0};
+    char nodeContent[MAX_JSON_NODE_SIZE]={0};
+    char virtualGatewayDevID[MAX_DEVICE_ID_LEN]={0};
+    char connectivityInfo[MAX_JSON_NODE_SIZE]={0};
+    char connectivityDevID[MAX_DEVICE_ID_LEN]={0};
+
+    JSON_Get(json, OBJ_AGENT_ID, nodeContent, sizeof(nodeContent));
+    if(strcmp(nodeContent, "NULL") == 0){
+        return -1;
+    }
+    strcpy(virtualGatewayDevID,nodeContent);
+
+    //
+
+    while(1){
+        //Get connectivity Info
+        sprintf(connectivity_type,"[susiCommData][infoSpec][IoTGW][WSN][WSN%d]",i);
+   
+        memset(nodeContent,0,sizeof(nodeContent));
+        JSON_Get(json, connectivity_type, nodeContent, sizeof(nodeContent));
+        if(strcmp(nodeContent, "NULL") == 0){
+            break;;
+        }
+        strcpy(connectivityInfo,nodeContent);
+        
+        //Get connectivity device ID
+        sprintf(connectivity_base_name,"[susiCommData][infoSpec][IoTGW][WSN][WSN%d][bn]",i);
+        memset(nodeContent,0,sizeof(nodeContent));
+        JSON_Get(json, connectivity_base_name, nodeContent, sizeof(nodeContent));
+        if(strcmp(nodeContent, "NULL") == 0){
+            break;;
+        }
+        strcpy(connectivityDevID,nodeContent);
+        //
+        printf("********************************************\n");
+        printf("virtualGateway DevID: "); printf(virtualGatewayDevID); printf("\n");
+        printf("connectivity Info: "); printf(connectivityInfo); printf("\n");
+        printf("connectivity DevID: "); printf(connectivityDevID);
+        printf("\n********************************************\n");
+        i++;
+    }
+
+#if 0
+    AddVirtualGatewayDataListNode(nodeContent,pMessage,strlen(pMessage));
+    cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
+    printf("add3, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
+    printf("count = %d\n", cnt);
+    DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
+#endif
+
+    return 0;
+}
 /******************************************************/
 
 int replaceName(char *_input, char *_strName)
@@ -562,7 +627,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    printf("[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     //test_link_list();
-
+                    //UpdateVirtualGatewayDataListNode(json, message->payload);
 #if 1
                     if ( RegisterGatewayCapability(json) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);

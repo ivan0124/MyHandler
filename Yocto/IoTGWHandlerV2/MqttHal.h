@@ -27,7 +27,7 @@
 #define OBJ_DATA                   "[susiCommData][data]"
 #define OBJ_IOTGW_DATA             "[susiCommData][data][IoTGW]"
 #define OBJ_SENHUB_DATA            "[susiCommData][data][SenHub]"
-#define OBJ_SENHUB_ID              "[susiCommData][agentID]"
+#define OBJ_AGENT_ID              "[susiCommData][agentID]"
 #define OBJ_DEVICE_TYPE            "[susiCommData][type]"
 #define OBJ_DEVICE_ID              "[susiCommData][devID]"
 #define OBJ_DEVICE_MAC             "[susiCommData][mac]"

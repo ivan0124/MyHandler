@@ -1200,7 +1200,7 @@ int UpdateSensorHubData( JSONode *json )
 
         //Get SensorHub ID
         memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-        JSON_Get(json, OBJ_SENHUB_ID, nodeContent, sizeof(nodeContent));
+        JSON_Get(json, OBJ_AGENT_ID, nodeContent, sizeof(nodeContent));
         if(strcmp(nodeContent, "NULL") == 0){
             return -1;
         }
