@@ -313,14 +313,13 @@ int UpdateVirtualGatewayDataListNode(JSONode *json, char* pMessage){
         i++;
     }
 
+    //Add Node
+    AddVirtualGatewayDataListNode(virtualGatewayDevID,0,connectivityDevID,connectivityInfo, strlen(connectivityInfo));
 #if 0
-    AddVirtualGatewayDataListNode(nodeContent,pMessage,strlen(pMessage));
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
-    printf("add3, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("count = %d\n", cnt);
     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
 #endif
-
     return 0;
 }
 /******************************************************/
@@ -645,9 +644,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("------------------------------------------------\n");
 		    printf("[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-                    test_link_list();
+                    //test_link_list();
                     //UpdateVirtualGatewayDataListNode(json, message->payload);
-#if 0
+#if 1
                     if ( RegisterGatewayCapability(json) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
