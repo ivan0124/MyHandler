@@ -73,9 +73,10 @@ char g_connectivity_capability[1024]={0};
 /******************************************************/
 struct node
 {
-    //int data;
-    char devID[MAX_DEVICE_ID_LEN];
-    char* message;
+    char virtualGatewayDevID[MAX_DEVICE_ID_LEN];
+    int connectivityType;
+    char connectivityDevID[MAX_DEVICE_ID_LEN];
+    char* connectivityInfo;
     struct node *next;
 };
 
@@ -94,8 +95,8 @@ struct node * GetVirtualGatewayDataListNode(char* devID)
     }
     while(r!=NULL)
     {
-    if (strcmp(r->devID, devID) == 0){
-         printf("found [%s],msg:%s\n",r->devID, r->message );
+    if (strcmp(r->connectivityDevID, devID) == 0){
+        printf("found [%s],msg:%s\n",r->connectivityDevID, r->connectivityInfo );
         return r;
     }
     r=r->next;
@@ -118,9 +119,9 @@ void AddVirtualGatewayDataListNode(char* devID, char* pMessage, int iSizeMessage
     //
     temp=(struct node *)malloc(sizeof(struct node));
     memset(temp,0,sizeof(struct node));
-    temp->message=(char*)malloc(iSizeMessage+1);
-    strcpy(temp->devID,devID);
-    strcpy(temp->message,pMessage);
+    temp->connectivityInfo=(char*)malloc(iSizeMessage+1);
+    strcpy(temp->connectivityDevID,devID);
+    strcpy(temp->connectivityInfo,pMessage);
 
     //temp->data=num;
     if (g_pVirtualGatewayDataListHead == NULL)
@@ -142,19 +143,19 @@ int DeleteVirtualGatewayDataListNode(char* devID)
     temp=g_pVirtualGatewayDataListHead;
     while(temp!=NULL)
     {
-    if( strcmp(temp->devID,devID) == 0 )
+    if( strcmp(temp->connectivityDevID,devID) == 0 )
     {
         if(temp==g_pVirtualGatewayDataListHead)
         {
         g_pVirtualGatewayDataListHead=temp->next;
-        free(temp->message);
+        free(temp->connectivityInfo);
         free(temp);
         return 1;
         }
         else
         {
         prev->next=temp->next;
-        free(temp->message);
+        free(temp->connectivityInfo);
         free(temp);
         return 1;
         }
@@ -178,7 +179,7 @@ void  DisplayAllVirtualGatewayDataListNode(struct node* head, struct node *r)
     }
     while(r!=NULL)
     {
-    printf("[%s],msg:%s\n",r->devID, r->message );
+    printf("[%s],msg:%s\n",r->connectivityDevID, r->connectivityInfo );
     r=r->next;
     }
     printf("\n");
