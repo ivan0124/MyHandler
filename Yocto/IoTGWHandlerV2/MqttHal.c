@@ -74,7 +74,7 @@ char g_connectivity_capability[1024]={0};
 struct node
 {
     char virtualGatewayDevID[MAX_DEVICE_ID_LEN];
-    int connectivityType;
+    char connectivityType[MAX_CONNECTIVITY_TYPE_LEN];
     char connectivityDevID[MAX_DEVICE_ID_LEN];
     char* connectivityInfo;
     struct node *next;
@@ -106,7 +106,7 @@ struct node * GetVirtualGatewayDataListNode(char* devID)
     printf("\n");
 }
 
-void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, int iConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize)
+void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize)
 {
     struct node *temp=NULL;
     //
@@ -123,7 +123,7 @@ void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, int iConnectivity
     strcpy(temp->connectivityDevID,pConnectivityDevID);
     strcpy(temp->connectivityInfo,pConnectivityInfo);
     strcpy(temp->virtualGatewayDevID, pVirtualGatewayDevID);
-    temp->connectivityType = iConnectivityType;
+    strcpy(temp->connectivityType,pConnectivityType);
 
     //temp->data=num;
     if (g_pVirtualGatewayDataListHead == NULL)
@@ -183,7 +183,7 @@ void  DisplayAllVirtualGatewayDataListNode(struct node* head, struct node *r)
     {
     printf("[%s][%s]\n----------------------------------\n", __FILE__, __func__);
     printf("virtualGatewayDevID:%s\n",r->virtualGatewayDevID);
-    printf("connectivityType:%d\n",r->connectivityType);
+    printf("connectivityType:%s\n",r->connectivityType);
     printf("connectivityDevID:%s\n",r->connectivityDevID);
     printf("connectivityInfo:%s\n",r->connectivityInfo);
     printf("----------------------------------\n", __FILE__, __func__);
@@ -213,22 +213,22 @@ void test_link_list(){
     printf("initital g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //add1
-    AddVirtualGatewayDataListNode("0000772233445599",0,"0007112233445501","12345", strlen("12345"));
+    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445501","12345", strlen("12345"));
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("add1, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //add2
-    AddVirtualGatewayDataListNode("0000772233445599",0,"0007112233445502","67",strlen("67"));
+    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445502","67",strlen("67"));
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("add2, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //add3
-    AddVirtualGatewayDataListNode("0000772233445599",0,"0007112233445503","890",strlen("890"));
+    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445503","890",strlen("890"));
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("add3, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //add3 again: we will delete3 then add3 again
-    AddVirtualGatewayDataListNode("0000772233445599",0,"0007112233445503","77777",strlen("77777"));
+    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445503","77777",strlen("77777"));
     printf("-----------count = %d\n", cnt);
     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
 
@@ -252,7 +252,7 @@ void test_link_list(){
 
 int UpdateVirtualGatewayDataListNode(JSONode *json){
 
-#if 0
+#if 1
 //sample message:
 /*
 {"susiCommData":{"infoSpec":{"IoTGW":{"WSN":{"WSN0":{"Info":{"e":[{"n":"SenHubList","sv":"","asm":"r"},{"n":"Neighbor","sv":"","asm":"r"},{"n":"Name","sv":"WSN0","asm":"r"},{"n":"Health","v":"100.000000","asm":"r"},{"n":"sw","sv":"1.2.1.12","asm":"r"},{"n":"reset","bv":"0","asm":"rw"}],"bn":"Info"},"bn":"0007000E40ABCD01","ver":1},"WSN1":{"Info":{"e":[{"n":"SenHubList","sv":"","asm":"r"},{"n":"Neighbor","sv":"","asm":"r"},{"n":"Name","sv":"WSN0","asm":"r"},{"n":"Health","v":"100.000000","asm":"r"},{"n":"sw","sv":"1.2.1.12","asm":"r"},{"n":"reset","bv":"0","asm":"rw"}],"bn":"Info"},"bn":"0007000E40ABCD02","ver":1},"bn":"WSN","ver":1},"ver":1}},"commCmd":2052,"requestID":2001,"agentID":"0000000E40ABCDEF","handlerName":"general","sendTS":160081020}}
@@ -299,7 +299,7 @@ int UpdateVirtualGatewayDataListNode(JSONode *json){
             strcpy(connectivityInfo,nodeContent);
         
             //Get connectivity device ID
-            sprintf(connectivity_base_name,"[susiCommData][infoSpec][IoTGW][WSN][WSN%d][bn]",i);
+            sprintf(connectivity_base_name,"[susiCommData][infoSpec][IoTGW][%s][%s%d][bn]",cType[j],cType[j],i);
             memset(nodeContent,0,sizeof(nodeContent));
             JSON_Get(json, connectivity_base_name, nodeContent, sizeof(nodeContent));
             if(strcmp(nodeContent, "NULL") == 0){
@@ -313,7 +313,7 @@ int UpdateVirtualGatewayDataListNode(JSONode *json){
             printf("connectivity DevID: "); printf(connectivityDevID);
             printf("\n********************************************\n");
             //Add Node
-            AddVirtualGatewayDataListNode(virtualGatewayDevID,0,connectivityDevID,connectivityInfo, strlen(connectivityInfo));
+            AddVirtualGatewayDataListNode(virtualGatewayDevID,cType[j],connectivityDevID,connectivityInfo, strlen(connectivityInfo));
             cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
             printf("count = %d\n", cnt);
 #if 1
@@ -618,6 +618,28 @@ int ParseMQTTMessage(char* ptopic, JSONode *json){
     return res;
 }
 
+#if 1
+struct connectivityInfoNode{
+    char type[MAX_CONNECTIVITY_TYPE_LEN];
+    char Info[1024];
+};
+
+struct connectivityInfoNode* connectivityInfoNodeList[256]={0};
+
+int GetConnectivityInfoTmp(char* pType){
+#if 0   
+    int i=0;
+    int max_size=sizeof(connectivityInfoNodeList)/sizeof(connectivityInfoNode*);
+
+    //Is connectivity
+    for(i=0; i< max_size;i++){
+        //connectivityInfoNodeList[j]
+    }
+#endif            
+    return 0;
+}
+#endif
+
 int BuildGatewayCapabilityInfo(struct node* head){
   
     printf("##################################################################\n");
@@ -639,10 +661,11 @@ int BuildGatewayCapabilityInfo(struct node* head){
     {
 	printf("[%s][%s]\n----------------------------------\n", __FILE__, __func__);
 	printf("virtualGatewayDevID:%s\n",r->virtualGatewayDevID);
-	printf("connectivityType:%d\n",r->connectivityType);
+	printf("connectivityType:%s\n",r->connectivityType);
 	printf("connectivityDevID:%s\n",r->connectivityDevID);
 	printf("connectivityInfo:%s\n",r->connectivityInfo);
 	printf("----------------------------------\n", __FILE__, __func__);
+        //
         sprintf(tmp,"\"WSN%d\":%s",i, r->connectivityInfo);
         i++;
         printf(tmp);

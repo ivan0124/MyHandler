@@ -53,6 +53,7 @@
 #define MAX_MACADDRESS_LEN       18
 #define MAX_DEVICE_ID_LEN        18
 #define MAX_DEVICE_SN_LEN        18	
+#define MAX_CONNECTIVITY_TYPE_LEN        16
 #define MAX_SENDATA_LEN          256
 
 #define MAX_JSON_NODE_SIZE       1024
