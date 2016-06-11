@@ -287,42 +287,41 @@ int UpdateVirtualGatewayDataListNode(JSONode *json){
     char* cType[]={"WSN",
                    "BLE"};
     printf("sizeof(cType)=%d, sizeof(char*)=%d\n", sizeof(cType), sizeof(char*));
-    for (j=0; j < sizeof(cType)/sizeof(char*); j++)
-    {
-    while(1){
-        //Get connectivity Info
-        sprintf(connectivity_type,"[susiCommData][infoSpec][IoTGW][%s][%s%d]",cType[j],cType[j],i);
+    for (j=0; j < sizeof(cType)/sizeof(char*); j++){
+        while(1){
+            //Get connectivity Info
+            sprintf(connectivity_type,"[susiCommData][infoSpec][IoTGW][%s][%s%d]",cType[j],cType[j],i);
 
-        memset(nodeContent,0,sizeof(nodeContent));
-        JSON_Get(json, connectivity_type, nodeContent, sizeof(nodeContent));
-        if(strcmp(nodeContent, "NULL") == 0){
-            break;;
-        }
-        strcpy(connectivityInfo,nodeContent);
+            memset(nodeContent,0,sizeof(nodeContent));
+            JSON_Get(json, connectivity_type, nodeContent, sizeof(nodeContent));
+            if(strcmp(nodeContent, "NULL") == 0){
+                break;;
+            }
+            strcpy(connectivityInfo,nodeContent);
         
-        //Get connectivity device ID
-        sprintf(connectivity_base_name,"[susiCommData][infoSpec][IoTGW][WSN][WSN%d][bn]",i);
-        memset(nodeContent,0,sizeof(nodeContent));
-        JSON_Get(json, connectivity_base_name, nodeContent, sizeof(nodeContent));
-        if(strcmp(nodeContent, "NULL") == 0){
-            break;;
-        }
-        strcpy(connectivityDevID,nodeContent);
-        //
-        printf("********************************************\n");
-        printf("virtualGateway DevID: "); printf(virtualGatewayDevID); printf("\n");
-        printf("connectivity Info: "); printf(connectivityInfo); printf("\n");
-        printf("connectivity DevID: "); printf(connectivityDevID);
-        printf("\n********************************************\n");
-        //Add Node
-        AddVirtualGatewayDataListNode(virtualGatewayDevID,0,connectivityDevID,connectivityInfo, strlen(connectivityInfo));
-        cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
-        printf("count = %d\n", cnt);
+            //Get connectivity device ID
+            sprintf(connectivity_base_name,"[susiCommData][infoSpec][IoTGW][WSN][WSN%d][bn]",i);
+            memset(nodeContent,0,sizeof(nodeContent));
+            JSON_Get(json, connectivity_base_name, nodeContent, sizeof(nodeContent));
+            if(strcmp(nodeContent, "NULL") == 0){
+                break;;
+            }
+            strcpy(connectivityDevID,nodeContent);
+            //
+            printf("********************************************\n");
+            printf("virtualGateway DevID: "); printf(virtualGatewayDevID); printf("\n");
+            printf("connectivity Info: "); printf(connectivityInfo); printf("\n");
+            printf("connectivity DevID: "); printf(connectivityDevID);
+            printf("\n********************************************\n");
+            //Add Node
+            AddVirtualGatewayDataListNode(virtualGatewayDevID,0,connectivityDevID,connectivityInfo, strlen(connectivityInfo));
+            cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
+            printf("count = %d\n", cnt);
 #if 1
-        DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
+            DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
 #endif
-        i++;
-    }
+            i++;
+        }
     }
 
 
