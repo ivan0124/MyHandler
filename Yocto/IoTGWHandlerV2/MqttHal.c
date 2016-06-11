@@ -624,18 +624,37 @@ struct connectivityInfoNode{
     char Info[1024];
 };
 
-struct connectivityInfoNode* connectivityInfoNodeList[256]={0};
+struct connectivityInfoNode g_ConnectivityInfoNodeList[256]={0};
+
+int FindConnectivityInfoNodeListIndex(char* pType){
+    
+    int i=0;
+    int max_size=sizeof(g_ConnectivityInfoNodeList)/sizeof(struct connectivityInfoNode);
+
+    for(i=0 ; i < max_size; i++){
+        if (strlen(g_ConnectivityInfoNodeList[i].type) == 0){
+            strcpy(g_ConnectivityInfoNodeList[i].type, pType);
+            return i;
+        }
+        if(strcmp(g_ConnectivityInfoNodeList[i].type, pType) == 0){
+            return i;
+        }
+    }
+
+    return -1;
+}
 
 int GetConnectivityInfoTmp(char* pType){
-#if 0   
+   
     int i=0;
-    int max_size=sizeof(connectivityInfoNodeList)/sizeof(connectivityInfoNode*);
-
-    //Is connectivity
-    for(i=0; i< max_size;i++){
-        //connectivityInfoNodeList[j]
-    }
-#endif            
+    int max_size=sizeof(g_ConnectivityInfoNodeList)/sizeof(struct connectivityInfoNode);
+         
+    int index = FindConnectivityInfoNodeListIndex("WSN");
+    printf("max size = %d, WSN index=%d\n", max_size, index);
+    index = FindConnectivityInfoNodeListIndex("BLE");
+    printf("max size = %d, BLE index=%d\n", max_size, index);
+    index = FindConnectivityInfoNodeListIndex("LAN");
+    printf("max size = %d, LAN index=%d\n", max_size, index);
     return 0;
 }
 #endif
@@ -643,9 +662,11 @@ int GetConnectivityInfoTmp(char* pType){
 int BuildGatewayCapabilityInfo(struct node* head){
   
     printf("##################################################################\n");
+    memset(&g_ConnectivityInfoNodeList,0,sizeof(g_ConnectivityInfoNodeList));
+    GetConnectivityInfoTmp("WSN");
 #if 1
     printf("BuildGatewayCapabilityInfo-----------------\n");
-    int i=0;
+    int i=0,index=-1;
     char tmp[1024]={0};
     char capability[1024]={0};
     char wsn_capability[2048]={0};
@@ -665,19 +686,24 @@ int BuildGatewayCapabilityInfo(struct node* head){
 	printf("connectivityDevID:%s\n",r->connectivityDevID);
 	printf("connectivityInfo:%s\n",r->connectivityInfo);
 	printf("----------------------------------\n", __FILE__, __func__);
-        //
-        sprintf(tmp,"\"WSN%d\":%s",i, r->connectivityInfo);
+        //WSN0:{Info...}
+        sprintf(tmp,"\"%s%d\":%s",r->connectivityType, i, r->connectivityInfo);
         i++;
         printf(tmp);
-        strcat(capability,tmp);
-        strcat(capability,",");
-        printf("---------------capability----------------------------\n");
-        printf(capability);
-        printf("-------------------------------------------\n");
+        index=FindConnectivityInfoNodeListIndex(r->connectivityType);
+        strcat(g_ConnectivityInfoNodeList[index].Info,tmp);
+        strcat(g_ConnectivityInfoNodeList[index].Info,",");
+        //strcpy(capability,g_ConnectivityInfoNodeList[index].Info);
+        //strcat(capability,tmp);
+        //strcat(capability,",");
+        //printf("---------------capability----------------------------\n");
+        //printf(capability);
+        //printf("-------------------------------------------\n");
 	r=r->next;
     }
     printf("\n");
-    sprintf(wsn_capability,"\"WSN\":{%s \"bn\":\"WSN\",\"ver\":1}",capability);
+    index=FindConnectivityInfoNodeListIndex("WSN");
+    sprintf(wsn_capability,"\"WSN\":{%s \"bn\":\"WSN\",\"ver\":1}",g_ConnectivityInfoNodeList[index].Info);
     printf("---------------WSN capability----------------------------\n");
     printf(wsn_capability);
     printf("-------------------------------------------\n");
