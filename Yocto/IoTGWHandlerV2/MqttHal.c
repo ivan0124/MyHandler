@@ -71,6 +71,9 @@ char g_connectivity_capability[1024]={0};
 #define NAME_ASM ",\"asm\""
 
 /******************************************************/
+char* cType[]={"WSN",
+               "BLE"};
+
 struct node
 {
     char virtualGatewayDevID[MAX_DEVICE_ID_LEN];
@@ -283,8 +286,6 @@ int UpdateVirtualGatewayDataListNode(JSONode *json){
     strcpy(virtualGatewayDevID,nodeContent);
 
     //
-    char* cType[]={"WSN",
-                   "BLE"};
     printf("sizeof(cType)=%d, sizeof(char*)=%d\n", sizeof(cType), sizeof(char*));
     for (j=0; j < sizeof(cType)/sizeof(char*); j++){
         while(1){
@@ -663,7 +664,7 @@ int BuildGatewayCapabilityInfo(struct node* head){
   
     printf("##################################################################\n");
     memset(&g_ConnectivityInfoNodeList,0,sizeof(g_ConnectivityInfoNodeList));
-    GetConnectivityInfoTmp("WSN");
+    //GetConnectivityInfoTmp("WSN");
 #if 1
     printf("BuildGatewayCapabilityInfo-----------------\n");
     int i=0,index=-1;
@@ -702,14 +703,40 @@ int BuildGatewayCapabilityInfo(struct node* head){
 	r=r->next;
     }
     printf("\n");
-    index=FindConnectivityInfoNodeListIndex("WSN");
-    sprintf(wsn_capability,"\"WSN\":{%s \"bn\":\"WSN\",\"ver\":1}",g_ConnectivityInfoNodeList[index].Info);
-    printf("---------------WSN capability----------------------------\n");
-    printf(wsn_capability);
-    printf("-------------------------------------------\n");
-    //
+
+    //Pack connectivity capability 
+    int max=sizeof(cType)/sizeof(char*);
+    for(i=0; i < max ; i++){
+        index=FindConnectivityInfoNodeListIndex(cType[i]);
+        if (strlen(g_ConnectivityInfoNodeList[index].Info) != 0 ){
+            //sprintf(wsn_capability,"\"WSN\":{%s\"bn\":\"WSN\",\"ver\":1}",g_ConnectivityInfoNodeList[index].Info);
+#if 1
+            sprintf(wsn_capability,"\"%s\":{",cType[i]);
+            strcat(wsn_capability,g_ConnectivityInfoNodeList[index].Info);
+            sprintf(tmp,"\"bn\":\"%s\",",g_ConnectivityInfoNodeList[index].type);
+            strcat(wsn_capability,tmp);
+            strcat(wsn_capability, "\"ver\":1}");
+            strcpy(g_ConnectivityInfoNodeList[index].Info,wsn_capability);
+#endif
+            printf("---------------WSN capability(max=%d)----------------------------\n", max);
+            printf(g_ConnectivityInfoNodeList[index].Info);
+            printf("-------------------------------------------\n");
+        }
+    }
+    //Pack gateway capability
     char gateway_capability[2048]={0};
-    sprintf(gateway_capability,"{\"IoTGW\":{%s,\"ver\":1}}", wsn_capability);
+    max=sizeof(cType)/sizeof(char*);
+    strcpy(gateway_capability,"{\"IoTGW\":{");
+    for(i=0; i < max ; i++){
+        index=FindConnectivityInfoNodeListIndex(cType[i]);
+        if (strlen(g_ConnectivityInfoNodeList[index].Info) != 0 ){
+            //sprintf(gateway_capability,"{\"IoTGW\":{%s,\"ver\":1}}", g_ConnectivityInfoNodeList[0].Info);
+            strcat(gateway_capability, g_ConnectivityInfoNodeList[index].Info);
+            strcat(gateway_capability, ",");
+        }
+    }
+    strcat(gateway_capability,"\"ver\":1}}");
+    //
     printf("---------------Gateway capability----------------------------\n");
     printf(gateway_capability);
     printf("-------------------------------------------\n");
@@ -750,9 +777,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    printf("[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     //test_link_list();
-                    //UpdateVirtualGatewayDataListNode(json);
-                    //BuildGatewayCapabilityInfo(g_pVirtualGatewayDataListHead);
-#if 1
+                    UpdateVirtualGatewayDataListNode(json);
+                    BuildGatewayCapabilityInfo(g_pVirtualGatewayDataListHead);
+#if 0
                     if ( RegisterGatewayCapability(json) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
