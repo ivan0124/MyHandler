@@ -80,7 +80,7 @@ struct node
     struct node *next;
 };
 
-static struct node* g_pVirtualGatewayDataListHead=NULL;
+struct node* g_pVirtualGatewayDataListHead=NULL;
 
 int DeleteVirtualGatewayDataListNode(char* devID);
 
@@ -265,7 +265,6 @@ int UpdateVirtualGatewayDataListNode(JSONode *json){
 	return -1;
     }
 #endif
-
 
     struct node *n;
     int cnt=0;
@@ -619,6 +618,58 @@ int ParseMQTTMessage(char* ptopic, JSONode *json){
     return res;
 }
 
+int BuildGatewayCapabilityInfo(struct node* head){
+  
+    printf("##################################################################\n");
+#if 1
+    printf("BuildGatewayCapabilityInfo-----------------\n");
+    int i=0;
+    char tmp[1024]={0};
+    char capability[1024]={0};
+    char wsn_capability[2048]={0};
+
+    struct node *r;
+    //DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
+    r=head;
+    if(r==NULL)
+    {
+        return;
+    }
+    while(r!=NULL)
+    {
+	printf("[%s][%s]\n----------------------------------\n", __FILE__, __func__);
+	printf("virtualGatewayDevID:%s\n",r->virtualGatewayDevID);
+	printf("connectivityType:%d\n",r->connectivityType);
+	printf("connectivityDevID:%s\n",r->connectivityDevID);
+	printf("connectivityInfo:%s\n",r->connectivityInfo);
+	printf("----------------------------------\n", __FILE__, __func__);
+        sprintf(tmp,"\"WSN%d\":%s",i, r->connectivityInfo);
+        i++;
+        printf(tmp);
+        strcat(capability,tmp);
+        strcat(capability,",");
+        printf("---------------capability----------------------------\n");
+        printf(capability);
+        printf("-------------------------------------------\n");
+	r=r->next;
+    }
+    printf("\n");
+    sprintf(wsn_capability,"\"WSN\":{%s \"bn\":\"WSN\",\"ver\":1}",capability);
+    printf("---------------WSN capability----------------------------\n");
+    printf(wsn_capability);
+    printf("-------------------------------------------\n");
+    //
+    char gateway_capability[2048]={0};
+    sprintf(gateway_capability,"{\"IoTGW\":{%s,\"ver\":1}}", wsn_capability);
+    printf("---------------Gateway capability----------------------------\n");
+    printf(gateway_capability);
+    printf("-------------------------------------------\n");
+
+#endif
+
+    return 0;
+}
+
 int MqttHal_Message_Process(const struct mosquitto_message *message)
 {
 	char topicType[32];
@@ -650,8 +701,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    printf("[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     //test_link_list();
-                    UpdateVirtualGatewayDataListNode(json);
-#if 0
+                    //UpdateVirtualGatewayDataListNode(json);
+                    //BuildGatewayCapabilityInfo(g_pVirtualGatewayDataListHead);
+#if 1
                     if ( RegisterGatewayCapability(json) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
