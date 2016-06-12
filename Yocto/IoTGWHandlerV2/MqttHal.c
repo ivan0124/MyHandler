@@ -628,6 +628,7 @@ int ParseMQTTMessage(char* ptopic, JSONode *json){
 
 #if 1
 struct connectivityInfoNode{
+    int index;
     char type[MAX_CONNECTIVITY_TYPE_LEN];
     char Info[1024];
 };
@@ -695,12 +696,14 @@ int BuildGatewayCapabilityInfo(struct node* head){
 	printf("connectivityInfo:%s\n",r->connectivityInfo);
 	printf("----------------------------------\n", __FILE__, __func__);
         //WSN0:{Info...}
-        sprintf(tmp,"\"%s%d\":%s",r->connectivityType, i, r->connectivityInfo);
-        i++;
+        //sprintf(tmp,"\"%s%d\":%s",r->connectivityType, i, r->connectivityInfo);
+        //i++;
         printf(tmp);
         index=FindConnectivityInfoNodeListIndex(r->connectivityType);
+        sprintf(tmp,"\"%s%d\":%s",r->connectivityType, g_ConnectivityInfoNodeList[index].index, r->connectivityInfo);
         strcat(g_ConnectivityInfoNodeList[index].Info,tmp);
         strcat(g_ConnectivityInfoNodeList[index].Info,",");
+        g_ConnectivityInfoNodeList[index].index++;
         //strcpy(capability,g_ConnectivityInfoNodeList[index].Info);
         //strcat(capability,tmp);
         //strcat(capability,",");
