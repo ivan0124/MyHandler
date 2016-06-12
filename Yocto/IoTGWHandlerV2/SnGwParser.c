@@ -3,6 +3,8 @@
 #include "IoTGWHandler.h"
 #include "inc/SensorNetwork_Manager_API.h"
 
+extern struct node* g_pVirtualGatewayDataListHead;
+
 int ParseReceivedData(void* data, int datalen, int * cmdID, char *sessionId, int nLenSessionId )
 {
 	/*{"susiCommData":{"commCmd":251,"catalogID":4,"requestID":10}}*/
@@ -69,11 +71,6 @@ int GetUIDType(const char *uid){
     return TYPE_UNKNOWN;
 }
 
-int GetVirtualGatewayUIDUIDfromTopic(const char *topic, char *uid , const int size ){
-    
-    strcpy(uid,"0000000E40ABCDEF");
-    return 0;
-}
 //   topic: /cagent/admin/%s/agentcallbackreq
 int GetSenHubUIDfromTopic(const char *topic, char *uid , const int size )
 {

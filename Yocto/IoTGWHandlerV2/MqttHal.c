@@ -682,7 +682,7 @@ int BuildGatewayCapabilityInfo(struct node* head, char* pResult){
     r=head;
     if(r==NULL)
     {
-        return;
+        return -1;
     }
     while(r!=NULL)
     {
@@ -738,6 +738,51 @@ int BuildGatewayCapabilityInfo(struct node* head, char* pResult){
     return 0;
 }
 
+int GetVirtualGatewayUIDfromData(struct node* head, const char *data, char *uid , const int size ){
+    
+    //printf("[%s] data=%s\n", __func__, data);
+    //strcpy(uid,"0000000E40ABCDEF");
+
+#if 0 
+//sample data to test  
+    char mydata[1024]={"{\"susiCommData\":{\"sessionID\":\"350176BE533B485647559A09C0E9F686\",\"sensorIDList\":{\"e\":[{\"n\":\"IoTGW/WSN/0007000E40ABCDEF/Info/Health\"}]},\"commCmd\":523,\"requestID\":0,\"agentID\":\"\",\"handlerName\":\"IoTGW\",\"sendTS\":1465711233}}"}; 
+
+    JSONode *json = JSON_Parser(mydata);
+#endif
+    JSONode *json = JSON_Parser(data);
+    char nodeContent[MAX_JSON_NODE_SIZE]={0};
+    char connectivity_uid[64]={0};
+    char topic[128]={0};
+
+
+    JSON_Get(json, "[susiCommData][sensorIDList][e][0][n]", nodeContent, sizeof(nodeContent));
+    printf("\n---------------------------------------------------\n");
+    sprintf(topic,"/%s",nodeContent);
+    GetUIDfromTopic(topic, connectivity_uid, sizeof(connectivity_uid));
+    printf("uid = %s\n", connectivity_uid);
+    printf("---------------------------------------------------\n");
+
+    struct node *r;
+
+    r=head;
+    if(r==NULL)
+    {
+        return -1;
+    }
+    while(r!=NULL)
+    {
+        if (strcmp(r->connectivityDevID, connectivity_uid) == 0){
+            strcpy(uid,r->virtualGatewayDevID);
+            return 0;
+        }
+        //
+	r=r->next;
+    }
+    printf("\n");
+    //
+    return -1;
+}
+
 int MqttHal_Message_Process(const struct mosquitto_message *message)
 {
 	char topicType[32];
@@ -774,7 +819,14 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     BuildGatewayCapabilityInfo(g_pVirtualGatewayDataListHead, gateway_capability);
 		    printf("---------------Gateway capability----------------------------\n");
 		    printf(gateway_capability);
-		    printf("-------------------------------------------\n");
+		    printf("\n-------------------------------------------\n");
+#if 0
+                    char gateway_uid[64]={0};
+                    GetVirtualGatewayUIDfromData(g_pVirtualGatewayDataListHead, 0,gateway_uid,sizeof(gateway_uid));
+		    printf("---------------Gateway UID----------------------------\n");
+		    printf(gateway_uid);
+		    printf("\n-------------------------------------------\n");
+#endif
 #if 1
                     if ( RegisterGatewayCapability(gateway_capability, strlen(gateway_capability)) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
