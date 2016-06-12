@@ -255,7 +255,7 @@ void test_link_list(){
 
 int UpdateVirtualGatewayDataListNode(JSONode *json){
 
-#if 1
+#if 0
 //sample message:
 /*
 //Only WSN
@@ -669,7 +669,7 @@ int GetConnectivityInfoTmp(char* pType){
 }
 #endif
 
-int BuildGatewayCapabilityInfo(struct node* head){
+int BuildGatewayCapabilityInfo(struct node* head, char* pResult){
   
     printf("##################################################################\n");
     memset(&g_ConnectivityInfoNodeList,0,sizeof(g_ConnectivityInfoNodeList));
@@ -677,10 +677,8 @@ int BuildGatewayCapabilityInfo(struct node* head){
     int i=0,index=-1;
     char tmp[1024]={0};
     char capability[1024]={0};
-    //char wsn_capability[2048]={0};
-
     struct node *r;
-    //DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
+
     r=head;
     if(r==NULL)
     {
@@ -706,7 +704,7 @@ int BuildGatewayCapabilityInfo(struct node* head){
     }
     printf("\n");
 
-    //Pack connectivity capability 
+    //Pack all connectivity type capability 
     int max=sizeof(cType)/sizeof(char*);
     for(i=0; i < max ; i++){
         index=FindConnectivityInfoNodeListIndex(cType[i]);
@@ -724,23 +722,19 @@ int BuildGatewayCapabilityInfo(struct node* head){
         }
     }
     //Pack gateway capability
-    char gateway_capability[2048]={0};
+    //char gateway_capability[2048]={0};
     max=sizeof(cType)/sizeof(char*);
-    strcpy(gateway_capability,"{\"IoTGW\":{");
+    strcpy(pResult,"{\"IoTGW\":{");
     for(i=0; i < max ; i++){
         index=FindConnectivityInfoNodeListIndex(cType[i]);
         if (strlen(g_ConnectivityInfoNodeList[index].Info) != 0 ){
             //sprintf(gateway_capability,"{\"IoTGW\":{%s,\"ver\":1}}", g_ConnectivityInfoNodeList[0].Info);
-            strcat(gateway_capability, g_ConnectivityInfoNodeList[index].Info);
-            strcat(gateway_capability, ",");
+            strcat(pResult, g_ConnectivityInfoNodeList[index].Info);
+            strcat(pResult, ",");
         }
     }
-    strcat(gateway_capability,"\"ver\":1}}");
+    strcat(pResult,"\"ver\":1}}");
     //
-    printf("---------------Gateway capability----------------------------\n");
-    printf(gateway_capability);
-    printf("-------------------------------------------\n");
-
     return 0;
 }
 
@@ -776,9 +770,13 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     //test_link_list();
                     UpdateVirtualGatewayDataListNode(json);
-                    BuildGatewayCapabilityInfo(g_pVirtualGatewayDataListHead);
-#if 0
-                    if ( RegisterGatewayCapability(json) < 0){
+                    char gateway_capability[2048]={0};
+                    BuildGatewayCapabilityInfo(g_pVirtualGatewayDataListHead, gateway_capability);
+		    printf("---------------Gateway capability----------------------------\n");
+		    printf(gateway_capability);
+		    printf("-------------------------------------------\n");
+#if 1
+                    if ( RegisterGatewayCapability(gateway_capability, strlen(gateway_capability)) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;

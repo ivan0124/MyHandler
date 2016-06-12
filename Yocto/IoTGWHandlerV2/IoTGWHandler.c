@@ -1050,20 +1050,12 @@ Exit_ProcSet:
 	return rc;
 }
 
-int RegisterGatewayCapability(JSONode *json){
+int RegisterGatewayCapability(char* pCapability, int iCapabilitySize){
 #if 0
 char Capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"WSN\":{\"WSN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"WSN0\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD02\",\"ver\":1},\"WSN1\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"WSN0\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD01\",\"ver\":1}, \"bn\":\"WSN\",\"ver\":1},\"ver\":1}}"};
      g_sendinfospeccbf( &g_PluginInfo, Capability, strlen(Capability), NULL, NULL);
 #else
-     char nodeContent[MAX_JSON_NODE_SIZE]={0};
-
-     JSON_Get(json, OBJ_INFO_SPEC, nodeContent, sizeof(nodeContent));
-     if(strcmp(nodeContent, "NULL") == 0){
-         return -1;
-     }
-         
-     //printf(nodeContent);
-     g_sendinfospeccbf( &g_PluginInfo, nodeContent, strlen(nodeContent)+1, NULL, NULL);
+     g_sendinfospeccbf( &g_PluginInfo, pCapability, iCapabilitySize, NULL, NULL);
 #endif
 
     return 0;
@@ -1087,6 +1079,15 @@ char ConnectivityInfo[1024]={"{\"IoTGW\":{\"WSN\":{\"WSN0\":{\"Info\":{\"e\":[{\
 char ConnectivityInfo2[1024]={"{\"IoTGW\":{\"WSN\":{\"WSN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"0017000E40000000\"},{\"n\":\"Neighbor\",\"sv\":\"0017000E40000000\"},{\"n\":\"Name\",\"sv\":\"WSN0\"},{\"n\":\"Health\",\"v\":\"100.000000\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\"},{\"n\":\"reset\",\"bv\":\"0\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD02\",\"ver\":1},\"bn\":\"WSN\"},\"ver\":1}}"};
 
     UpdateInterfaceData(ConnectivityInfo2, strlen(ConnectivityInfo2));
+
+char ConnectivityInfo3[1024]={"{\"IoTGW\":{\"BLE\":{\"BLE0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"0017000E40000000\"},{\"n\":\"Neighbor\",\"sv\":\"0017000E40000000\"},{\"n\":\"Name\",\"sv\":\"WSN0\"},{\"n\":\"Health\",\"v\":\"100.000000\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\"},{\"n\":\"reset\",\"bv\":\"0\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD05\",\"ver\":1},\"bn\":\"BLE\"},\"ver\":1}}"};
+
+    UpdateInterfaceData(ConnectivityInfo3, strlen(ConnectivityInfo3));
+
+char ConnectivityInfo4[1024]={"{\"IoTGW\":{\"BLE\":{\"BLE0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"0017000E40000000\"},{\"n\":\"Neighbor\",\"sv\":\"0017000E40000000\"},{\"n\":\"Name\",\"sv\":\"WSN0\"},{\"n\":\"Health\",\"v\":\"100.000000\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\"},{\"n\":\"reset\",\"bv\":\"0\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD06\",\"ver\":1},\"bn\":\"BLE\"},\"ver\":1}}"};
+
+    UpdateInterfaceData(ConnectivityInfo4, strlen(ConnectivityInfo4));
+    return 0;
 
 #else
     //printf(nodeContent);
