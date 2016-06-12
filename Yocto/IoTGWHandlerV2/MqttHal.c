@@ -626,7 +626,7 @@ int ParseMQTTMessage(char* ptopic, JSONode *json){
     return res;
 }
 
-#if 1
+
 struct connectivityInfoNode{
     int index;
     char type[MAX_CONNECTIVITY_TYPE_LEN];
@@ -653,6 +653,7 @@ int FindConnectivityInfoNodeListIndex(char* pType){
     return -1;
 }
 
+#if 0
 int GetConnectivityInfoTmp(char* pType){
    
     int i=0;
@@ -672,13 +673,11 @@ int BuildGatewayCapabilityInfo(struct node* head){
   
     printf("##################################################################\n");
     memset(&g_ConnectivityInfoNodeList,0,sizeof(g_ConnectivityInfoNodeList));
-    //GetConnectivityInfoTmp("WSN");
-#if 1
     printf("BuildGatewayCapabilityInfo-----------------\n");
     int i=0,index=-1;
     char tmp[1024]={0};
     char capability[1024]={0};
-    char wsn_capability[2048]={0};
+    //char wsn_capability[2048]={0};
 
     struct node *r;
     //DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
@@ -697,19 +696,12 @@ int BuildGatewayCapabilityInfo(struct node* head){
 	printf("----------------------------------\n", __FILE__, __func__);
         //WSN0:{Info...}
         //sprintf(tmp,"\"%s%d\":%s",r->connectivityType, i, r->connectivityInfo);
-        //i++;
-        printf(tmp);
         index=FindConnectivityInfoNodeListIndex(r->connectivityType);
         sprintf(tmp,"\"%s%d\":%s",r->connectivityType, g_ConnectivityInfoNodeList[index].index, r->connectivityInfo);
         strcat(g_ConnectivityInfoNodeList[index].Info,tmp);
         strcat(g_ConnectivityInfoNodeList[index].Info,",");
         g_ConnectivityInfoNodeList[index].index++;
-        //strcpy(capability,g_ConnectivityInfoNodeList[index].Info);
-        //strcat(capability,tmp);
-        //strcat(capability,",");
-        //printf("---------------capability----------------------------\n");
-        //printf(capability);
-        //printf("-------------------------------------------\n");
+        //
 	r=r->next;
     }
     printf("\n");
@@ -720,15 +712,13 @@ int BuildGatewayCapabilityInfo(struct node* head){
         index=FindConnectivityInfoNodeListIndex(cType[i]);
         if (strlen(g_ConnectivityInfoNodeList[index].Info) != 0 ){
             //sprintf(wsn_capability,"\"WSN\":{%s\"bn\":\"WSN\",\"ver\":1}",g_ConnectivityInfoNodeList[index].Info);
-#if 1
-            sprintf(wsn_capability,"\"%s\":{",cType[i]);
-            strcat(wsn_capability,g_ConnectivityInfoNodeList[index].Info);
+            sprintf(capability,"\"%s\":{",cType[i]);
+            strcat(capability,g_ConnectivityInfoNodeList[index].Info);
             sprintf(tmp,"\"bn\":\"%s\",",g_ConnectivityInfoNodeList[index].type);
-            strcat(wsn_capability,tmp);
-            strcat(wsn_capability, "\"ver\":1}");
-            strcpy(g_ConnectivityInfoNodeList[index].Info,wsn_capability);
-#endif
-            printf("---------------WSN capability(max=%d)----------------------------\n", max);
+            strcat(capability,tmp);
+            strcat(capability, "\"ver\":1}");
+            strcpy(g_ConnectivityInfoNodeList[index].Info,capability);
+            printf("---------------%s capability----------------------------\n", g_ConnectivityInfoNodeList[index].type);
             printf(g_ConnectivityInfoNodeList[index].Info);
             printf("-------------------------------------------\n");
         }
@@ -750,8 +740,6 @@ int BuildGatewayCapabilityInfo(struct node* head){
     printf("---------------Gateway capability----------------------------\n");
     printf(gateway_capability);
     printf("-------------------------------------------\n");
-
-#endif
 
     return 0;
 }
