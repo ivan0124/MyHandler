@@ -177,6 +177,39 @@ int DeleteVirtualGatewayDataListNode(char* devID)
     return 0;
 }
 
+int DeleteDataListNodeByGatewayUID(char* devID)
+{
+    struct node *temp, *prev;
+    temp=g_pVirtualGatewayDataListHead;
+    while(temp!=NULL)
+    {
+    if( strcmp(temp->virtualGatewayDevID,devID) == 0 )
+    {
+        if(temp==g_pVirtualGatewayDataListHead)
+        {
+        g_pVirtualGatewayDataListHead=temp->next;
+        free(temp->connectivityInfo);
+        free(temp);
+        return 1;
+        }
+        else
+        {
+        prev->next=temp->next;
+        free(temp->connectivityInfo);
+        free(temp);
+        return 1;
+        }
+    }
+    else
+    {
+        prev=temp;
+        temp= temp->next;
+    }
+    }
+
+    return 0;
+}
+
 int GetJSONValue(JSONode *json, char* pPath, char* pResult){
 	
     char nodeContent[MAX_JSON_NODE_SIZE]={0};
@@ -771,6 +804,8 @@ int BuildGatewayCapabilityInfo(struct node* head, char* pResult){
     r=head;
     if(r==NULL)
     {
+        printf("[%s][%s] node list is null\n",__FILE__, __func__);
+        strcpy(pResult, "{\"IoTGW\":{}}");
         return -1;
     }
     while(r!=NULL)
@@ -1105,6 +1140,17 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 if ( GetUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
                     printf("found virtual gateway device ID\n");
                     DisconnectSensorHubInVirtualGateway(g_pVirtualGatewayDataListHead, DeviceUID);
+                    DeleteDataListNodeByGatewayUID(DeviceUID);
+                    char gateway_capability[2048]={0};
+                    BuildGatewayCapabilityInfo(g_pVirtualGatewayDataListHead, gateway_capability);
+		    printf("---------------Gateway capability----------------------------\n");
+		    printf(gateway_capability);
+		    printf("\n-------------------------------------------\n");
+                    if ( RegisterGatewayCapability(gateway_capability, strlen(gateway_capability)) < 0){
+                        printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
+                        JSON_Destory(&json);
+                        return -1;
+                    }
                 }
                 else{
                     DisconnectSensorHub(DeviceUID);
