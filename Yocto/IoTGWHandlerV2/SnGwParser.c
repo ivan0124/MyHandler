@@ -3,8 +3,6 @@
 #include "IoTGWHandler.h"
 #include "inc/SensorNetwork_Manager_API.h"
 
-extern struct node* g_pVirtualGatewayDataListHead;
-
 int ParseReceivedData(void* data, int datalen, int * cmdID, char *sessionId, int nLenSessionId )
 {
 	/*{"susiCommData":{"commCmd":251,"catalogID":4,"requestID":10}}*/
