@@ -74,7 +74,7 @@ typedef enum{
 int ParseReceivedData(void* data, int datalen, int * cmdID, char *sessionId, int nLenSessionId );
 
 //
-int GetUIDType(const char *topic);
+//int GetUIDType(const char *topic);
 // Sensor Hub
 int GetUIDfromTopic(const char *topic, char *uid , const int size );
 //int GetVirtualGatewayUIDfromData(const char *data, char *uid , const int size );

@@ -62,15 +62,6 @@ int GetUIDfromTopic(const char *ptopic, char *uid , const int size )
     return 0;
 }
 
-int GetUIDType(const char *uid){
-
-    if ( strcmp(uid, "0000000E40ABCDEF") == 0 ){
-        return TYPE_VIRTUAL_GATEWAY;
-    }
-
-    return TYPE_UNKNOWN;
-}
-
 //   topic: /cagent/admin/%s/agentcallbackreq
 int GetSenHubUIDfromTopic(const char *topic, char *uid , const int size )
 {

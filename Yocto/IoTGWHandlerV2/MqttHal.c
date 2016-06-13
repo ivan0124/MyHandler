@@ -783,6 +783,34 @@ int GetVirtualGatewayUIDfromData(struct node* head, const char *data, char *uid 
     return -1;
 }
 
+int GetUIDType(struct node* head, const char *uid){
+
+#if 0
+    if ( strcmp(uid, "0000000E40ABCDEF") == 0 ){
+        return TYPE_VIRTUAL_GATEWAY;
+    }
+#endif
+
+    struct node *r;
+
+    r=head;
+    if(r==NULL)
+    {
+        return TYPE_UNKNOWN;
+    }
+
+    while(r!=NULL)
+    {
+        if (strcmp(r->virtualGatewayDevID, uid) == 0){
+            return TYPE_VIRTUAL_GATEWAY;
+        }
+        //
+	r=r->next;
+    }
+ 
+    return TYPE_UNKNOWN;
+}
+
 int MqttHal_Message_Process(const struct mosquitto_message *message)
 {
 	char topicType[32];
@@ -877,8 +905,8 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    }
                     printf("DeviceUID = %s\n", DeviceUID);
 #if 1
-                    if ( GetUIDType(DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
-                        printf("found 0000000E40ABCDEF connectivity mac\n");
+                    if ( GetUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
+                        printf("found virtual gateway device ID\n");
                         ReplyGatewayGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY);
                         return 0;
                     }
@@ -906,7 +934,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    }
                     printf("DeviceUID = %s\n", DeviceUID);
 #if 1
-                    if ( GetUIDType(DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
+                    if ( GetUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
                         printf("found 0000000E40ABCDEF connectivity mac\n");
                         ReplyGatewayGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY);
                         return 0;
