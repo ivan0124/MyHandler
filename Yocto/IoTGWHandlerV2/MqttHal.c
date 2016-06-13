@@ -1137,10 +1137,13 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 char DeviceUID[64]={0};
                 GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID));
                 printf("DeviceUID = %s\n", DeviceUID);
+
+                //
                 if ( GetUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
                     printf("found virtual gateway device ID\n");
                     DisconnectSensorHubInVirtualGateway(g_pVirtualGatewayDataListHead, DeviceUID);
                     DeleteDataListNodeByGatewayUID(DeviceUID);
+                    //
                     char gateway_capability[2048]={0};
                     BuildGatewayCapabilityInfo(g_pVirtualGatewayDataListHead, gateway_capability);
 		    printf("---------------Gateway capability----------------------------\n");
