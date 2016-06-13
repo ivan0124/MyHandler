@@ -913,7 +913,14 @@ int DisconnectSensorHubInVirtualGateway(struct node* head, char* VirtualGatewayU
     while(r!=NULL)
     {
         if (strcmp(r->virtualGatewayDevID, VirtualGatewayUID) == 0){
-            //DisconnectSensorHub(DeviceUID);
+            char tmp[1024]={0};
+            strcpy(tmp,r->connectivitySensorHubList);
+	    char *SensorHubUID = strtok(tmp, ",");
+	    while(SensorHubUID != NULL)
+	    {
+                DisconnectSensorHub(SensorHubUID);
+		SensorHubUID = strtok(NULL, ",");
+	    }
         }
         //
 	r=r->next;
@@ -1092,30 +1099,12 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		// CmdID=2003
 		printf("[%s][%s] Receive messages from will topic!!\n", __FILE__, __func__);
                 printf("topic = %s\n", message->topic);
-#if 0
-		char macAddr[MAX_MACADDRESS_LEN];
-		//JSON_Print(json);
-		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-		JSON_Get(json, OBJ_DEVICE_MAC, nodeContent, sizeof(nodeContent));
-		memset(macAddr, 0, MAX_MACADDRESS_LEN);
-		sprintf(macAddr, "0017%s" , nodeContent);
-		//printf("%s: mac=%s!!\n", __func__, macAddr);
-		pshinfo = (senhub_info_t *)senhub_list_find_by_mac(g_SensorHubList, macAddr);
-		if(NULL != pshinfo) {
-			g_doUpdateInterface = 1;
-			SensorHub_DisConn(pshinfo);
-			//printf("%s: id=%d!!\n", __func__, pshinfo->id);
-			g_SensorHubList = SENHUB_LIST_RM(g_SensorHubList, pshinfo->id, &pshinfo);
-			free(pshinfo);
-		}
-#endif
                 char DeviceUID[64]={0};
                 GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID));
                 printf("DeviceUID = %s\n", DeviceUID);
                 if ( GetUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
                     printf("found virtual gateway device ID\n");
-                    //ReplyGatewayGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY);
-                    //return 0;
+                    DisconnectSensorHubInVirtualGateway(g_pVirtualGatewayDataListHead, DeviceUID);
                 }
                 else{
                     DisconnectSensorHub(DeviceUID);
