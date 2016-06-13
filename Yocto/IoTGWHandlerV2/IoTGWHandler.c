@@ -1185,13 +1185,19 @@ int RegisterSensorHubCapability(char* ptopic, JSONode *json){
     return 0;
 }
 
-int DisconnectSensorHub()
+int DisconnectSensorHub(char* SensorHubUID)
 {
         printf("[ivan] DisconnectSensorHub ==================>\n");
 	int rc = 0;
-
+        int index=-1;
+        //
+	if( ( index = GetSenHubAgentInfobyUID(&g_SenHubAgentInfo, MAX_SENNODES, SensorHubUID) ) == -1 ) {
+		PRINTF("[%s][%s] Can't find SenHub UID in Table =%s\r\n",__FILE__, __func__, SensorHubUID );
+		return -1;
+	}
+        //
         Handler_info *pHandler_info = NULL;
-        pHandler_info = &g_SenPluginInfo[1];
+        pHandler_info = &g_SenPluginInfo[index];
 	pHandler_info->agentInfo->status = 0;
 	rc = SenHubDisconnectWISECloud( pHandler_info );
 	return rc;

@@ -811,6 +811,28 @@ int GetUIDType(struct node* head, const char *uid){
     return TYPE_UNKNOWN;
 }
 
+int DisconnectSensorHubInVirtualGateway(struct node* head, char* VirtualGatewayUID){
+
+    struct node *r;
+
+    r=head;
+    if(r==NULL)
+    {
+        return -1;
+    }
+
+    while(r!=NULL)
+    {
+        if (strcmp(r->virtualGatewayDevID, VirtualGatewayUID) == 0){
+            //DisconnectSensorHub(DeviceUID);
+        }
+        //
+	r=r->next;
+    }
+
+    return 0;
+}
+
 int MqttHal_Message_Process(const struct mosquitto_message *message)
 {
 	char topicType[32];
@@ -848,13 +870,6 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    printf("---------------Gateway capability----------------------------\n");
 		    printf(gateway_capability);
 		    printf("\n-------------------------------------------\n");
-#if 0
-                    char gateway_uid[64]={0};
-                    GetVirtualGatewayUIDfromData(g_pVirtualGatewayDataListHead, 0,gateway_uid,sizeof(gateway_uid));
-		    printf("---------------Gateway UID----------------------------\n");
-		    printf(gateway_uid);
-		    printf("\n-------------------------------------------\n");
-#endif
 #if 1
                     if ( RegisterGatewayCapability(gateway_capability, strlen(gateway_capability)) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
@@ -1004,16 +1019,17 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 			free(pshinfo);
 		}
 #endif
-                senhub_info_t shinfo={0};
-                memset(&shinfo, 0, sizeof(senhub_info_t));
-                strcpy(shinfo.devID, "0017000E40000001");
-                strcpy(shinfo.macAddress,"0017000E40000001");
-                strcpy(shinfo.sn,"0017000E40000001");
-                strcpy(shinfo.hostName,"AAA");
-                strcpy(shinfo.productName,"WISE-1020");
-                strcpy(shinfo.version,"3.1.2");
-
-                DisconnectSensorHub();
+                char DeviceUID[64]={0};
+                GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID));
+                printf("DeviceUID = %s\n", DeviceUID);
+                if ( GetUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
+                    printf("found virtual gateway device ID\n");
+                    //ReplyGatewayGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY);
+                    //return 0;
+                }
+                else{
+                    DisconnectSensorHub(DeviceUID);
+                }
 	}
 	
 	// CmdID=1000
