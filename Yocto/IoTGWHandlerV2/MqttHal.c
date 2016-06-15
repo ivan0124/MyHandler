@@ -430,7 +430,7 @@ int UpdateVirtualGatewayDataListNode(JSONode *json){
     }
 
     FindJSONLayerName(json,0,10);
-#else
+#endif
 
     struct node *n;
     int cnt=0;
@@ -486,7 +486,6 @@ int UpdateVirtualGatewayDataListNode(JSONode *json){
             i++;
         }
     }
-#endif
 
     return 0;
 }
