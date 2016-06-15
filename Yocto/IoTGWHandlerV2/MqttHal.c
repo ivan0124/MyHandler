@@ -375,6 +375,41 @@ void test_link_list(){
     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
 }
 
+#define FIND_DEPTH 10
+
+int FindJSONLayerName(JSONode *json, int depth, int find_depth) {
+	int i = 0;
+	depth++;
+	
+	JSONode *head = json->next;
+	if(head != NULL) {
+		if(head->type == JSON_TYPE_VOID) {
+			//PLVoid(head, depth);
+		} else {
+
+			depth++; 
+			//FindJSONLayerName(head->key, depth, DEPTH);
+			if (depth == find_depth ){
+		            printf("(STRING)%.*s\n", head->key->len, head->key->s);
+			}
+			FindJSONLayerName(head->value, depth, find_depth);
+			head = head->next;
+				
+			while(head != NULL) {
+				depth--;
+				depth++;
+				//FindJSONLayerName(head->key, depth, DEPTH);
+				if (depth == find_depth ){
+				    printf("(STRING)%.*s\n", head->key->len, head->key->s);
+				}
+				FindJSONLayerName(head->value, depth, find_depth);
+				head = head->next;
+			}
+		}
+	}
+	return depth;
+}
+
 int UpdateVirtualGatewayDataListNode(JSONode *json){
 
 #if 0
