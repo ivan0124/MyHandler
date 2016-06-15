@@ -375,12 +375,10 @@ void test_link_list(){
     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
 }
 
-#define FIND_DEPTH 10
-
 int FindJSONLayerName(JSONode *json, int depth, int find_depth) {
 	int i = 0;
 	depth++;
-	
+
 	JSONode *head = json->next;
 	if(head != NULL) {
 		if(head->type == JSON_TYPE_VOID) {
@@ -430,7 +428,9 @@ int UpdateVirtualGatewayDataListNode(JSONode *json){
         printf("json parse err!\n");
 	return -1;
     }
-#endif
+
+    FindJSONLayerName(json,0,10);
+#else
 
     struct node *n;
     int cnt=0;
@@ -481,13 +481,12 @@ int UpdateVirtualGatewayDataListNode(JSONode *json){
             AddVirtualGatewayDataListNode(virtualGatewayDevID,cType[j],connectivityDevID,connectivityInfo, strlen(connectivityInfo));
             cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
             printf("count = %d\n", cnt);
-#if 1
+            //
             DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
-#endif
             i++;
         }
     }
-
+#endif
 
     return 0;
 }
