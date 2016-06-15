@@ -73,6 +73,8 @@ char g_connectivity_capability[1024]={0};
 /******************************************************/
 char* cType[]={"WSN",
                "BLE"};
+char g_json_path[1024]={0};
+char g_connType[64]={0};
 
 struct node
 {
@@ -222,6 +224,46 @@ int GetJSONValue(JSONode *json, char* pPath, char* pResult){
     }
     strcpy(pResult,nodeContent);
     return 0;
+}
+
+int FindJSONLayerNameS(JSONode *json_root, JSONode *json, int depth, int find_depth) {
+	
+        int i = 0;
+        char nodeContent[1024]={0};
+        char json_path[256]={0};
+	depth++;
+
+	JSONode *head = json->next;
+	if(head != NULL) {
+		if(head->type == JSON_TYPE_VOID) {
+			//PLVoid(head, depth);
+		} else {
+
+			depth++; 
+			//FindJSONLayerName(head->key, depth, DEPTH);
+			if ( (depth == 8 || depth == 10) &&
+                              head->value->type == JSON_TYPE_OBJECT ){
+		            printf("(STRING0)%.*s, value type = %d,(depth=%d)\n", head->key->len, head->key->s, head->value->type, depth);
+                            //
+			}
+			FindJSONLayerNameS(json_root, head->value, depth, find_depth);
+			head = head->next;
+				
+			while(head != NULL) {
+				depth--;
+				depth++;
+				//FindJSONLayerName(head->key, depth, DEPTH);
+				if ( (depth == 8 || depth == 10) &&
+                                      head->value->type == JSON_TYPE_OBJECT ){
+		                    printf("(STRING1)%.*s, value type = %d,(depth=%d)\n", head->key->len, head->key->s, head->value->type, depth);
+                                    //
+				}
+				FindJSONLayerNameS(json_root, head->value, depth, find_depth);
+				head = head->next;
+			}
+		}
+	}
+	return depth;
 }
 
 void UpdateConnectivitySensorHubListNode(JSONode *json)
@@ -375,9 +417,6 @@ void test_link_list(){
     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
 }
 
-char g_json_path[1024]={0};
-char g_connType[64]={0};
-
 int StoreVirtualGatewayDataListNode(JSONode *json, char* json_path){
  
     struct node *n;
@@ -523,62 +562,6 @@ int UpdateVirtualGatewayDataListNode(JSONode *json){
     memset(g_json_path,0,sizeof(g_json_path)); 
     FindJSONLayerName(json,json,0,8);
 
-#if 0
-    struct node *n;
-    int cnt=0;
-    int i=0, j=0;
-    char connectivity_type[256]={0};
-    char connectivity_base_name[256]={0};
-    char nodeContent[MAX_JSON_NODE_SIZE]={0};
-    char virtualGatewayDevID[MAX_DEVICE_ID_LEN]={0};
-    char connectivityInfo[MAX_JSON_NODE_SIZE]={0};
-    char connectivityDevID[MAX_DEVICE_ID_LEN]={0};
-
-    JSON_Get(json, OBJ_AGENT_ID, nodeContent, sizeof(nodeContent));
-    if(strcmp(nodeContent, "NULL") == 0){
-        return -1;
-    }
-    strcpy(virtualGatewayDevID,nodeContent);
-
-    //
-    printf("sizeof(cType)=%d, sizeof(char*)=%d\n", sizeof(cType), sizeof(char*));
-    for (j=0; j < sizeof(cType)/sizeof(char*); j++){
-        i=0;
-        while(1){
-            //Get connectivity Info
-            sprintf(connectivity_type,"[susiCommData][infoSpec][IoTGW][%s][%s%d]",cType[j],cType[j],i);
-
-            memset(nodeContent,0,sizeof(nodeContent));
-            JSON_Get(json, connectivity_type, nodeContent, sizeof(nodeContent));
-            if(strcmp(nodeContent, "NULL") == 0){
-                break;;
-            }
-            strcpy(connectivityInfo,nodeContent);
-        
-            //Get connectivity device ID
-            sprintf(connectivity_base_name,"[susiCommData][infoSpec][IoTGW][%s][%s%d][bn]",cType[j],cType[j],i);
-            memset(nodeContent,0,sizeof(nodeContent));
-            JSON_Get(json, connectivity_base_name, nodeContent, sizeof(nodeContent));
-            if(strcmp(nodeContent, "NULL") == 0){
-                break;;
-            }
-            strcpy(connectivityDevID,nodeContent);
-            //
-            printf("********************************************\n");
-            printf("virtualGateway DevID: "); printf(virtualGatewayDevID); printf("\n");
-            printf("connectivity Info: "); printf(connectivityInfo); printf("\n");
-            printf("connectivity DevID: "); printf(connectivityDevID);
-            printf("\n********************************************\n");
-            //Add Node
-            AddVirtualGatewayDataListNode(virtualGatewayDevID,cType[j],connectivityDevID,connectivityInfo, strlen(connectivityInfo));
-            cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
-            printf("count = %d\n", cnt);
-            //
-            DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
-            i++;
-        }
-    }
-#endif
     return 0;
 }
 /******************************************************/
