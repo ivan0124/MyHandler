@@ -375,7 +375,8 @@ void test_link_list(){
     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
 }
 
-char g_json_path[1024]={0}; 
+char g_json_path[1024]={0};
+char g_connType[64]={0};
 
 int StoreVirtualGatewayDataListNode(JSONode *json, char* json_path){
  
@@ -392,37 +393,33 @@ int StoreVirtualGatewayDataListNode(JSONode *json, char* json_path){
     if ( GetJSONValue(json, OBJ_AGENT_ID, virtualGatewayDevID) < 0){
         return -1;
     }
-    //strcpy(virtualGatewayDevID,nodeContent);
+    
+    //Get connectivity Info
+    memset(connectivityInfo,0,sizeof(connectivityInfo));
+    if ( GetJSONValue(json, json_path, connectivityInfo) < 0){
+        return -1;
+    }
+            
+    //Get connectivity device ID
+    sprintf(connectivity_base_name,"%s[bn]",json_path);
+    memset(connectivityDevID,0,sizeof(connectivityDevID));
+    if ( GetJSONValue(json, connectivity_base_name, connectivityDevID) < 0){
+        return -1;
+    }
+    //
+    printf("********************************************\n");
+    printf("virtualGateway DevID: "); printf(virtualGatewayDevID); printf("\n");
+    printf("connectivity Info: "); printf(connectivityInfo); printf("\n");
+    printf("connectivity DevID: "); printf(connectivityDevID);
+    printf("\n********************************************\n");
 
-
-            //Get connectivity Info
-            memset(connectivityInfo,0,sizeof(connectivityInfo));
-            if ( GetJSONValue(json, json_path, connectivityInfo) < 0){
-	        return -1;
-	    }
-            //strcpy(connectivityInfo,nodeContent);
-        
-            //Get connectivity device ID
-            sprintf(connectivity_base_name,"%s[bn]",json_path);
-            memset(connectivityDevID,0,sizeof(connectivityDevID));
-            if ( GetJSONValue(json, connectivity_base_name, connectivityDevID) < 0){
-	        return -1;
-	    }
-            //strcpy(connectivityDevID,nodeContent);
-            //
-            printf("********************************************\n");
-            printf("virtualGateway DevID: "); printf(virtualGatewayDevID); printf("\n");
-            printf("connectivity Info: "); printf(connectivityInfo); printf("\n");
-            printf("connectivity DevID: "); printf(connectivityDevID);
-            printf("\n********************************************\n");
-
-            //Add Node
-            AddVirtualGatewayDataListNode(virtualGatewayDevID,"WSN",connectivityDevID,connectivityInfo, strlen(connectivityInfo));
+    //Add Node
+    AddVirtualGatewayDataListNode(virtualGatewayDevID,g_connType,connectivityDevID,connectivityInfo, strlen(connectivityInfo));
 #if 0
-            cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
-            printf("count = %d\n", cnt);
-            //
-            DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
+    cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
+    printf("count = %d\n", cnt);
+    //
+    DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
 #endif
     return 0;
 }
@@ -448,6 +445,8 @@ int FindJSONLayerName(JSONode *json_root, JSONode *json, int depth, int find_dep
                             //
                             if (depth == 8){
                                 sprintf(g_json_path,"[susiCommData][infoSpec][IoTGW][%.*s]",head->key->len,head->key->s);
+                                sprintf(g_connType,"%.*s",head->key->len,head->key->s);
+                                printf(g_connType);
                                 printf(g_json_path);printf("\n");
                             }
 
@@ -475,6 +474,8 @@ int FindJSONLayerName(JSONode *json_root, JSONode *json, int depth, int find_dep
                                     //
 				    if (depth == 8){
 				        sprintf(g_json_path,"[susiCommData][infoSpec][IoTGW][%.*s]",head->key->len,head->key->s);
+					sprintf(g_connType,"%.*s",head->key->len,head->key->s);
+					printf(g_connType);
 					printf(g_json_path);printf("\n");
 				    }
 	
@@ -499,7 +500,7 @@ int FindJSONLayerName(JSONode *json_root, JSONode *json, int depth, int find_dep
 
 int UpdateVirtualGatewayDataListNode(JSONode *json){
 
-#if 1
+#if 0
 //sample message:
 /*
 //Only WSN
@@ -517,11 +518,12 @@ int UpdateVirtualGatewayDataListNode(JSONode *json){
         printf("json parse err!\n");
 	return -1;
     }
-    //memset(g_json_path,0,sizeof(g_json_path)); 
-    //FindJSONLayerName(json,json,0,8);
 #endif
 
-#if 1
+    memset(g_json_path,0,sizeof(g_json_path)); 
+    FindJSONLayerName(json,json,0,8);
+
+#if 0
     struct node *n;
     int cnt=0;
     int i=0, j=0;
@@ -945,6 +947,7 @@ int BuildGatewayCapabilityInfo(struct node* head, char* pResult){
         sprintf(tmp,"\"%s%d\":%s",r->connectivityType, g_ConnectivityInfoNodeList[index].index, r->connectivityInfo);
         strcat(g_ConnectivityInfoNodeList[index].Info,tmp);
         strcat(g_ConnectivityInfoNodeList[index].Info,",");
+        strcpy(g_ConnectivityInfoNodeList[index].type,r->connectivityType);
         g_ConnectivityInfoNodeList[index].index++;
         //
 	r=r->next;
@@ -952,31 +955,28 @@ int BuildGatewayCapabilityInfo(struct node* head, char* pResult){
     printf("\n");
 
     //Pack all connectivity type capability 
-    int max=sizeof(cType)/sizeof(char*);
+    int max=sizeof(g_ConnectivityInfoNodeList)/sizeof(struct connectivityInfoNode);
     for(i=0; i < max ; i++){
-        index=FindConnectivityInfoNodeListIndex(cType[i]);
-        if (strlen(g_ConnectivityInfoNodeList[index].Info) != 0 ){
+        //index=FindConnectivityInfoNodeListIndex(cType[i]);
+        if (strlen(g_ConnectivityInfoNodeList[i].Info) != 0 ){
             //sprintf(wsn_capability,"\"WSN\":{%s\"bn\":\"WSN\",\"ver\":1}",g_ConnectivityInfoNodeList[index].Info);
-            sprintf(capability,"\"%s\":{",cType[i]);
-            strcat(capability,g_ConnectivityInfoNodeList[index].Info);
-            sprintf(tmp,"\"bn\":\"%s\",",g_ConnectivityInfoNodeList[index].type);
+            sprintf(capability,"\"%s\":{",g_ConnectivityInfoNodeList[i].type);
+            strcat(capability,g_ConnectivityInfoNodeList[i].Info);
+            sprintf(tmp,"\"bn\":\"%s\",",g_ConnectivityInfoNodeList[i].type);
             strcat(capability,tmp);
             strcat(capability, "\"ver\":1}");
-            strcpy(g_ConnectivityInfoNodeList[index].Info,capability);
-            printf("---------------%s capability----------------------------\n", g_ConnectivityInfoNodeList[index].type);
-            printf(g_ConnectivityInfoNodeList[index].Info);
+            strcpy(g_ConnectivityInfoNodeList[i].Info,capability);
+            printf("---------------%s capability----------------------------\n", g_ConnectivityInfoNodeList[i].type);
+            printf(g_ConnectivityInfoNodeList[i].Info);
             printf("-------------------------------------------\n");
         }
     }
     //Pack gateway capability
-    //char gateway_capability[2048]={0};
-    max=sizeof(cType)/sizeof(char*);
     strcpy(pResult,"{\"IoTGW\":{");
     for(i=0; i < max ; i++){
-        index=FindConnectivityInfoNodeListIndex(cType[i]);
-        if (strlen(g_ConnectivityInfoNodeList[index].Info) != 0 ){
+        if (strlen(g_ConnectivityInfoNodeList[i].Info) != 0 ){
             //sprintf(gateway_capability,"{\"IoTGW\":{%s,\"ver\":1}}", g_ConnectivityInfoNodeList[0].Info);
-            strcat(pResult, g_ConnectivityInfoNodeList[index].Info);
+            strcat(pResult, g_ConnectivityInfoNodeList[i].Info);
             strcat(pResult, ",");
         }
     }
