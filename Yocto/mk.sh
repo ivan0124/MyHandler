@@ -7,7 +7,7 @@ if [ "$1" == "v1" ] ; then
     cd ~ivan/CAgentIoT/Modules/IoTGWHandler/
     make
     echo "build IoTGWHandler done"
-    cp ./IoTSensorHandler.so.3.1.30.5434 ~ivan/CAgentIoT/Release/AgentService/module/IoTSensorHandlerV2.so.3.1.30.5434
+    cp ./IoTSensorHandler.so.3.1.32.5653 ~ivan/CAgentIoT/Release/AgentService/module/IoTSensorHandlerV2.so.3.1.30.5434
     cd /mnt/MyHandler/Yocto/
 else
 echo "build IoTGWHandlerV2 version"
@@ -15,7 +15,7 @@ echo "build IoTGWHandlerV2 version"
     cp -rf ./IoTGWHandlerV2 ~ivan/CAgentIoT/Modules/
     cd ~ivan/CAgentIoT/Modules/IoTGWHandlerV2/
     make
-    cp ./IoTSensorHandlerV2.so.3.1.30.5434 ~ivan/CAgentIoT/Release/AgentService/module/
+    cp ./IoTSensorHandlerV2.so.3.1.32.5653 ~ivan/CAgentIoT/Release/AgentService/module/
     cd /mnt/MyHandler/Yocto/
     echo "build IoTGWHandlerV2 version done"
 fi

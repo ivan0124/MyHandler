@@ -35,6 +35,7 @@
 #include "SensorNetwork_APIex.h"
 #include "unistd.h"
 #include "IoTGWHandler.h"
+#include "a.h"
 
 #define MQTT_RESPONSE_TIMEOUT 3
 
@@ -226,6 +227,7 @@ int GetJSONValue(JSONode *json, char* pPath, char* pResult){
     return 0;
 }
 
+#if 0
 int FindJSONLayerNameS(JSONode *json_root, JSONode *json, int depth, int find_depth) {
 	
         int i = 0;
@@ -265,6 +267,7 @@ int FindJSONLayerNameS(JSONode *json_root, JSONode *json, int depth, int find_de
 	}
 	return depth;
 }
+#endif
 
 void UpdateConnectivitySensorHubListNode(JSONode *json)
 {
@@ -353,7 +356,7 @@ void  DisplayAllVirtualGatewayDataListNode(struct node* head, struct node *r)
     printf("connectivityType:%s\n",r->connectivityType);
     printf("connectivityDevID:%s\n",r->connectivityDevID);
     printf("connectivityInfo:%s\n",r->connectivityInfo);
-    printf("----------------------------------\n", __FILE__, __func__);
+    printf("----------------------------------\n");
     r=r->next;
     }
     printf("\n");
@@ -463,6 +466,7 @@ int StoreVirtualGatewayDataListNode(JSONode *json, char* json_path){
     return 0;
 }
 
+#if 0
 int FindJSONLayerName(JSONode *json_root, JSONode *json, int depth, int find_depth) {
 	
         int i = 0;
@@ -536,6 +540,7 @@ int FindJSONLayerName(JSONode *json_root, JSONode *json, int depth, int find_dep
 	}
 	return depth;
 }
+#endif
 
 int UpdateVirtualGatewayDataListNode(JSONode *json){
 
@@ -559,9 +564,9 @@ int UpdateVirtualGatewayDataListNode(JSONode *json){
     }
 #endif
 
-    memset(g_json_path,0,sizeof(g_json_path)); 
-    FindJSONLayerName(json,json,0,8);
-
+    //memset(g_json_path,0,sizeof(g_json_path)); 
+    //FindJSONLayerName(json,json,0,8);
+    aTestFunc();
     return 0;
 }
 /******************************************************/
@@ -923,7 +928,7 @@ int BuildGatewayCapabilityInfo(struct node* head, char* pResult){
 	printf("connectivityType:%s\n",r->connectivityType);
 	printf("connectivityDevID:%s\n",r->connectivityDevID);
 	printf("connectivityInfo:%s\n",r->connectivityInfo);
-	printf("----------------------------------\n", __FILE__, __func__);
+	printf("----------------------------------\n");
         //WSN0:{Info...}
         //sprintf(tmp,"\"%s%d\":%s",r->connectivityType, i, r->connectivityInfo);
         index=FindConnectivityInfoNodeListIndex(r->connectivityType);
