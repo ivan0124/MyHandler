@@ -566,7 +566,7 @@ int UpdateVirtualGatewayDataListNode(JSONode *json){
 
     //memset(g_json_path,0,sizeof(g_json_path)); 
     //FindJSONLayerName(json,json,0,8);
-    aTestFunc();
+    aTest();
     return 0;
 }
 /******************************************************/
