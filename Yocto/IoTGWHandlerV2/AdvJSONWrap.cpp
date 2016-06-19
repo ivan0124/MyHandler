@@ -161,7 +161,7 @@ void aTest(const char* mydata){
     AdvJSON json(mydata);
     int i=0, j=0;
     int max=0;
-    char connectivity_base_name[256]={0};
+    //char connectivity_base_name[256]={0};
     //char nodeContent[MAX_JSON_NODE_SIZE]={0};
     char virtualGatewayDevID[MAX_DEVICE_ID_LEN]={0};
     char connectivityInfo[MAX_JSON_NODE_SIZE]={0};
@@ -171,7 +171,7 @@ void aTest(const char* mydata){
     strcpy(virtualGatewayDevID,json["susiCommData"]["agentID"].Value().c_str());
     //printf(virtualGatewayDevID);
 
-    char a[128]={"susiCommData"};
+    //char a[128]={"susiCommData"};
     max=json["susiCommData"]["infoSpec"]["IoTGW"].Size();
     for(i=0; i < max ;i++){
         printf("json[\"susiCommData\"][\"infoSpec\"][\"IoTGW\"][%d]=%s\n",i,json["susiCommData"]["infoSpec"]["IoTGW"][i].Key().c_str());
