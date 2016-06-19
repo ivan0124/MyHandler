@@ -76,6 +76,7 @@ char* cType[]={"WSN",
 char g_json_path[1024]={0};
 char g_connType[64]={0};
 
+#if 0
 struct node
 {
     char virtualGatewayDevID[MAX_DEVICE_ID_LEN];
@@ -86,11 +87,14 @@ struct node
     char* connectivityInfo;
     struct node *next;
 };
+#endif
 
-struct node* g_pVirtualGatewayDataListHead=NULL;
+//struct node* g_pVirtualGatewayDataListHead=NULL;
+extern struct node* g_pVirtualGatewayDataListHead;
 
-int DeleteVirtualGatewayDataListNode(char* devID);
+//int DeleteVirtualGatewayDataListNode(char* devID);
 
+#if 0
 struct node * GetVirtualGatewayDataListNode(char* devID)
 {
     struct node * r;
@@ -112,7 +116,9 @@ struct node * GetVirtualGatewayDataListNode(char* devID)
     return NULL;
     printf("\n");
 }
+#endif
 
+#if 0
 void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize)
 {
     struct node *temp=NULL;
@@ -144,8 +150,10 @@ void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivi
     g_pVirtualGatewayDataListHead=temp;
     }
 
-} 
+}
+#endif 
  
+#if 0
 int DeleteVirtualGatewayDataListNode(char* devID)
 {
     struct node *temp, *prev;
@@ -178,6 +186,7 @@ int DeleteVirtualGatewayDataListNode(char* devID)
 
     return 0;
 }
+#endif
 
 int DeleteDataListNodeByGatewayUID(char* devID)
 {
@@ -419,6 +428,7 @@ void test_link_list(){
     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
 }
 
+#if 0
 int StoreVirtualGatewayDataListNode(JSONode *json, char* json_path){
  
     struct node *n;
@@ -464,6 +474,7 @@ int StoreVirtualGatewayDataListNode(JSONode *json, char* json_path){
 #endif
     return 0;
 }
+#endif
 
 #if 0
 int FindJSONLayerName(JSONode *json_root, JSONode *json, int depth, int find_depth) {
@@ -541,9 +552,9 @@ int FindJSONLayerName(JSONode *json_root, JSONode *json, int depth, int find_dep
 }
 #endif
 
-int UpdateVirtualGatewayDataListNode(JSONode *json){
+int UpdateVirtualGatewayDataListNode(char* data){
 
-#if 1
+#if 0
 //sample message:
 /*
 //Only WSN
@@ -558,16 +569,9 @@ int UpdateVirtualGatewayDataListNode(JSONode *json){
 */
     char mydata[2024]={"{\"susiCommData\":{\"infoSpec\":{\"IoTGW\":{\"WSN\":{\"WSN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"WSN0\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD01\",\"ver\":1},\"WSN1\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"WSN0\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD02\",\"ver\":1},\"bn\":\"WSN\",\"ver\":1},\"BLE\":{\"BLE0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"WSN0\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD05\",\"ver\":1},\"BLE1\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"WSN0\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD06\",\"ver\":1},\"bn\":\"BLE\",\"ver\":1},\"ver\":1}},\"commCmd\":2052,\"requestID\":2001,\"agentID\":\"0000000E40ABCDEF\",\"handlerName\":\"general\",\"sendTS\":160081020}}"};
     
-    aTest(mydata);  
-  
-    if((json = JSON_Parser(mydata)) == NULL) {
-        printf("json parse err!\n");
-	return -1;
-    }
 #endif
 
-    //memset(g_json_path,0,sizeof(g_json_path)); 
-    //FindJSONLayerName(json,json,0,8);
+     aTest(data); 
     
     return 0;
 }
@@ -1108,13 +1112,13 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    printf("[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     //test_link_list();
-                    UpdateVirtualGatewayDataListNode(json);
+#if 1
+                    UpdateVirtualGatewayDataListNode(message->payload);
                     char gateway_capability[2048]={0};
                     BuildGatewayCapabilityInfo(g_pVirtualGatewayDataListHead, gateway_capability);
 		    printf("---------------Gateway capability----------------------------\n");
 		    printf(gateway_capability);
 		    printf("\n-------------------------------------------\n");
-#if 1
                     if ( RegisterGatewayCapability(gateway_capability, strlen(gateway_capability)) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);

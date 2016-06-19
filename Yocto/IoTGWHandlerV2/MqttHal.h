@@ -103,6 +103,17 @@ typedef struct _senhub_info_t {
 	JSONode *jsonNode;                             // json data
 } senhub_info_t;
 
+struct node
+{
+    char virtualGatewayDevID[MAX_DEVICE_ID_LEN];
+    char connectivityType[MAX_CONNECTIVITY_TYPE_LEN];
+    char connectivityDevID[MAX_DEVICE_ID_LEN];
+    char connectivitySensorHubList[1024];
+    char connectivityNeighborList[1024];
+    char* connectivityInfo;
+    struct node *next;
+};
+
 
 int MqttHal_GetNetworkIntfaceMAC(char *_ifname, char* _ifmac);
 int MqttHal_Init();
