@@ -17,6 +17,7 @@
 #include <sys/ioctl.h>
 #include <sys/socket.h>
 #include <net/if.h>   //ifreq
+#include <netdb.h>
 #endif
 
 #include <stdio.h>
@@ -301,6 +302,27 @@ int ReplySensorHubGetSetRequest(char* ptopic, JSONode *json, int cmdID){
 
 }
 
+int isOSIPbase(JSONode *json){
+
+    char nodeContent[MAX_JSON_NODE_SIZE]={0};
+
+    JSON_Get(json, "[susiCommData][osInfo][IP]", nodeContent, sizeof(nodeContent));
+
+    if(strcmp(nodeContent, "NULL") == 0){
+        return -1;
+    }
+
+    struct sockaddr_in sa;
+    int result = inet_pton(AF_INET, nodeContent, &(sa.sin_addr));
+    
+    printf("IP=%s, result=%d\n", nodeContent, result);
+    if ( result == 0 ){
+        return -1;
+    }
+
+    return 0;
+}
+
 
 int isRegisterGatewayCapability(JSONode *json){
 
@@ -408,6 +430,11 @@ int ParseAgentactionreqTopic(JSONode *json){
                 return REPLY_GET_SENSOR_REQUEST;
             case IOTGW_SET_SENSOR_REPLY:
                 return REPLY_SET_SENSOR_REQUEST;
+            case IOTGW_OS_INFO:
+                {
+                    isOSIPbase(json);
+                    break;
+                }
             case IOTGW_HANDLER_GET_CAPABILITY_REPLY:
                 {
                     printf("Get capability reply\n");
