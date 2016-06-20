@@ -240,7 +240,6 @@ int HANDLER_API Handler_Initialize( HANDLER_INFO *pluginfo )
 /*ivan del end*/
  
 /*ivan add start 20160521*/ 
-    printf("[%s][%s]SN_Initialize() --------------------------->\n",__FILE__, __func__);
     SN_Initialize(NULL);
     
 /*ivan add end*/
@@ -406,7 +405,6 @@ int HANDLER_API Handler_Stop( void )
  * ***************************************************************************************/
 void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t datalen, void *pRev1, void* pRev2  )
 {
-        printf("+++++++++++++++ Handler_Recv ++++++++++++++++++++++++++++>\n");
 	int cmdID = 0;
 	int len = 0;
 	char szSessionId[MAX_SIZE_SESSIONID]={0};
@@ -632,7 +630,6 @@ static int ProcSet_Result( const char *pInJson, const int InDataLen, void *pInPa
 
 SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int InDatalen, void **pOutParam, void *pRev1, void *pRev2 )
 {
-        printf("[ivan][%s][%s] ======================>\n",__FILE__, __func__);
 	int rc = 0;
 
 	switch( cmdId)
@@ -641,14 +638,6 @@ SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int 
 		{
 #if 0
 
-         printf("Update Interface ===============================================================================>\n");
-         
-	
-                        
-          
-						PRINTF("[ivan][%s][%s] SN_Inf_UpdateInterface_Data======================>\n",__FILE__, __func__);
-
-                        printf("[ivan][%s][%s]Interface Data=%s\n",__FILE__, __func__, mydata);
 			rc = UpdateInterfaceData( mydata/*pInJson*/, strlen(mydata)/*InDatalen*/ );
 #endif
 		}
@@ -656,31 +645,29 @@ SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int 
 	case SN_SenHub_Register:
 		{
                         SenHubInfo *pSenHubInfo = (SenHubInfo*)pRev1;
-                        PRINTF("[ivan][%s][%s] ****************************************\n",__FILE__, __func__);
+                        
 			rc = Register_SenHub( 0, 0, 0, pRev1, 0 );
 		}
 		break;
 	case SN_SenHub_SendInfoSpec:
 		{
-                        PRINTF("[ivan][%s][%s] SN_SenHub_SendInfoSpec======================>\n",__FILE__, __func__);
+                        
 			rc = SendInfoSpec_SenHub( pInJson, InDatalen, *pOutParam, pRev1 );
 		}
 		break;
 	case SN_SenHub_AutoReportData:
 		{
-                        PRINTF("[ivan][%s][%s] SN_SenHub_AutoReportData======================>\n",__FILE__, __func__);
+                        
 			rc = AutoReportSenData_SenHub( 0, 0, 0, 0 );
 		}
 		break;
 	case SN_SetResult:
 		{
-                        PRINTF("[ivan][%s][%s] SN_SetResult======================>\n",__FILE__, __func__);
 			rc = ProcSet_Result( pInJson, InDatalen, *pOutParam, pRev1 );
 		}
 		break;
 	case SN_SenHub_Disconnect:
 		{
-                        printf("[ivan][%s][%s] SN_SenHub_Disconnect======================>\n",__FILE__, __func__);
 			rc = Disconnect_SenHub( 0 );
 		}
 		break;	
@@ -759,7 +746,6 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 			// { "sessionID":"XXX", "StatusCode":200, "SenHub": { xxxx_JSON_Object } }
 			printf("[%s][%s] IOTGW_GET_CAPABILITY_REQUEST: %s\r\n",__FILE__, __func__, SenHubUID);
                         MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);
-                        printf("---------------------------------------------------------------\n");
 		}
                 break;
 #if 0
@@ -876,11 +862,8 @@ static int Register_SenHub( const char *pJSON, const int nLen, void **pOutParam,
 	int rc = 0;
 	int index = 0;
 
-        PRINTF("[ivan][%s][%s] ---------------------------------=====>\n", __FILE__, __func__ );
 	SenHubInfo *pSenHubInfo = (SenHubInfo*)pRev1;
 
-	PRINTF("[ivan][%s][%s] MAC=%s HostName=%s SN=%s Product=%s\n",__FILE__,__func__,		pSenHubInfo->sUID,
-	pSenHubInfo->sHostName,										pSenHubInfo->sSN,										pSenHubInfo->sProduct);
 
 	Handler_info  *pSenHander = NULL;
 
@@ -910,7 +893,6 @@ static int Register_SenHub( const char *pJSON, const int nLen, void **pOutParam,
 
 static int Disconnect_SenHub( void *pInParam )
 {
-        printf("[ivan] Disconnect_SenHub ==================>\n");
 	int rc = 0;
 #if 0
 	Handler_info *pHandler_info = (Handler_info*)pInParam;
@@ -947,7 +929,6 @@ static int SendInfoSpec_SenHub( const char *pInJson, const int InDataLen, void *
 
 static int AutoReportSenData_SenHub( const char *pInJson, const int InDataLen, void *pInParam, void *pRev1 )
 {
-        //PRINTF("[ivan][%s][%s] =====>\n", __FILE__, __func__);
 	int rc = 0;
 #if 1
         int index = -1;
@@ -1111,7 +1092,6 @@ int RegisterSensorHub(JSONode *json)
             return -1;
         }
 
-        PRINTF("[ivan][%s][%s] ---------------------------------=====>\n", __FILE__, __func__ );
 	pSenHubInfo = &shinfo;
 
 	if( pSenHubInfo == NULL ) {
@@ -1187,7 +1167,6 @@ int RegisterSensorHubCapability(char* ptopic, JSONode *json){
 
 int DisconnectSensorHub(char* SensorHubUID)
 {
-        printf("[ivan] DisconnectSensorHub ==================>\n");
 	int rc = 0;
         int index=-1;
         //
@@ -1259,7 +1238,7 @@ int ResponseGetData(char* topic, int cmdID, char* sensor_hub_id, char* presponse
         printf("[%s][%s] Can't find SenHub UID in Table =%s\r\n",__FILE__, __func__, sensor_hub_id );
 	return -1;
     }
-    PRINTF("[ivan][%s][%s] g_SenPluginInfo[index] index = %d\n", __FILE__, __func__, index);
+	
     Handler_info  *pSenHander = NULL;
     pSenHander = &g_SenPluginInfo[index];
 
