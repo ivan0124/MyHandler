@@ -552,6 +552,7 @@ int FindJSONLayerName(JSONode *json_root, JSONode *json, int depth, int find_dep
 }
 #endif
 
+#if 0
 int UpdateVirtualGatewayDataListNode(char* data){
 
 #if 0
@@ -575,6 +576,9 @@ int UpdateVirtualGatewayDataListNode(char* data){
     
     return 0;
 }
+
+#endif
+
 /******************************************************/
 
 int replaceName(char *_input, char *_strName)

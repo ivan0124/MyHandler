@@ -13,6 +13,7 @@ struct node* g_pVirtualGatewayDataListHead=NULL;
 struct node * GetVirtualGatewayDataListNode(char* devID);
 int DeleteVirtualGatewayDataListNode(char* devID);
 void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize);
+int UpdateVirtualGatewayDataListNode(char* data);
 int StoreVirtualGatewayDataListNode(JSONode *json, char* json_path);
 void aTest(const char* mydata);
 
@@ -156,13 +157,28 @@ int StoreVirtualGatewayDataListNode(JSONode *json, char* json_path){
     return 0;
 }
 
-void aTest(const char* mydata){
-    printf("call aTest\n");
-    AdvJSON json(mydata);
+int UpdateVirtualGatewayDataListNode(char* data){
+
+#if 0
+//sample message:
+/*
+//Only WSN
+{"susiCommData":{"infoSpec":{"IoTGW":{"WSN":{"WSN0":{"Info":{"e":[{"n":"SenHubList","sv":"","asm":"r"},{"n":"Neighbor","sv":"","asm":"r"},{"n":"Name","sv":"WSN0","asm":"r"},{"n":"Health","v":"100.000000","asm":"r"},{"n":"sw","sv":"1.2.1.12","asm":"r"},{"n":"reset","bv":"0","asm":"rw"}],"bn":"Info"},"bn":"0007000E40ABCD01","ver":1},"WSN1":{"Info":{"e":[{"n":"SenHubList","sv":"","asm":"r"},{"n":"Neighbor","sv":"","asm":"r"},{"n":"Name","sv":"WSN0","asm":"r"},{"n":"Health","v":"100.000000","asm":"r"},{"n":"sw","sv":"1.2.1.12","asm":"r"},{"n":"reset","bv":"0","asm":"rw"}],"bn":"Info"},"bn":"0007000E40ABCD02","ver":1},"bn":"WSN","ver":1},"ver":1}},"commCmd":2052,"requestID":2001,"agentID":"0000000E40ABCDEF","handlerName":"general","sendTS":160081020}}
+
+//WSN and BLE
+{"susiCommData":{"infoSpec":{"IoTGW":{"WSN":{"WSN0":{"Info":{"e":[{"n":"SenHubList","sv":"","asm":"r"},{"n":"Neighbor","sv":"","asm":"r"},{"n":"Name","sv":"WSN0","asm":"r"},{"n":"Health","v":"100.000000","asm":"r"},{"n":"sw","sv":"1.2.1.12","asm":"r"},{"n":"reset","bv":"0","asm":"rw"}],"bn":"Info"},"bn":"0007000E40ABCD01","ver":1},"WSN1":{"Info":{"e":[{"n":"SenHubList","sv":"","asm":"r"},{"n":"Neighbor","sv":"","asm":"r"},{"n":"Name","sv":"WSN0","asm":"r"},{"n":"Health","v":"100.000000","asm":"r"},{"n":"sw","sv":"1.2.1.12","asm":"r"},{"n":"reset","bv":"0","asm":"rw"}],"bn":"Info"},"bn":"0007000E40ABCD02","ver":1},"bn":"WSN","ver":1},"BLE":{"BLE0":{"Info":{"e":[{"n":"SenHubList","sv":"","asm":"r"},{"n":"Neighbor","sv":"","asm":"r"},{"n":"Name","sv":"WSN0","asm":"r"},{"n":"Health","v":"100.000000","asm":"r"},{"n":"sw","sv":"1.2.1.12","asm":"r"},{"n":"reset","bv":"0","asm":"rw"}],"bn":"Info"},"bn":"0007000E40ABCD05","ver":1},"BLE1":{"Info":{"e":[{"n":"SenHubList","sv":"","asm":"r"},{"n":"Neighbor","sv":"","asm":"r"},{"n":"Name","sv":"WSN0","asm":"r"},{"n":"Health","v":"100.000000","asm":"r"},{"n":"sw","sv":"1.2.1.12","asm":"r"},{"n":"reset","bv":"0","asm":"rw"}],"bn":"Info"},"bn":"0007000E40ABCD06","ver":1},"bn":"BLE","ver":1},"ver":1}},"commCmd":2052,"requestID":2001,"agentID":"0000000E40ABCDEF","handlerName":"general","sendTS":160081020}}
+
+*/
+/*
+    char mydata[1024]={"{\"susiCommData\":{\"infoSpec\":{\"IoTGW\":{\"WSN\":{\"WSN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"WSN0\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD01\",\"ver\":1},\"WSN1\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"WSN0\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD02\",\"ver\":1},\"bn\":\"WSN\",\"ver\":1},\"ver\":1}},\"commCmd\":2052,\"requestID\":2001,\"agentID\":\"0000000E40ABCDEF\",\"handlerName\":\"general\",\"sendTS\":160081020}"};
+*/
+    char mydata[2024]={"{\"susiCommData\":{\"infoSpec\":{\"IoTGW\":{\"WSN\":{\"WSN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"WSN0\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD01\",\"ver\":1},\"WSN1\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"WSN0\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD02\",\"ver\":1},\"bn\":\"WSN\",\"ver\":1},\"BLE\":{\"BLE0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"WSN0\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD05\",\"ver\":1},\"BLE1\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"WSN0\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD06\",\"ver\":1},\"bn\":\"BLE\",\"ver\":1},\"ver\":1}},\"commCmd\":2052,\"requestID\":2001,\"agentID\":\"0000000E40ABCDEF\",\"handlerName\":\"general\",\"sendTS\":160081020}}"};
+    
+#endif
+
+    AdvJSON json(data);
     int i=0, j=0;
     int max=0;
-    //char connectivity_base_name[256]={0};
-    //char nodeContent[MAX_JSON_NODE_SIZE]={0};
     char virtualGatewayDevID[MAX_DEVICE_ID_LEN]={0};
     char connectivityInfo[MAX_JSON_NODE_SIZE]={0};
     char connectivityDevID[MAX_DEVICE_ID_LEN]={0};
@@ -174,10 +190,11 @@ void aTest(const char* mydata){
     //char a[128]={"susiCommData"};
     max=json["susiCommData"]["infoSpec"]["IoTGW"].Size();
     for(i=0; i < max ;i++){
+#if 0
         printf("json[\"susiCommData\"][\"infoSpec\"][\"IoTGW\"][%d]=%s\n",i,json["susiCommData"]["infoSpec"]["IoTGW"][i].Key().c_str());
+#endif
         char type[128]={0};
         char device[128]={0};
-        //strcpy(type,"123");
 
         strcpy(type,json["susiCommData"]["infoSpec"]["IoTGW"][i].Key().c_str());
 #if 0
@@ -185,15 +202,75 @@ void aTest(const char* mydata){
         type,
         json["susiCommData"]["infoSpec"]["IoTGW"][type].Value().c_str());
 #endif        
-        int max_conn_type=json["susiCommData"]["infoSpec"]["IoTGW"][type].Size();
-        for(j=0; j<max_conn_type ; j++){
+        int max_device=json["susiCommData"]["infoSpec"]["IoTGW"][type].Size();
+        for(j=0; j<max_device ; j++){
             strcpy(device,json["susiCommData"]["infoSpec"]["IoTGW"][type][j].Key().c_str());
-            int tmp_value[1024]={0};
+            //int tmp_value[1024]={0};
             if ( strcmp("NULL",json["susiCommData"]["infoSpec"]["IoTGW"][type][device]["Info"].Value().c_str()) != 0){
+#if 0
                 printf("@@@@ json[\"susiCommData\"][\"infoSpec\"][\"IoTGW\"][%s][%s]=%s\n",\
                 type,device, \
                 json["susiCommData"]["infoSpec"]["IoTGW"][type][device].Value().c_str());
+#endif
+                //Get connectivity Info
+                strcpy(connectivityInfo,json["susiCommData"]["infoSpec"]["IoTGW"][type][device].Value().c_str());
+                //Get connectivity device ID
+                strcpy(connectivityDevID,json["susiCommData"]["infoSpec"]["IoTGW"][type][device]["bn"].Value().c_str());
+#if 0
+		printf("********************************************\n");
+		printf("virtualGateway DevID: "); printf(virtualGatewayDevID); printf("\n");
+		printf("connectivity Info: "); printf(connectivityInfo); printf("\n");
+		printf("connectivity DevID: "); printf(connectivityDevID);
+		printf("\n********************************************\n");
+#endif
+                //Add Node
+                AddVirtualGatewayDataListNode(virtualGatewayDevID,type,connectivityDevID,connectivityInfo, strlen(connectivityInfo));
+            }
+        }
 
+    }
+    
+    return 0;
+}
+
+void aTest(const char* mydata){
+
+    AdvJSON json(mydata);
+    int i=0, j=0;
+    int max=0;
+    char virtualGatewayDevID[MAX_DEVICE_ID_LEN]={0};
+    char connectivityInfo[MAX_JSON_NODE_SIZE]={0};
+    char connectivityDevID[MAX_DEVICE_ID_LEN]={0};
+
+    //Get virtual gateway devID
+    strcpy(virtualGatewayDevID,json["susiCommData"]["agentID"].Value().c_str());
+    //printf(virtualGatewayDevID);
+
+    //char a[128]={"susiCommData"};
+    max=json["susiCommData"]["infoSpec"]["IoTGW"].Size();
+    for(i=0; i < max ;i++){
+#if 0
+        printf("json[\"susiCommData\"][\"infoSpec\"][\"IoTGW\"][%d]=%s\n",i,json["susiCommData"]["infoSpec"]["IoTGW"][i].Key().c_str());
+#endif
+        char type[128]={0};
+        char device[128]={0};
+
+        strcpy(type,json["susiCommData"]["infoSpec"]["IoTGW"][i].Key().c_str());
+#if 0
+        printf("json[\"susiCommData\"][\"infoSpec\"][\"IoTGW\"][%s]=%s\n",\
+        type,
+        json["susiCommData"]["infoSpec"]["IoTGW"][type].Value().c_str());
+#endif        
+        int max_device=json["susiCommData"]["infoSpec"]["IoTGW"][type].Size();
+        for(j=0; j<max_device ; j++){
+            strcpy(device,json["susiCommData"]["infoSpec"]["IoTGW"][type][j].Key().c_str());
+            //int tmp_value[1024]={0};
+            if ( strcmp("NULL",json["susiCommData"]["infoSpec"]["IoTGW"][type][device]["Info"].Value().c_str()) != 0){
+#if 0
+                printf("@@@@ json[\"susiCommData\"][\"infoSpec\"][\"IoTGW\"][%s][%s]=%s\n",\
+                type,device, \
+                json["susiCommData"]["infoSpec"]["IoTGW"][type][device].Value().c_str());
+#endif
                 //Get connectivity Info
                 strcpy(connectivityInfo,json["susiCommData"]["infoSpec"]["IoTGW"][type][device].Value().c_str());
                 //Get connectivity device ID
