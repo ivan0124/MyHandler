@@ -14,7 +14,6 @@ struct node * GetVirtualGatewayDataListNode(char* devID);
 int DeleteVirtualGatewayDataListNode(char* devID);
 void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize);
 int UpdateVirtualGatewayDataListNode(char* data);
-int StoreVirtualGatewayDataListNode(JSONode *json, char* json_path);
 void aTest(const char* mydata);
 
 #ifdef __cplusplus
@@ -108,54 +107,6 @@ void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivi
     }
 
 } 
-
-int StoreVirtualGatewayDataListNode(JSONode *json, char* json_path){
- 
-    struct node *n;
-    int cnt=0;
-    //char connectivity_type[256]={0};
-    char connectivity_base_name[256]={0};
-    //char nodeContent[MAX_JSON_NODE_SIZE]={0};
-    char virtualGatewayDevID[MAX_DEVICE_ID_LEN]={0};
-    char connectivityInfo[MAX_JSON_NODE_SIZE]={0};
-    char connectivityDevID[MAX_DEVICE_ID_LEN]={0};
-
-#if 0
-    //Get virtual gateway devID
-    if ( GetJSONValue(json, OBJ_AGENT_ID, virtualGatewayDevID) < 0){
-        return -1;
-    }
-    
-    //Get connectivity Info
-    memset(connectivityInfo,0,sizeof(connectivityInfo));
-    if ( GetJSONValue(json, json_path, connectivityInfo) < 0){
-        return -1;
-    }
-            
-    //Get connectivity device ID
-    sprintf(connectivity_base_name,"%s[bn]",json_path);
-    memset(connectivityDevID,0,sizeof(connectivityDevID));
-    if ( GetJSONValue(json, connectivity_base_name, connectivityDevID) < 0){
-        return -1;
-    }
-    //
-    printf("********************************************\n");
-    printf("virtualGateway DevID: "); printf(virtualGatewayDevID); printf("\n");
-    printf("connectivity Info: "); printf(connectivityInfo); printf("\n");
-    printf("connectivity DevID: "); printf(connectivityDevID);
-    printf("\n********************************************\n");
-
-    //Add Node
-    AddVirtualGatewayDataListNode(virtualGatewayDevID,g_connType,connectivityDevID,connectivityInfo, strlen(connectivityInfo));
-#if 0
-    cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
-    printf("count = %d\n", cnt);
-    //
-    DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
-#endif
-#endif
-    return 0;
-}
 
 int UpdateVirtualGatewayDataListNode(char* data){
 
