@@ -906,7 +906,8 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("------------------------------------------------\n");
 		    printf("[%s][%s]\033[33m #Update Gateway Data# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-                    UpdateConnectivitySensorHubListNode(json);
+                    //UpdateConnectivitySensorHubListNode(json);
+                    aTest(message->payload);
 #if 1
                     if ( UpdateGatewayData(json) < 0){
                         printf("[%s][%s] Update Gateway Data FAIL !!!\n", __FILE__, __func__);

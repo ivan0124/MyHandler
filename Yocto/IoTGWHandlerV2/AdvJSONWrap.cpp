@@ -32,14 +32,14 @@ struct node * GetVirtualGatewayDataListNode(char* devID)
     while(r!=NULL)
     {
     if (strcmp(r->connectivityDevID, devID) == 0){
-        printf("found [%s],msg:%s\n",r->connectivityDevID, r->connectivityInfo );
+        //printf("[%s][%s] found [%s],msg:%s\n", __FILE__, __func__, r->connectivityDevID, r->connectivityInfo );
         return r;
     }
     r=r->next;
     }
 
     return NULL;
-    printf("\n");
+    //printf("\n");
 }
 
 int DeleteVirtualGatewayDataListNode(char* devID)
@@ -187,54 +187,84 @@ int UpdateVirtualGatewayDataListNode(char* data){
 void aTest(const char* mydata){
 
     AdvJSON json(mydata);
-    int i=0, j=0;
+    int i=0, j=0, k=0;
     int max=0;
     char virtualGatewayDevID[MAX_DEVICE_ID_LEN]={0};
     char connectivityInfo[MAX_JSON_NODE_SIZE]={0};
     char connectivityDevID[MAX_DEVICE_ID_LEN]={0};
+    char packet_type[32]={"data"};
+    struct node *temp=NULL;
+
 
     //Get virtual gateway devID
     strcpy(virtualGatewayDevID,json["susiCommData"]["agentID"].Value().c_str());
-    //printf(virtualGatewayDevID);
 
-    //char a[128]={"susiCommData"};
-    max=json["susiCommData"]["infoSpec"]["IoTGW"].Size();
+    AdvJSON IoTGW_json=json["susiCommData"][packet_type]["IoTGW"];
+    max=IoTGW_json.Size();
+
     for(i=0; i < max ;i++){
-#if 0
-        printf("json[\"susiCommData\"][\"infoSpec\"][\"IoTGW\"][%d]=%s\n",i,json["susiCommData"]["infoSpec"]["IoTGW"][i].Key().c_str());
-#endif
         char type[128]={0};
         char device[128]={0};
 
-        strcpy(type,json["susiCommData"]["infoSpec"]["IoTGW"][i].Key().c_str());
-#if 0
-        printf("json[\"susiCommData\"][\"infoSpec\"][\"IoTGW\"][%s]=%s\n",\
-        type,
-        json["susiCommData"]["infoSpec"]["IoTGW"][type].Value().c_str());
-#endif        
-        int max_device=json["susiCommData"]["infoSpec"]["IoTGW"][type].Size();
+        strcpy(type,IoTGW_json[i].Key().c_str());
+ 
+        int max_device=IoTGW_json[type].Size();
+
         for(j=0; j<max_device ; j++){
-            strcpy(device,json["susiCommData"]["infoSpec"]["IoTGW"][type][j].Key().c_str());
-            //int tmp_value[1024]={0};
-            if ( strcmp("NULL",json["susiCommData"]["infoSpec"]["IoTGW"][type][device]["Info"].Value().c_str()) != 0){
-#if 0
-                printf("@@@@ json[\"susiCommData\"][\"infoSpec\"][\"IoTGW\"][%s][%s]=%s\n",\
-                type,device, \
-                json["susiCommData"]["infoSpec"]["IoTGW"][type][device].Value().c_str());
-#endif
+            strcpy(device,IoTGW_json[type][j].Key().c_str());
+
+            if ( strcmp("NULL",IoTGW_json[type][device]["Info"].Value().c_str()) != 0){
+
                 //Get connectivity Info
-                strcpy(connectivityInfo,json["susiCommData"]["infoSpec"]["IoTGW"][type][device].Value().c_str());
+                strcpy(connectivityInfo,IoTGW_json[type][device].Value().c_str());
                 //Get connectivity device ID
-                strcpy(connectivityDevID,json["susiCommData"]["infoSpec"]["IoTGW"][type][device]["bn"].Value().c_str());
-#if 0
+                strcpy(connectivityDevID,IoTGW_json[type][device]["bn"].Value().c_str());
+#if 1
 		printf("********************************************\n");
 		printf("virtualGateway DevID: "); printf(virtualGatewayDevID); printf("\n");
 		printf("connectivity Info: "); printf(connectivityInfo); printf("\n");
 		printf("connectivity DevID: "); printf(connectivityDevID);
 		printf("\n********************************************\n");
 #endif
-                //Add Node
-                AddVirtualGatewayDataListNode(virtualGatewayDevID,type,connectivityDevID,connectivityInfo, strlen(connectivityInfo));
+		//get connectivity node
+#if 1
+		temp=GetVirtualGatewayDataListNode(connectivityDevID);
+		if ( temp == NULL ){
+			printf("[%s][%s]can not find connectivity:%s node\n", __FILE__, __func__, connectivityDevID);
+			continue;
+		}
+#endif
+
+                AdvJSON IoTGW_device_info=IoTGW_json[type][device]["Info"]["e"];
+                int max_info_size=IoTGW_device_info.Size();
+
+                for(k=0; k < max_info_size; k++){
+                    int l=0;
+                    int max_dev_info_size=IoTGW_device_info[k].Size();
+
+                    for(l=0; l<max_dev_info_size ; l++){
+                        
+                        //Get SenHubList value
+                        if ( strcmp("n",IoTGW_device_info[k][l].Key().c_str()) == 0 &&
+                             strcmp("SenHubList",IoTGW_device_info[k][l].Value().c_str()) == 0 && 
+                             strcmp("sv",IoTGW_device_info[k][l+1].Key().c_str()) == 0){
+
+                             printf("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l].Key().c_str(), IoTGW_device_info[k][l].Value().c_str()); 
+                             printf("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l+1].Key().c_str(), IoTGW_device_info[k][l+1].Value().c_str());
+                             strcpy(temp->connectivitySensorHubList, IoTGW_device_info[k][l+1].Value().c_str());
+                        }
+                        //Get Neighbor value
+                        if ( strcmp("n",IoTGW_device_info[k][l].Key().c_str()) == 0 &&
+                             strcmp("Neighbor",IoTGW_device_info[k][l].Value().c_str()) == 0 && 
+                             strcmp("sv",IoTGW_device_info[k][l+1].Key().c_str()) == 0){
+
+                             printf("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l].Key().c_str(), IoTGW_device_info[k][l].Value().c_str()); 
+                             printf("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l+1].Key().c_str(), IoTGW_device_info[k][l+1].Value().c_str());
+                             strcpy(temp->connectivityNeighborList, IoTGW_device_info[k][l+1].Value().c_str());
+                        }
+                    }
+                }
+
             }
         }
 
