@@ -71,10 +71,7 @@ char g_connectivity_capability[1024]={0};
 #define NAME_ASM ",\"asm\""
 
 /******************************************************/
-char* cType[]={"WSN",
-               "BLE"};
-char g_json_path[1024]={0};
-char g_connType[64]={0};
+
 
 extern struct node* g_pVirtualGatewayDataListHead;
 
@@ -865,6 +862,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		// CmdID=2003
 		printf("[%s][%s] Receive messages from will topic!!\n", __FILE__, __func__);
                 printf("topic = %s\n", message->topic);
+                printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                 char DeviceUID[64]={0};
                 GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID));
                 printf("DeviceUID = %s\n", DeviceUID);
