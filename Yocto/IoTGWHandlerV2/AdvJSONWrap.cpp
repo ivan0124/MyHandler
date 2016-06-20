@@ -14,6 +14,7 @@ struct node * GetVirtualGatewayDataListNode(char* devID);
 int DeleteVirtualGatewayDataListNode(char* devID);
 void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize);
 int UpdateVirtualGatewayDataListNode(char* data);
+void UpdateConnectivitySensorHubListNode(const char* data);
 void aTest(const char* mydata);
 
 #ifdef __cplusplus
@@ -182,6 +183,93 @@ int UpdateVirtualGatewayDataListNode(char* data){
     }
     
     return 0;
+}
+
+void UpdateConnectivitySensorHubListNode(const char* data){
+
+    AdvJSON json(data);
+    int i=0, j=0, k=0;
+    int max=0;
+    char virtualGatewayDevID[MAX_DEVICE_ID_LEN]={0};
+    char connectivityInfo[MAX_JSON_NODE_SIZE]={0};
+    char connectivityDevID[MAX_DEVICE_ID_LEN]={0};
+    char packet_type[32]={"data"};
+    struct node *temp=NULL;
+
+
+    //Get virtual gateway devID
+    strcpy(virtualGatewayDevID,json["susiCommData"]["agentID"].Value().c_str());
+
+    AdvJSON IoTGW_json=json["susiCommData"][packet_type]["IoTGW"];
+    max=IoTGW_json.Size();
+
+    for(i=0; i < max ;i++){
+        char type[128]={0};
+        char device[128]={0};
+
+        strcpy(type,IoTGW_json[i].Key().c_str());
+ 
+        int max_device=IoTGW_json[type].Size();
+
+        for(j=0; j<max_device ; j++){
+            strcpy(device,IoTGW_json[type][j].Key().c_str());
+
+            if ( strcmp("NULL",IoTGW_json[type][device]["Info"].Value().c_str()) != 0){
+
+                //Get connectivity Info
+                strcpy(connectivityInfo,IoTGW_json[type][device].Value().c_str());
+                //Get connectivity device ID
+                strcpy(connectivityDevID,IoTGW_json[type][device]["bn"].Value().c_str());
+#if 1
+		printf("********************************************\n");
+		printf("virtualGateway DevID: "); printf(virtualGatewayDevID); printf("\n");
+		printf("connectivity Info: "); printf(connectivityInfo); printf("\n");
+		printf("connectivity DevID: "); printf(connectivityDevID);
+		printf("\n********************************************\n");
+#endif
+		//get connectivity node
+#if 1
+		temp=GetVirtualGatewayDataListNode(connectivityDevID);
+		if ( temp == NULL ){
+			printf("[%s][%s]can not find connectivity:%s node\n", __FILE__, __func__, connectivityDevID);
+			continue;
+		}
+#endif
+
+                AdvJSON IoTGW_device_info=IoTGW_json[type][device]["Info"]["e"];
+                int max_info_size=IoTGW_device_info.Size();
+
+                for(k=0; k < max_info_size; k++){
+                    int l=0;
+                    int max_dev_info_size=IoTGW_device_info[k].Size();
+
+                    for(l=0; l<max_dev_info_size ; l++){
+                        
+                        //Get SenHubList value
+                        if ( strcmp("n",IoTGW_device_info[k][l].Key().c_str()) == 0 &&
+                             strcmp("SenHubList",IoTGW_device_info[k][l].Value().c_str()) == 0 && 
+                             strcmp("sv",IoTGW_device_info[k][l+1].Key().c_str()) == 0){
+
+                             printf("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l].Key().c_str(), IoTGW_device_info[k][l].Value().c_str()); 
+                             printf("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l+1].Key().c_str(), IoTGW_device_info[k][l+1].Value().c_str());
+                             strcpy(temp->connectivitySensorHubList, IoTGW_device_info[k][l+1].Value().c_str());
+                        }
+                        //Get Neighbor value
+                        if ( strcmp("n",IoTGW_device_info[k][l].Key().c_str()) == 0 &&
+                             strcmp("Neighbor",IoTGW_device_info[k][l].Value().c_str()) == 0 && 
+                             strcmp("sv",IoTGW_device_info[k][l+1].Key().c_str()) == 0){
+
+                             printf("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l].Key().c_str(), IoTGW_device_info[k][l].Value().c_str()); 
+                             printf("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l+1].Key().c_str(), IoTGW_device_info[k][l+1].Value().c_str());
+                             strcpy(temp->connectivityNeighborList, IoTGW_device_info[k][l+1].Value().c_str());
+                        }
+                    }
+                }
+
+            }
+        }
+
+    }
 }
 
 void aTest(const char* mydata){

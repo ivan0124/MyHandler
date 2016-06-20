@@ -126,79 +126,6 @@ int GetJSONValue(JSONode *json, char* pPath, char* pResult){
     return 0;
 }
 
-void UpdateConnectivitySensorHubListNode(JSONode *json)
-{
-    int i=0,j=0, k=0, l=0;
-    char json_path[256]={0};
-    char nodeContent[MAX_JSON_NODE_SIZE]={0};
-    struct node *temp=NULL;
-
-    for (j=0; j < sizeof(cType)/sizeof(char*); j++){
-        i=0;
-        while(1){
-            k=0;
-            //Check if connectivity exist
-            sprintf(json_path,"[susiCommData][data][IoTGW][%s][%s%d][bn]",cType[j],cType[j],i);
-            if ( GetJSONValue(json,json_path, nodeContent) < 0){
-                break;
-            }
-
-            printf("\n--------------------------------------\n");
-            printf("connectivity = %s\n", nodeContent);
-            printf("--------------------------------------\n");
-
-            //get connectivity node
-	    temp=GetVirtualGatewayDataListNode(nodeContent);
-	    if ( temp == NULL ){
-                printf("can not find connectivity:%s node\n", nodeContent);
-		break;
-	    }
-
-            //find the Info array size
-            while(1){
-		sprintf(json_path,"[susiCommData][data][IoTGW][%s][%s%d][Info][e][%d]",cType[j],cType[j],i,k);
-                if ( GetJSONValue(json,json_path, nodeContent) < 0){
-                    break;
-                }
-                k++;
-            }
-            //get SenHubList, Neighbor value
-            for(l=0; l<k; l++){
-		sprintf(json_path,"[susiCommData][data][IoTGW][%s][%s%d][Info][e][%d][n]",cType[j],cType[j],i,l);
-                GetJSONValue(json,json_path, nodeContent);
-                if( strcmp(nodeContent,"SenHubList") == 0 ){
-		    sprintf(json_path,"[susiCommData][data][IoTGW][%s][%s%d][Info][e][%d][sv]",cType[j],cType[j],i,l);
-
-                    if ( GetJSONValue(json,json_path, nodeContent) < 0){
-                        printf("can not get SenHubList value\n");
-                    }
-                    else{
-			strcpy(temp->connectivitySensorHubList, nodeContent);
-			printf("\n--------------------------------------\n");
-			printf("SenHubList = %s\n", temp->connectivitySensorHubList);
-			printf("--------------------------------------\n");
-                    }
-                }
-                if( strcmp(nodeContent,"Neighbor") == 0 ){
-		    sprintf(json_path,"[susiCommData][data][IoTGW][%s][%s%d][Info][e][%d][sv]",cType[j],cType[j],i,l);
-
-                    if ( GetJSONValue(json,json_path, nodeContent) < 0){
-                        printf("can not get Neighbor value\n");
-                    }
-                    else{
-			strcpy(temp->connectivityNeighborList, nodeContent);
-			printf("\n--------------------------------------\n");
-			printf("Neighbor = %s\n", temp->connectivityNeighborList);
-			printf("--------------------------------------\n");
-                    }
-                }
-            }
-            i++;
-        }
-    }
-
-}
-
 void  DisplayAllVirtualGatewayDataListNode(struct node* head, struct node *r)
 {
     r=head;
@@ -906,8 +833,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("------------------------------------------------\n");
 		    printf("[%s][%s]\033[33m #Update Gateway Data# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-                    //UpdateConnectivitySensorHubListNode(json);
-                    aTest(message->payload);
+                    UpdateConnectivitySensorHubListNode(message->payload);
 #if 1
                     if ( UpdateGatewayData(json) < 0){
                         printf("[%s][%s] Update Gateway Data FAIL !!!\n", __FILE__, __func__);
