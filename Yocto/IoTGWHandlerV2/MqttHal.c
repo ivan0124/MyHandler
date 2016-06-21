@@ -165,22 +165,22 @@ void test_link_list(){
     printf("initital g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //add1
-    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445501","12345", strlen("12345"));
+    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445501","12345", strlen("12345"), TYPE_CONNECTIVITY);
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("add1, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //add2
-    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445502","67",strlen("67"));
+    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445502","67",strlen("67"), TYPE_CONNECTIVITY);
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("add2, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //add3
-    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445503","890",strlen("890"));
+    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445503","890",strlen("890"), TYPE_CONNECTIVITY);
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("add3, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //add3 again: we will delete3 then add3 again
-    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445503","77777",strlen("77777"));
+    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445503","77777",strlen("77777"), TYPE_CONNECTIVITY);
     printf("add3 again, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);

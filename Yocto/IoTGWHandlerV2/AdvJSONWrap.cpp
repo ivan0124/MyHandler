@@ -12,7 +12,7 @@ struct node* g_pVirtualGatewayDataListHead=NULL;
 
 struct node * GetVirtualGatewayDataListNode(char* devID, int devType);
 int DeleteVirtualGatewayDataListNode(char* devID, int devType);
-void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize);
+void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType);
 int UpdateVirtualGatewayDataListNode(char* data);
 void UpdateConnectivitySensorHubListNode(const char* data);
 void UpdateVirtualGatewayOSInfoToDataListNode(char* data, int iOSInfo);
@@ -116,35 +116,68 @@ void UpdateVirtualGatewayOSInfoToDataListNode(char* data, int iOSInfo){
     printf("virtualGatewayDevID = %s\n", virtualGatewayDevID);
 }
 
-void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize)
+void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType)
 {
     struct node *temp=NULL;
+    char tmp_devID[32]={0};
+    
+    switch(devType)
+    {
+        case TYPE_GATEWAY:
+        {
+            if (pVirtualGatewayDevID != NULL){
+                strcpy(tmp_devID,pVirtualGatewayDevID);
+            }
+            break;
+        }
+        case TYPE_CONNECTIVITY:
+        {
+            if (pConnectivityDevID != NULL){
+                strcpy(tmp_devID,pConnectivityDevID);
+            }
+            break;
+        }
+        default:
+            break;
+    }
     //
-    temp=GetVirtualGatewayDataListNode(pConnectivityDevID, TYPE_CONNECTIVITY);
+    temp=GetVirtualGatewayDataListNode(tmp_devID, TYPE_CONNECTIVITY);
     //
     if (temp != NULL){
-        DeleteVirtualGatewayDataListNode(pConnectivityDevID, TYPE_CONNECTIVITY);
+        DeleteVirtualGatewayDataListNode(tmp_devID, TYPE_CONNECTIVITY);
         temp=NULL;
     }
     //
     temp=(struct node *)malloc(sizeof(struct node));
     memset(temp,0,sizeof(struct node));
-    temp->connectivityInfo=(char*)malloc(iConnectivityInfoSize+1);
-    strcpy(temp->connectivityDevID,pConnectivityDevID);
-    strcpy(temp->connectivityInfo,pConnectivityInfo);
-    strcpy(temp->virtualGatewayDevID, pVirtualGatewayDevID);
-    strcpy(temp->connectivityType,pConnectivityType);
+ 
+    if (pConnectivityInfo != NULL){
+        temp->connectivityInfo=(char*)malloc(iConnectivityInfoSize+1);
+        strcpy(temp->connectivityInfo,pConnectivityInfo);
+    }
+
+    if (pConnectivityDevID != NULL){
+        strcpy(temp->connectivityDevID,pConnectivityDevID);
+    }
+   
+    if ( pVirtualGatewayDevID != NULL){
+        strcpy(temp->virtualGatewayDevID, pVirtualGatewayDevID);
+    }
+    
+    if ( pConnectivityType != NULL){
+        strcpy(temp->connectivityType,pConnectivityType);
+    }
 
     //temp->data=num;
     if (g_pVirtualGatewayDataListHead == NULL)
     {
-    g_pVirtualGatewayDataListHead=temp;
-    g_pVirtualGatewayDataListHead->next=NULL;
+        g_pVirtualGatewayDataListHead=temp;
+        g_pVirtualGatewayDataListHead->next=NULL;
     }
     else
     {
-    temp->next=g_pVirtualGatewayDataListHead;
-    g_pVirtualGatewayDataListHead=temp;
+        temp->next=g_pVirtualGatewayDataListHead;
+        g_pVirtualGatewayDataListHead=temp;
     }
 
 } 
@@ -216,7 +249,7 @@ int UpdateVirtualGatewayDataListNode(char* data){
 		printf("\n********************************************\n");
 #endif
                 //Add Node
-                AddVirtualGatewayDataListNode(virtualGatewayDevID,type,connectivityDevID,connectivityInfo, strlen(connectivityInfo));
+                AddVirtualGatewayDataListNode(virtualGatewayDevID,type,connectivityDevID,connectivityInfo, strlen(connectivityInfo), TYPE_CONNECTIVITY);
             }
         }
 
