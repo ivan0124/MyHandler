@@ -53,7 +53,7 @@ static int g_pubResp = 0;
 static char g_sessionID[34];
 
 static senhub_list_t   *g_SensorHubList;
-static char            g_GWInfMAC[MAX_MACADDRESS_LEN];
+char            g_GWInfMAC[MAX_MACADDRESS_LEN];
 char g_connectivity_capability[1024]={0};
 
 #define SET_SENHUB_V_JSON "{\"susiCommData\":{\"sensorIDList\":{\"e\":[{\"v\":%s,\"n\":\"SenHub/%s/%s\"}]},\"handlerName\":\"SenHub\",\"commCmd\":525,\"sessionID\":\"%s\"}}"
@@ -584,16 +584,16 @@ int BuildGatewayCapabilityInfo(struct node* head, char* pResult){
         index=FindConnectivityInfoNodeListIndex(r->connectivityType);
         if ( index >= 0 ){
             if (r->nodeType == TYPE_CONNECTIVITY){
-                if (r->virtualGatewayOSInfo == OS_NONE_IP_BASE){
+                //if (r->virtualGatewayOSInfo == OS_NONE_IP_BASE){
                     sprintf(tmp,"\"%s%d\":%s",r->connectivityType, g_ConnectivityInfoNodeList[index].index, r->connectivityInfo);
                     strcat(g_ConnectivityInfoNodeList[index].Info,tmp);
                     strcat(g_ConnectivityInfoNodeList[index].Info,",");
                     strcpy(g_ConnectivityInfoNodeList[index].type,r->connectivityType);
                     g_ConnectivityInfoNodeList[index].index++;
-                }
-                else if (r->virtualGatewayOSInfo == OS_IP_BASE){
+                //}
+                //else if (r->virtualGatewayOSInfo == OS_IP_BASE){
                     //ToDo
-                }
+                //}
             }
         }
         else{

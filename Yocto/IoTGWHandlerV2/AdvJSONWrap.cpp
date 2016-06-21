@@ -7,7 +7,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
+extern char            g_GWInfMAC[MAX_MACADDRESS_LEN];
 struct node* g_pVirtualGatewayDataListHead=NULL;
 
 struct node * GetVirtualGatewayDataListNode(char* devID, int devType);
@@ -267,7 +267,7 @@ int UpdateVirtualGatewayDataListNode(char* data){
                 strcpy(connectivityInfo,json["susiCommData"]["infoSpec"]["IoTGW"][type][device].Value().c_str());
                 //Get connectivity device ID
                 strcpy(connectivityDevID,json["susiCommData"]["infoSpec"]["IoTGW"][type][device]["bn"].Value().c_str());
-#if 0
+#if 1
 		printf("********************************************\n");
 		printf("virtualGateway DevID: "); printf(virtualGatewayDevID); printf("\n");
 		printf("connectivity Info: "); printf(connectivityInfo); printf("\n");
@@ -280,6 +280,14 @@ int UpdateVirtualGatewayDataListNode(char* data){
                     osInfo = temp->virtualGatewayOSInfo;
                 }
                 //Add Node
+#if 1
+                if ( osInfo == OS_IP_BASE){
+                    sprintf(connectivityDevID,"0007%s",g_GWInfMAC);
+                    char info_data[1024]={"{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"Ethernet\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"bn\":\"%s\",\"ver\":1}"};
+                    sprintf(connectivityInfo,info_data,connectivityDevID);
+                }
+#endif
+                printf("\n@@@@@@ add node********************************************\n");
                 AddVirtualGatewayDataListNode(virtualGatewayDevID,type,connectivityDevID,connectivityInfo, strlen(connectivityInfo), TYPE_CONNECTIVITY, osInfo);
             }
         }
@@ -331,8 +339,9 @@ void UpdateConnectivitySensorHubListNode(const char* data){
 		printf("connectivity DevID: "); printf(connectivityDevID);
 		printf("\n********************************************\n");
 #endif
-		//get connectivity node
+		
 #if 1
+                //get connectivity node
 		temp=GetVirtualGatewayDataListNode(connectivityDevID, TYPE_CONNECTIVITY);
 		if ( temp == NULL ){
 			printf("[%s][%s]can not find connectivity:%s node\n", __FILE__, __func__, connectivityDevID);
