@@ -36,6 +36,12 @@ struct node * GetVirtualGatewayDataListNode(char* devID, int devType)
         switch(devType){
             case TYPE_GATEWAY:
             {
+
+                if (strcmp(r->virtualGatewayDevID, devID) == 0){
+                    //printf("[%s][%s] found [%s],msg:%s\n", __FILE__, __func__, r->connectivityDevID, r->connectivityInfo );
+                    return r;
+                }
+
                 break;
             }
             case TYPE_CONNECTIVITY:
@@ -107,13 +113,40 @@ int DeleteVirtualGatewayDataListNode(char* devID, int devType)
 void UpdateVirtualGatewayOSInfoToDataListNode(char* data, int iOSInfo){
 
     printf("UpdateVirtualGatewayOSInfoToDataListNode\n");
+    struct node *temp=NULL;
+    char virtualGatewayDevID[MAX_DEVICE_ID_LEN]={0};
+    
     AdvJSON json(data);
 
-    char virtualGatewayDevID[MAX_DEVICE_ID_LEN]={0};
-    struct node *temp=NULL;
     //Get virtual gateway devID
     strcpy(virtualGatewayDevID,json["susiCommData"]["agentID"].Value().c_str());
     printf("virtualGatewayDevID = %s\n", virtualGatewayDevID);
+
+    temp= GetVirtualGatewayDataListNode(virtualGatewayDevID,TYPE_GATEWAY);
+    if ( temp ){
+        //Update all Nodes which have this gateway device ID
+    }
+    else{
+        //Add Node to record os info
+        temp=(struct node *)malloc(sizeof(struct node));
+        memset(temp,0,sizeof(struct node));
+       
+        //assign value
+        strcpy(temp->virtualGatewayDevID, virtualGatewayDevID);
+        temp->virtualGatewayDevType=iOSInfo;
+         
+	if (g_pVirtualGatewayDataListHead == NULL)
+	{
+	    g_pVirtualGatewayDataListHead=temp;
+	    g_pVirtualGatewayDataListHead->next=NULL;
+	}
+	else
+	{
+	    temp->next=g_pVirtualGatewayDataListHead;
+	    g_pVirtualGatewayDataListHead=temp;
+	}
+    }
+
 }
 
 void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType)

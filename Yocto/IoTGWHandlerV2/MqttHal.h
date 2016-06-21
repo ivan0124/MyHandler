@@ -80,7 +80,8 @@ typedef enum {
 } MQTT_ACTION;
 
 typedef enum {
-        TYPE_GATEWAY = 0,
+        DEVICE_TYPE_UNKNOWN = 0,
+        TYPE_GATEWAY,
 	TYPE_CONNECTIVITY
 } DEVICE_TYPE;
 
@@ -115,6 +116,7 @@ typedef struct _senhub_info_t {
 struct node
 {
     char virtualGatewayDevID[MAX_DEVICE_ID_LEN];
+    int virtualGatewayDevType;
     char connectivityType[MAX_CONNECTIVITY_TYPE_LEN];
     char connectivityDevID[MAX_DEVICE_ID_LEN];
     char connectivitySensorHubList[1024];

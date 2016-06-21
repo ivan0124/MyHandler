@@ -185,6 +185,11 @@ void test_link_list(){
     printf("-----------count = %d\n", cnt);
     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
 
+     
+    n = GetVirtualGatewayDataListNode("0000772233445599",TYPE_GATEWAY);
+    if ( n ){
+        printf("virtualGatewayDevID = %s\n",n->virtualGatewayDevID);
+    }
     //del3
     DeleteVirtualGatewayDataListNode("0007112233445503", TYPE_CONNECTIVITY);
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
@@ -576,11 +581,18 @@ int BuildGatewayCapabilityInfo(struct node* head, char* pResult){
         //WSN0:{Info...}
         //sprintf(tmp,"\"%s%d\":%s",r->connectivityType, i, r->connectivityInfo);
         index=FindConnectivityInfoNodeListIndex(r->connectivityType);
-        sprintf(tmp,"\"%s%d\":%s",r->connectivityType, g_ConnectivityInfoNodeList[index].index, r->connectivityInfo);
-        strcat(g_ConnectivityInfoNodeList[index].Info,tmp);
-        strcat(g_ConnectivityInfoNodeList[index].Info,",");
-        strcpy(g_ConnectivityInfoNodeList[index].type,r->connectivityType);
-        g_ConnectivityInfoNodeList[index].index++;
+        if ( index >= 0 ){
+            if (r->connectivityInfo != NULL){
+                sprintf(tmp,"\"%s%d\":%s",r->connectivityType, g_ConnectivityInfoNodeList[index].index, r->connectivityInfo);
+                strcat(g_ConnectivityInfoNodeList[index].Info,tmp);
+                strcat(g_ConnectivityInfoNodeList[index].Info,",");
+                strcpy(g_ConnectivityInfoNodeList[index].type,r->connectivityType);
+                g_ConnectivityInfoNodeList[index].index++;
+            }
+        }
+        else{
+            printf("[%s][%s] can not find Info node list index\n",__FILE__, __func__);
+        }
         //
 	r=r->next;
     }
@@ -600,7 +612,7 @@ int BuildGatewayCapabilityInfo(struct node* head, char* pResult){
             strcpy(g_ConnectivityInfoNodeList[i].Info,capability);
             printf("---------------%s capability----------------------------\n", g_ConnectivityInfoNodeList[i].type);
             printf(g_ConnectivityInfoNodeList[i].Info);
-            printf("-------------------------------------------\n");
+            printf("\n-------------------------------------------\n");
         }
     }
     //Pack gateway capability
