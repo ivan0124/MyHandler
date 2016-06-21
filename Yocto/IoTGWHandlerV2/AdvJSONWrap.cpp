@@ -38,8 +38,9 @@ struct node * GetVirtualGatewayDataListNode(char* devID, int devType)
             {
 
                 if (strcmp(r->virtualGatewayDevID, devID) == 0){
-                    //printf("[%s][%s] found [%s],msg:%s\n", __FILE__, __func__, r->connectivityDevID, r->connectivityInfo );
-                    return r;
+                    if ( r->connectivityInfo == NULL) {
+                        return r;
+                    }
                 }
 
                 break;
@@ -124,16 +125,20 @@ void UpdateVirtualGatewayOSInfoToDataListNode(char* data, int iOSInfo){
 
     temp= GetVirtualGatewayDataListNode(virtualGatewayDevID,TYPE_GATEWAY);
     if ( temp ){
+         printf("Update all Nodes OS info = %d\n", temp->virtualGatewayOSInfo);
         //Update all Nodes which have this gateway device ID
+      
+        //Get virtual gateway info
     }
     else{
+        printf("Add Node to record OS info = %d\n",iOSInfo);
         //Add Node to record os info
         temp=(struct node *)malloc(sizeof(struct node));
         memset(temp,0,sizeof(struct node));
        
         //assign value
         strcpy(temp->virtualGatewayDevID, virtualGatewayDevID);
-        temp->virtualGatewayDevType=iOSInfo;
+        temp->virtualGatewayOSInfo=iOSInfo;
          
 	if (g_pVirtualGatewayDataListHead == NULL)
 	{

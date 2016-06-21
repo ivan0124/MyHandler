@@ -65,8 +65,6 @@
 #define CONNECTIVITY_CAPABILITY  1
 #define SENSOR_HUB_CAPABILITY    2
 
-#define OS_NONE_IP_BASE    1
-#define OS_IP_BASE         2
 
 typedef enum {
         GATEWAY_OS_INFO = 0,
@@ -84,6 +82,12 @@ typedef enum {
         TYPE_GATEWAY,
 	TYPE_CONNECTIVITY
 } DEVICE_TYPE;
+
+typedef enum {
+        OS_TYPE_UNKNOWN = 0,
+        OS_NONE_IP_BASE,
+	OS_IP_BASE
+} GATEWYA_OS_INFO;
 
 typedef enum {
 	Mote_Report_CMD2000 = 0,
@@ -116,7 +120,7 @@ typedef struct _senhub_info_t {
 struct node
 {
     char virtualGatewayDevID[MAX_DEVICE_ID_LEN];
-    int virtualGatewayDevType;
+    int virtualGatewayOSInfo;
     char connectivityType[MAX_CONNECTIVITY_TYPE_LEN];
     char connectivityDevID[MAX_DEVICE_ID_LEN];
     char connectivitySensorHubList[1024];
