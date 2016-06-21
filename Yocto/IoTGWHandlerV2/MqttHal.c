@@ -803,6 +803,22 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("------------------------------------------------\n");
                     break;
                 }
+            case UPDATE_GATEWAY_DATA:
+                {
+                    printf("------------------------------------------------\n");
+		    printf("[%s][%s]\033[33m #Update Gateway Data# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    UpdateConnectivitySensorHubListNode(message->payload);
+#if 1
+                    if ( UpdateGatewayData(json) < 0){
+                        printf("[%s][%s] Update Gateway Data FAIL !!!\n", __FILE__, __func__);
+                        JSON_Destory(&json);
+                        return -1;
+                    }
+#endif
+                    printf("------------------------------------------------\n");
+                    break;
+                }
             case REGISTER_SENSOR_HUB:
                 {
                     printf("------------------------------------------------\n");
@@ -882,22 +898,6 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #if 1
                     if ( ReplySensorHubGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY) < 0){
                         printf("[%s][%s] Reply Set Sensor Request FAIL !!!\n", __FILE__, __func__);
-                        JSON_Destory(&json);
-                        return -1;
-                    }
-#endif
-                    printf("------------------------------------------------\n");
-                    break;
-                }
-            case UPDATE_GATEWAY_DATA:
-                {
-                    printf("------------------------------------------------\n");
-		    printf("[%s][%s]\033[33m #Update Gateway Data# \033[0m\n", __FILE__, __func__);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-                    UpdateConnectivitySensorHubListNode(message->payload);
-#if 1
-                    if ( UpdateGatewayData(json) < 0){
-                        printf("[%s][%s] Update Gateway Data FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;
                     }
