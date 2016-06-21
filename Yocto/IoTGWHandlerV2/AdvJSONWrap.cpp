@@ -15,6 +15,7 @@ int DeleteVirtualGatewayDataListNode(char* devID);
 void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize);
 int UpdateVirtualGatewayDataListNode(char* data);
 void UpdateConnectivitySensorHubListNode(const char* data);
+void UpdateVirtualGatewayOSInfoToDataListNode(char* data, int iOSInfo);
 void aTest(const char* mydata);
 
 #ifdef __cplusplus
@@ -74,6 +75,17 @@ int DeleteVirtualGatewayDataListNode(char* devID)
     }
 
     return 0;
+}
+void UpdateVirtualGatewayOSInfoToDataListNode(char* data, int iOSInfo){
+
+    printf("UpdateVirtualGatewayOSInfoToDataListNode\n");
+    AdvJSON json(data);
+
+    char virtualGatewayDevID[MAX_DEVICE_ID_LEN]={0};
+    struct node *temp=NULL;
+    //Get virtual gateway devID
+    strcpy(virtualGatewayDevID,json["susiCommData"]["agentID"].Value().c_str());
+    printf("virtualGatewayDevID = %s\n", virtualGatewayDevID);
 }
 
 void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize)

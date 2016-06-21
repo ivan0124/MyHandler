@@ -432,8 +432,7 @@ int ParseAgentactionreqTopic(JSONode *json){
                 return REPLY_SET_SENSOR_REQUEST;
             case IOTGW_OS_INFO:
                 {
-                    isOSIPbase(json);
-                    break;
+                    return GATEWAY_OS_INFO;
                 }
             case IOTGW_HANDLER_GET_CAPABILITY_REPLY:
                 {
@@ -744,6 +743,25 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
         }
 #endif
         switch(action){
+            case GATEWAY_OS_INFO:
+                {
+                    printf("------------------------------------------------\n");
+		    printf("[%s][%s]\033[33m #Gateway OS Info# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    int OSInfo=OS_NONE_IP_BASE;
+
+                    if ( isOSIPbase(json) < 0 ){
+                        printf("[%s][%s]OS Info: none-IP base\n", __FILE__, __func__);
+                    }
+                    else{
+                        printf("[%s][%s]OS Info: IP base\n", __FILE__, __func__);
+                        OSInfo=OS_IP_BASE;
+                    }
+
+                    UpdateVirtualGatewayOSInfoToDataListNode(message->payload, OSInfo);
+                    printf("------------------------------------------------\n");
+                    break;
+                }
             case REGISTER_GATEWAY_CAPABILITY:
                 {
                     printf("------------------------------------------------\n");
