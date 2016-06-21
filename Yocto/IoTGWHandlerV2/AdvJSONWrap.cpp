@@ -179,10 +179,10 @@ void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivi
             break;
     }
     //
-    temp=GetVirtualGatewayDataListNode(tmp_devID, TYPE_CONNECTIVITY);
+    temp=GetVirtualGatewayDataListNode(tmp_devID, devType);
     //
     if (temp != NULL){
-        DeleteVirtualGatewayDataListNode(tmp_devID, TYPE_CONNECTIVITY);
+        DeleteVirtualGatewayDataListNode(tmp_devID, devType);
         temp=NULL;
     }
     //
