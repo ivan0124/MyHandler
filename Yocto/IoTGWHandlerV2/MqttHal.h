@@ -80,7 +80,8 @@ typedef enum {
 typedef enum {
         DEVICE_TYPE_UNKNOWN = 0,
         TYPE_GATEWAY,
-	TYPE_CONNECTIVITY
+	TYPE_CONNECTIVITY,
+        TYPE_SENSOR_HUB
 } DEVICE_TYPE;
 
 typedef enum {
@@ -119,6 +120,7 @@ typedef struct _senhub_info_t {
 
 struct node
 {
+    int nodeType;
     char virtualGatewayDevID[MAX_DEVICE_ID_LEN];
     int virtualGatewayOSInfo;
     char connectivityType[MAX_CONNECTIVITY_TYPE_LEN];

@@ -38,7 +38,7 @@ struct node * GetVirtualGatewayDataListNode(char* devID, int devType)
             {
 
                 if (strcmp(r->virtualGatewayDevID, devID) == 0){
-                    if ( r->connectivityInfo == NULL) {
+                    if ( r->nodeType == TYPE_GATEWAY) {
                         return r;
                     }
                 }
@@ -48,8 +48,9 @@ struct node * GetVirtualGatewayDataListNode(char* devID, int devType)
             case TYPE_CONNECTIVITY:
             {
                 if (strcmp(r->connectivityDevID, devID) == 0){
-                    //printf("[%s][%s] found [%s],msg:%s\n", __FILE__, __func__, r->connectivityDevID, r->connectivityInfo );
-                    return r;
+                    if ( r->nodeType == TYPE_CONNECTIVITY) {
+                        return r;
+                    }
                 }
                 break;
             }
@@ -86,7 +87,7 @@ int DeleteVirtualGatewayDataListNode(char* devID, int devType)
                 break;
         }
         //
-        if( strcmp(tmp_devID,devID) == 0 )
+        if( strcmp(tmp_devID,devID) == 0 && temp->nodeType == devType)
         {
             if(temp==g_pVirtualGatewayDataListHead)
             {
@@ -189,6 +190,8 @@ void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivi
     temp=(struct node *)malloc(sizeof(struct node));
     memset(temp,0,sizeof(struct node));
  
+    temp->nodeType = devType;
+
     if (pConnectivityInfo != NULL){
         temp->connectivityInfo=(char*)malloc(iConnectivityInfoSize+1);
         strcpy(temp->connectivityInfo,pConnectivityInfo);
