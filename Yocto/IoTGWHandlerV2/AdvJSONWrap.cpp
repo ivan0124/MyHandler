@@ -308,9 +308,15 @@ void UpdateConnectivitySensorHubListNode(const char* data){
     char packet_type[32]={"data"};
     struct node *temp=NULL;
 
-
     //Get virtual gateway devID
     strcpy(virtualGatewayDevID,json["susiCommData"]["agentID"].Value().c_str());
+    //check OS type
+    temp=GetVirtualGatewayDataListNode(virtualGatewayDevID, TYPE_GATEWAY);
+    if ( temp->virtualGatewayOSInfo == OS_IP_BASE){
+        printf("[%s][%s] IP base device, DO NOT update gateway Info\n", __FILE__, __func__);
+        return;
+    }
+    //
 
     AdvJSON IoTGW_json=json["susiCommData"][packet_type]["IoTGW"];
     max=IoTGW_json.Size();
