@@ -574,6 +574,7 @@ int BuildGatewayCapabilityInfo(struct node* head, char* pResult){
     {
 	printf("[%s][%s]\n----------------------------------\n", __FILE__, __func__);
 	printf("virtualGatewayDevID:%s\n",r->virtualGatewayDevID);
+        printf("osInfo:%d\n",r->virtualGatewayOSInfo);
 	printf("connectivityType:%s\n",r->connectivityType);
 	printf("connectivityDevID:%s\n",r->connectivityDevID);
 	printf("connectivityInfo:%s\n",r->connectivityInfo);
@@ -582,12 +583,17 @@ int BuildGatewayCapabilityInfo(struct node* head, char* pResult){
         //sprintf(tmp,"\"%s%d\":%s",r->connectivityType, i, r->connectivityInfo);
         index=FindConnectivityInfoNodeListIndex(r->connectivityType);
         if ( index >= 0 ){
-            if (r->connectivityInfo != NULL){
-                sprintf(tmp,"\"%s%d\":%s",r->connectivityType, g_ConnectivityInfoNodeList[index].index, r->connectivityInfo);
-                strcat(g_ConnectivityInfoNodeList[index].Info,tmp);
-                strcat(g_ConnectivityInfoNodeList[index].Info,",");
-                strcpy(g_ConnectivityInfoNodeList[index].type,r->connectivityType);
-                g_ConnectivityInfoNodeList[index].index++;
+            if (r->nodeType == TYPE_CONNECTIVITY){
+                if (r->virtualGatewayOSInfo == OS_NONE_IP_BASE){
+                    sprintf(tmp,"\"%s%d\":%s",r->connectivityType, g_ConnectivityInfoNodeList[index].index, r->connectivityInfo);
+                    strcat(g_ConnectivityInfoNodeList[index].Info,tmp);
+                    strcat(g_ConnectivityInfoNodeList[index].Info,",");
+                    strcpy(g_ConnectivityInfoNodeList[index].type,r->connectivityType);
+                    g_ConnectivityInfoNodeList[index].index++;
+                }
+                else if (r->virtualGatewayOSInfo == OS_IP_BASE){
+                    //ToDo
+                }
             }
         }
         else{

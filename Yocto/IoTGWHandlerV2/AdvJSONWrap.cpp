@@ -293,8 +293,13 @@ int UpdateVirtualGatewayDataListNode(char* data){
 		printf("connectivity DevID: "); printf(connectivityDevID);
 		printf("\n********************************************\n");
 #endif
+                int osInfo=OS_TYPE_UNKNOWN;
+                struct node* temp= GetVirtualGatewayDataListNode(virtualGatewayDevID,TYPE_GATEWAY);
+                if ( temp != NULL ){
+                    osInfo = temp->virtualGatewayOSInfo;
+                }
                 //Add Node
-                AddVirtualGatewayDataListNode(virtualGatewayDevID,type,connectivityDevID,connectivityInfo, strlen(connectivityInfo), TYPE_CONNECTIVITY, OS_TYPE_UNKNOWN);
+                AddVirtualGatewayDataListNode(virtualGatewayDevID,type,connectivityDevID,connectivityInfo, strlen(connectivityInfo), TYPE_CONNECTIVITY, osInfo);
             }
         }
 
