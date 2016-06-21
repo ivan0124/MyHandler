@@ -135,25 +135,6 @@ void UpdateVirtualGatewayOSInfoToDataListNode(char* data, int iOSInfo){
         printf("Add Node to record OS info = %d\n",iOSInfo);
         //Add Node to record os info
         AddVirtualGatewayDataListNode(virtualGatewayDevID,NULL,NULL,NULL, 0, TYPE_GATEWAY, iOSInfo);
-#if 0
-        temp=(struct node *)malloc(sizeof(struct node));
-        memset(temp,0,sizeof(struct node));
-       
-        //assign value
-        strcpy(temp->virtualGatewayDevID, virtualGatewayDevID);
-        temp->virtualGatewayOSInfo=iOSInfo;
-         
-	if (g_pVirtualGatewayDataListHead == NULL)
-	{
-	    g_pVirtualGatewayDataListHead=temp;
-	    g_pVirtualGatewayDataListHead->next=NULL;
-	}
-	else
-	{
-	    temp->next=g_pVirtualGatewayDataListHead;
-	    g_pVirtualGatewayDataListHead=temp;
-	}
-#endif
     }
 
 }
