@@ -80,6 +80,11 @@ typedef enum {
 } MQTT_ACTION;
 
 typedef enum {
+        TYPE_GATEWAY = 0,
+	TYPE_CONNECTIVITY
+} DEVICE_TYPE;
+
+typedef enum {
 	Mote_Report_CMD2000 = 0,
 	Mote_Report_CMD2001,
 	Mote_Report_CMD2002,

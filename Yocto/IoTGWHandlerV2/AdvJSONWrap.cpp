@@ -10,7 +10,7 @@ extern "C" {
 
 struct node* g_pVirtualGatewayDataListHead=NULL;
 
-struct node * GetVirtualGatewayDataListNode(char* devID);
+struct node * GetVirtualGatewayDataListNode(char* devID, int devType);
 int DeleteVirtualGatewayDataListNode(char* devID);
 void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize);
 int UpdateVirtualGatewayDataListNode(char* data);
@@ -22,7 +22,7 @@ void aTest(const char* mydata);
 }
 #endif
 
-struct node * GetVirtualGatewayDataListNode(char* devID)
+struct node * GetVirtualGatewayDataListNode(char* devID, int devType)
 {
     struct node * r;
     r=g_pVirtualGatewayDataListHead;
@@ -33,11 +33,23 @@ struct node * GetVirtualGatewayDataListNode(char* devID)
     }
     while(r!=NULL)
     {
-    if (strcmp(r->connectivityDevID, devID) == 0){
-        //printf("[%s][%s] found [%s],msg:%s\n", __FILE__, __func__, r->connectivityDevID, r->connectivityInfo );
-        return r;
-    }
-    r=r->next;
+        switch(devType){
+            case TYPE_GATEWAY:
+            {
+                break;
+            }
+            case TYPE_CONNECTIVITY:
+            {
+                if (strcmp(r->connectivityDevID, devID) == 0){
+                    //printf("[%s][%s] found [%s],msg:%s\n", __FILE__, __func__, r->connectivityDevID, r->connectivityInfo );
+                    return r;
+                }
+                break;
+            }
+            default:
+                break;
+        }
+        r=r->next;
     }
 
     return NULL;
@@ -92,7 +104,7 @@ void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivi
 {
     struct node *temp=NULL;
     //
-    temp=GetVirtualGatewayDataListNode(pConnectivityDevID);
+    temp=GetVirtualGatewayDataListNode(pConnectivityDevID, TYPE_CONNECTIVITY);
     //
     if (temp != NULL){
         DeleteVirtualGatewayDataListNode(pConnectivityDevID);
@@ -241,7 +253,7 @@ void UpdateConnectivitySensorHubListNode(const char* data){
 #endif
 		//get connectivity node
 #if 1
-		temp=GetVirtualGatewayDataListNode(connectivityDevID);
+		temp=GetVirtualGatewayDataListNode(connectivityDevID, TYPE_CONNECTIVITY);
 		if ( temp == NULL ){
 			printf("[%s][%s]can not find connectivity:%s node\n", __FILE__, __func__, connectivityDevID);
 			continue;
@@ -328,7 +340,7 @@ void aTest(const char* mydata){
 #endif
 		//get connectivity node
 #if 1
-		temp=GetVirtualGatewayDataListNode(connectivityDevID);
+		temp=GetVirtualGatewayDataListNode(connectivityDevID, TYPE_CONNECTIVITY);
 		if ( temp == NULL ){
 			printf("[%s][%s]can not find connectivity:%s node\n", __FILE__, __func__, connectivityDevID);
 			continue;
