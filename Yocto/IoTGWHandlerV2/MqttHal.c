@@ -181,21 +181,22 @@ void test_link_list(){
     printf("-----------count = %d\n", cnt);
     //add3 again: we will delete3 then add3 again
     AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445503","77777",strlen("77777"));
+    printf("add3 again, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
 
     //del3
-    DeleteVirtualGatewayDataListNode("0007112233445503");
+    DeleteVirtualGatewayDataListNode("0007112233445503", TYPE_CONNECTIVITY);
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("del3, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //del2
-    DeleteVirtualGatewayDataListNode("0007112233445502");
+    DeleteVirtualGatewayDataListNode("0007112233445502", TYPE_CONNECTIVITY);
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("del2, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //del1
-    DeleteVirtualGatewayDataListNode("0007112233445501");
+    DeleteVirtualGatewayDataListNode("0007112233445501", TYPE_CONNECTIVITY);
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("del1, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
@@ -757,7 +758,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         printf("[%s][%s]OS Info: IP base\n", __FILE__, __func__);
                         OSInfo=OS_IP_BASE;
                     }
-
+                    //test_link_list();
                     UpdateVirtualGatewayOSInfoToDataListNode(message->payload, OSInfo);
                     printf("------------------------------------------------\n");
                     break;

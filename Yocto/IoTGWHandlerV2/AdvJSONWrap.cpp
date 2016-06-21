@@ -11,7 +11,7 @@ extern "C" {
 struct node* g_pVirtualGatewayDataListHead=NULL;
 
 struct node * GetVirtualGatewayDataListNode(char* devID, int devType);
-int DeleteVirtualGatewayDataListNode(char* devID);
+int DeleteVirtualGatewayDataListNode(char* devID, int devType);
 void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize);
 int UpdateVirtualGatewayDataListNode(char* data);
 void UpdateConnectivitySensorHubListNode(const char* data);
@@ -56,34 +56,50 @@ struct node * GetVirtualGatewayDataListNode(char* devID, int devType)
     //printf("\n");
 }
 
-int DeleteVirtualGatewayDataListNode(char* devID)
+int DeleteVirtualGatewayDataListNode(char* devID, int devType)
 {
     struct node *temp, *prev;
     temp=g_pVirtualGatewayDataListHead;
+    char tmp_devID[32]={0};
+
     while(temp!=NULL)
     {
-    if( strcmp(temp->connectivityDevID,devID) == 0 )
-    {
-        if(temp==g_pVirtualGatewayDataListHead)
-        {
-        g_pVirtualGatewayDataListHead=temp->next;
-        free(temp->connectivityInfo);
-        free(temp);
-        return 1;
+        switch(devType){
+            case TYPE_GATEWAY:
+            {
+                strcpy(tmp_devID, temp->virtualGatewayDevID);
+                break;
+            }
+            case TYPE_CONNECTIVITY:
+            {
+                strcpy(tmp_devID, temp->connectivityDevID);
+                break;
+            }
+            default:
+                break;
         }
-        else
+        //
+        if( strcmp(tmp_devID,devID) == 0 )
         {
-        prev->next=temp->next;
-        free(temp->connectivityInfo);
-        free(temp);
-        return 1;
+            if(temp==g_pVirtualGatewayDataListHead)
+            {
+                g_pVirtualGatewayDataListHead=temp->next;
+                free(temp->connectivityInfo);
+                free(temp);
+                return 1;
+            }
+            else
+            {
+                prev->next=temp->next;
+                free(temp->connectivityInfo);
+                free(temp);
+                return 1;
+            }
         }
-    }
-    else
-    {
-        prev=temp;
-        temp= temp->next;
-    }
+        else{
+            prev=temp;
+            temp= temp->next;
+        }
     }
 
     return 0;
@@ -107,7 +123,7 @@ void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivi
     temp=GetVirtualGatewayDataListNode(pConnectivityDevID, TYPE_CONNECTIVITY);
     //
     if (temp != NULL){
-        DeleteVirtualGatewayDataListNode(pConnectivityDevID);
+        DeleteVirtualGatewayDataListNode(pConnectivityDevID, TYPE_CONNECTIVITY);
         temp=NULL;
     }
     //
