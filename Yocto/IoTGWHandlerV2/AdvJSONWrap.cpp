@@ -12,7 +12,7 @@ struct node* g_pVirtualGatewayDataListHead=NULL;
 
 struct node * GetVirtualGatewayDataListNode(char* devID, int devType);
 int DeleteVirtualGatewayDataListNode(char* devID, int devType);
-void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType);
+void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType, int iOSInfo);
 int UpdateVirtualGatewayDataListNode(char* data);
 void UpdateConnectivitySensorHubListNode(const char* data);
 void UpdateVirtualGatewayOSInfoToDataListNode(char* data, int iOSInfo);
@@ -134,6 +134,8 @@ void UpdateVirtualGatewayOSInfoToDataListNode(char* data, int iOSInfo){
     else{
         printf("Add Node to record OS info = %d\n",iOSInfo);
         //Add Node to record os info
+        AddVirtualGatewayDataListNode(virtualGatewayDevID,NULL,NULL,NULL, 0, TYPE_GATEWAY, iOSInfo);
+#if 0
         temp=(struct node *)malloc(sizeof(struct node));
         memset(temp,0,sizeof(struct node));
        
@@ -151,11 +153,12 @@ void UpdateVirtualGatewayOSInfoToDataListNode(char* data, int iOSInfo){
 	    temp->next=g_pVirtualGatewayDataListHead;
 	    g_pVirtualGatewayDataListHead=temp;
 	}
+#endif
     }
 
 }
 
-void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType)
+void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType, int iOSInfo)
 {
     struct node *temp=NULL;
     char tmp_devID[32]={0};
@@ -191,6 +194,7 @@ void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivi
     memset(temp,0,sizeof(struct node));
  
     temp->nodeType = devType;
+    temp->virtualGatewayOSInfo = iOSInfo;
 
     if (pConnectivityInfo != NULL){
         temp->connectivityInfo=(char*)malloc(iConnectivityInfoSize+1);
@@ -290,7 +294,7 @@ int UpdateVirtualGatewayDataListNode(char* data){
 		printf("\n********************************************\n");
 #endif
                 //Add Node
-                AddVirtualGatewayDataListNode(virtualGatewayDevID,type,connectivityDevID,connectivityInfo, strlen(connectivityInfo), TYPE_CONNECTIVITY);
+                AddVirtualGatewayDataListNode(virtualGatewayDevID,type,connectivityDevID,connectivityInfo, strlen(connectivityInfo), TYPE_CONNECTIVITY, OS_TYPE_UNKNOWN);
             }
         }
 
