@@ -208,6 +208,56 @@ void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivi
 
 } 
 
+int PackConnectivityCapability(char* info_data){
+
+    char* e_array[]={"{\"n\":\"SenHubList\",\"sv\":\"%s\",\"asm\":\"%s\"}",
+                     "{\"n\":\"Neighbor\",\"sv\":\"%s\",\"asm\":\"%s\"}",
+                     "{\"n\":\"Name\",\"sv\":\"Ethernet\",\"asm\":\"r\"}"
+                    };
+    int i=0;
+    int max_e_array_size=sizeof(e_array)/sizeof(char*);
+
+    strcat(info_data,"{\"Info\":");
+    //
+    strcat(info_data,"{");
+    //
+    strcat(info_data,"\"e\":[");
+#if 1
+    for(i=0; i < max_e_array_size ; i++){
+        char tmp[1024]={0};
+        AdvJSON json(e_array[i]);
+
+        if ( strcmp("SenHubList", json[0].Value().c_str()) == 0){
+            sprintf(tmp,e_array[i],"1111","2222");
+        }
+        else if ( strcmp("Neighbor", json[0].Value().c_str()) == 0){
+            sprintf(tmp,e_array[i],"3333","4444");
+        }
+        else{
+            strcpy(tmp,e_array[i]);
+        }
+        strcat(info_data,tmp);
+        strcat(info_data,",");
+    }
+    int len=strlen(info_data);
+    info_data[len-1]=0;
+#endif
+    strcat(info_data,"]");
+    //
+    strcat(info_data,",");
+    strcat(info_data,"\"bn\":\"Info\"");
+    //
+    strcat(info_data,"}");
+    //
+    strcat(info_data,",");
+    strcat(info_data,"\"bn\":\"0007000E40ABCDEF\"");
+    strcat(info_data,",");
+    strcat(info_data,"\"ver\":1");
+    strcat(info_data,"}");
+
+    return 0;
+}
+
 int UpdateVirtualGatewayDataListNode(char* data){
 
 #if 0
@@ -283,8 +333,9 @@ int UpdateVirtualGatewayDataListNode(char* data){
 #if 1
                 if ( osInfo == OS_IP_BASE){
                     sprintf(connectivityDevID,"0007%s",g_GWInfMAC);
-                    char info_data[1024]={"{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"Ethernet\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"bn\":\"%s\",\"ver\":1}"};
-                    sprintf(connectivityInfo,info_data,connectivityDevID);
+                    char info_data[1024]={0};
+                    PackConnectivityCapability(info_data);
+                    strcpy(connectivityInfo,info_data); 
                 }
 #endif
                 printf("\n@@@@@@ add node********************************************\n");
