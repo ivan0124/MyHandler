@@ -679,15 +679,7 @@ void UpdateConnectivitySensorHubListNode(const char* data){
                                      strcpy(virtualConnectivityDevID,connectivityDevID);
                                      AddVirtualGatewayDataListNode(virtualGatewayDevID,NULL,virtualConnectivityDevID,NULL, 0, TYPE_SENSOR_HUB, osInfo, sensorHubDevID);
                                  }
-#if 0
-                                 sprintf(trueConnectivityDevID,"0007%s", g_GWInfMAC);
-				 temp=GetVirtualGatewayDataListNode(trueConnectivityDevID, TYPE_CONNECTIVITY);
-				 if ( temp == NULL ){
-				     printf("[%s][%s]can not find connectivity:%s node\n", __FILE__, __func__, connectivityDevID);
-				 }
-                                 else{
-                                 }
-#endif
+
                              }
                              else{
                                  printf("[%s][%s]Unknown OS Info: %d\n", __FILE__, __func__, osInfo);
