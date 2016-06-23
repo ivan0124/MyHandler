@@ -1100,7 +1100,7 @@ char ConnectivityInfo4[1024]={"{\"IoTGW\":{\"BLE\":{\"BLE0\":{\"Info\":{\"e\":[{
 }
 
 
-int RegisterSensorHub(JSONode *json)
+int ConnectToRMM_SensorHub(JSONode *json)
 {
 	int rc = -1;
 	int index = 0;
@@ -1139,7 +1139,7 @@ int RegisterSensorHub(JSONode *json)
 	return 0;
 }
 
-int RegisterSensorHubCapability(char* ptopic, JSONode *json){
+int RegisterToRMM_SensorHubCapability(char* ptopic, JSONode *json){
 
     int index=-1;
     char nodeContent[MAX_JSON_NODE_SIZE]={0};
@@ -1187,9 +1187,9 @@ int RegisterSensorHubCapability(char* ptopic, JSONode *json){
     return 0;
 }
 
-int DisconnectSensorHub(char* SensorHubUID)
+int DisconnectToRMM_SensorHub(char* SensorHubUID)
 {
-        printf("[ivan] DisconnectSensorHub ==================>\n");
+        printf("[%s][%s] DisconnectSensorHub(%s)==================>\n", __FILE__, __func__, SensorHubUID);
 	int rc = 0;
         int index=-1;
         //
@@ -1205,7 +1205,7 @@ int DisconnectSensorHub(char* SensorHubUID)
 	return rc;
 }
 
-int UpdateSensorHubData( JSONode *json )
+int UpdateToRMM_SensorHubData( JSONode *json )
 {
 	int rc = 0;
         int index = -1;

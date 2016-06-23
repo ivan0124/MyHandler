@@ -491,7 +491,7 @@ int ParseAgentinfoackTopic(JSONode *json){
     JSON_Get(json, OBJ_DEVICE_TYPE, nodeContent, sizeof(nodeContent));
 
     if(strcmp(nodeContent, "SenHub") == 0){
-        return REGISTER_SENSOR_HUB;
+        return SENSOR_HUB_CONNECT;
     }
 
     return -1;
@@ -727,7 +727,7 @@ int DisconnectSensorHubInVirtualGateway(struct node* head, char* VirtualGatewayU
 	    char *SensorHubUID = strtok(tmp, ",");
 	    while(SensorHubUID != NULL)
 	    {
-                DisconnectSensorHub(SensorHubUID);
+                DisconnectToRMM_SensorHub(SensorHubUID);
 		SensorHubUID = strtok(NULL, ",");
 	    }
         }
@@ -830,14 +830,14 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("------------------------------------------------\n");
                     break;
                 }
-            case REGISTER_SENSOR_HUB:
+            case SENSOR_HUB_CONNECT:
                 {
                     printf("------------------------------------------------\n");
-                    printf("[%s][%s]\033[33m #Register SensorHub# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s]\033[33m #SensorHub Connect# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 #if 1
-                    if ( RegisterSensorHub(json) < 0){
-                        printf("[%s][%s] Register SensorHub FAIL !!!\n", __FILE__, __func__);
+                    if ( ConnectToRMM_SensorHub(json) < 0){
+                        printf("[%s][%s] SensorHub connect to RMM FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;
                     }
@@ -851,7 +851,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    printf("[%s][%s]\033[33m #Register SensorHub Capability# \033[0m\n", __FILE__, __func__);
 #if 1
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-                    if(RegisterSensorHubCapability(message->topic, json) < 0){
+                    if(RegisterToRMM_SensorHubCapability(message->topic, json) < 0){
                         printf("[%s][%s] Register SensorHub Capability FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;
@@ -859,6 +859,19 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #endif
                     printf("------------------------------------------------\n");
                     break;
+                }
+            case UPDATE_SENSOR_HUB_DATA:
+                {
+                    printf("------------------------------------------------\n");
+		    printf("[%s][%s]\033[33m #Update SensorHub Data# \033[0m\n", __FILE__, __func__);
+#if 1
+                    if ( UpdateToRMM_SensorHubData(json) < 0){
+                        printf("[%s][%s] Update SensorHub Data FAIL !!!\n", __FILE__, __func__);
+                        JSON_Destory(&json);
+                        return -1;
+                    }
+#endif
+                    printf("\n------------------------------------------------\n");
                 }
             case REPLY_GET_SENSOR_REQUEST:
                 {
@@ -901,7 +914,6 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("DeviceUID = %s\n", DeviceUID);
 #if 1
                     if ( GetUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
-                        printf("found 0000000E40ABCDEF connectivity mac\n");
                         ReplyGatewayGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY);
                         return 0;
                     }
@@ -916,19 +928,6 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #endif
                     printf("------------------------------------------------\n");
                     break;
-                }
-            case UPDATE_SENSOR_HUB_DATA:
-                {
-                    printf("------------------------------------------------\n");
-		    printf("[%s][%s]\033[33m #Update SensorHub Data# \033[0m\n", __FILE__, __func__);
-#if 1
-                    if ( UpdateSensorHubData(json) < 0){
-                        printf("[%s][%s] Update SensorHub Data FAIL !!!\n", __FILE__, __func__);
-                        JSON_Destory(&json);
-                        return -1;
-                    }
-#endif
-                    printf("\n------------------------------------------------\n");
                 }
             default:
                 break;
@@ -961,7 +960,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     }
                 }
                 else{
-                    DisconnectSensorHub(DeviceUID);
+                    DisconnectToRMM_SensorHub(DeviceUID);
                 }
 	}
 	
