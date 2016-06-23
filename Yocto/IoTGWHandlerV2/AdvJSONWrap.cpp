@@ -301,7 +301,7 @@ int GetSensorHubList(char* sensorHubList, int osInfo, char* connectivityDevID){
     return 0;
 }
 
-int PackIPBaseConnectivityInfo(char* info_data){
+int BuildNodeList_IPBaseGatewayUpdateInfo(char* info_data){
 
     char* e_array[]={"{\"n\":\"SenHubList\",\"sv\":\"%s\"}",
                      "{\"n\":\"Neighbor\",\"sv\":\"%s\"}",
@@ -381,7 +381,7 @@ int PackIPBaseConnectivityInfo(char* info_data){
 
 }
 
-int PackNoneIPBaseConnectivityInfo(char* data, char* info_data){
+int BuildData_NoneIPBaseGatewayUpdateInfo(char* data, char* info_data){
 
     char nodeContent[MAX_JSON_NODE_SIZE]={0};
 
@@ -401,11 +401,11 @@ int BuildNodeList_GatewayUpdateInfo(char* data, char* info_data, int osInfo){
     switch(osInfo){
         case OS_IP_BASE:
         {
-            return PackIPBaseConnectivityInfo(info_data);
+            return BuildNodeList_IPBaseGatewayUpdateInfo(info_data);
         }
         case OS_NONE_IP_BASE:
         {
-            return PackNoneIPBaseConnectivityInfo(data, info_data);
+            return BuildData_NoneIPBaseGatewayUpdateInfo(data, info_data);
         }
         default:
         {
