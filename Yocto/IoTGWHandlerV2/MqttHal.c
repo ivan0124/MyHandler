@@ -138,6 +138,7 @@ void  DisplayAllVirtualGatewayDataListNode(struct node* head, struct node *r)
     printf("connectivityType:%s\n",r->connectivityType);
     printf("connectivityDevID:%s\n",r->connectivityDevID);
     printf("connectivityInfo:%s\n",r->connectivityInfo);
+    printf("sensorHubDevID:%s\n",r->sensorHubDevID);
     printf("----------------------------------\n");
     r=r->next;
     }
@@ -165,22 +166,22 @@ void test_link_list(){
     printf("initital g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //add1
-    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445501","12345", strlen("12345"), TYPE_CONNECTIVITY, OS_TYPE_UNKNOWN);
+    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445501","12345", strlen("12345"), TYPE_SENSOR_HUB, OS_TYPE_UNKNOWN, "0017112233445501");
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("add1, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //add2
-    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445502","67",strlen("67"), TYPE_CONNECTIVITY, OS_TYPE_UNKNOWN);
+    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445502","67",strlen("67"), TYPE_SENSOR_HUB, OS_TYPE_UNKNOWN, "0017112233445502");
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("add2, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //add3
-    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445503","890",strlen("890"), TYPE_CONNECTIVITY, OS_TYPE_UNKNOWN);
+    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445503","890",strlen("890"), TYPE_SENSOR_HUB, OS_TYPE_UNKNOWN, "0017112233445503");
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("add3, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //add3 again: we will delete3 then add3 again
-    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445503","77777",strlen("77777"), TYPE_CONNECTIVITY, OS_TYPE_UNKNOWN);
+    AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445503","77777",strlen("77777"), TYPE_SENSOR_HUB, OS_TYPE_UNKNOWN, "0017112233445503");
     printf("add3 again, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
@@ -191,17 +192,17 @@ void test_link_list(){
         printf("virtualGatewayDevID = %s\n",n->virtualGatewayDevID);
     }
     //del3
-    DeleteVirtualGatewayDataListNode("0007112233445503", TYPE_CONNECTIVITY);
+    DeleteVirtualGatewayDataListNode("0017112233445503", TYPE_SENSOR_HUB);
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("del3, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //del2
-    DeleteVirtualGatewayDataListNode("0007112233445502", TYPE_CONNECTIVITY);
+    DeleteVirtualGatewayDataListNode("0017112233445502", TYPE_SENSOR_HUB);
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("del2, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
     //del1
-    DeleteVirtualGatewayDataListNode("0007112233445501", TYPE_CONNECTIVITY);
+    DeleteVirtualGatewayDataListNode("0017112233445501", TYPE_SENSOR_HUB);
     cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
     printf("del1, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
     printf("-----------count = %d\n", cnt);
@@ -823,6 +824,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
                     printf("[%s][%s]\033[33m #Register SensorHub# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 #if 1
                     if ( RegisterSensorHub(json) < 0){
                         printf("[%s][%s] Register SensorHub FAIL !!!\n", __FILE__, __func__);

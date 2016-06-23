@@ -128,6 +128,7 @@ struct node
     char connectivitySensorHubList[1024];
     char connectivityNeighborList[1024];
     char* connectivityInfo;
+    char sensorHubDevID[MAX_DEVICE_ID_LEN];
     struct node *next;
 };
 
