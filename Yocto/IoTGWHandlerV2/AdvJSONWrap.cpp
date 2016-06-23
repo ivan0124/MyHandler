@@ -305,10 +305,12 @@ int PackIPBaseConnectivityInfo(char* info_data){
 
     char* e_array[]={"{\"n\":\"SenHubList\",\"sv\":\"%s\"}",
                      "{\"n\":\"Neighbor\",\"sv\":\"%s\"}",
-                     "{\"n\":\"Name\",\"sv\":\"Ethernet\"}",
+                     "{\"n\":\"Name\",\"sv\":\"Ethernet\"}"
+#if 0
                      "{\"n\":\"Health\",\"v\":\"100.000000\"}",
                      "{\"n\":\"sw\",\"sv\":\"1.2.1.12\"}",
                      "{\"n\":\"reset\",\"bv\":\"0\"}"
+#endif
                     };
     int i=0;
     int max_e_array_size=sizeof(e_array)/sizeof(char*);
@@ -411,70 +413,7 @@ int PackConnectivityInfo(char* data, char* info_data, int osInfo){
             return -1;
         }
     }
-#if 0
-    char* e_array[]={"{\"n\":\"SenHubList\",\"sv\":\"%s\"}",
-                     "{\"n\":\"Neighbor\",\"sv\":\"%s\"}",
-                     "{\"n\":\"Name\",\"sv\":\"Ethernet\"}"
-                    };
-    int i=0;
-    int max_e_array_size=sizeof(e_array)/sizeof(char*);
-    char sensorHubList[1024]={0};
-    char tmp[1024]={0};
 
-    if ( GetSensorHubList(sensorHubList, OS_IP_BASE, NULL) < 0 ){
-        printf("[%s][%s] get sensor hub list fail\n", __FILE__, __func__);
-        return -1;
-    }
-
-    strcat(info_data,"{\"Info\":");
-    //
-    strcat(info_data,"{");
-    //
-    strcat(info_data,"\"e\":[");
-#if 1
-    for(i=0; i < max_e_array_size ; i++){
-        memset(tmp,0,sizeof(tmp));
-        AdvJSON json(e_array[i]);
-
-        if ( strcmp("SenHubList", json[0].Value().c_str()) == 0){
-            if ( strlen(sensorHubList) == 0){
-                strcpy(tmp,"{\"n\":\"SenHubList\",\"sv\":\"\"}");
-            }
-            else{
-                sprintf(tmp,e_array[i],sensorHubList);
-            }
-        }
-        else if ( strcmp("Neighbor", json[0].Value().c_str()) == 0){
-            if ( strlen(sensorHubList) == 0){
-                strcpy(tmp,"{\"n\":\"Neighbor\",\"sv\":\"\"}");
-            }
-            else{
-                sprintf(tmp,e_array[i],sensorHubList);
-            };
-        }
-        else{
-            strcpy(tmp,e_array[i]);
-        }
-        strcat(info_data,tmp);
-        strcat(info_data,",");
-    }
-    int len=strlen(info_data);
-    info_data[len-1]=0;
-#endif
-    strcat(info_data,"]");
-    //
-    strcat(info_data,",");
-    strcat(info_data,"\"bn\":\"Info\"");
-    //
-    strcat(info_data,"}");
-    //
-    strcat(info_data,",");
-    sprintf(tmp,"\"bn\":\"0007%s\"",g_GWInfMAC);
-    strcat(info_data,tmp);
-    strcat(info_data,",");
-    strcat(info_data,"\"ver\":1");
-    strcat(info_data,"}");
-#endif
     return 0;
 }
 
@@ -482,10 +421,12 @@ int PackConnectivityCapability(char* info_data){
 
     char* e_array[]={"{\"n\":\"SenHubList\",\"sv\":\"%s\",\"asm\":\"%s\"}",
                      "{\"n\":\"Neighbor\",\"sv\":\"%s\",\"asm\":\"%s\"}",
-                     "{\"n\":\"Name\",\"sv\":\"Ethernet\",\"asm\":\"r\"}",
+                     "{\"n\":\"Name\",\"sv\":\"Ethernet\",\"asm\":\"r\"}"//,
+#if 0
                      "{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"}",
                      "{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"}",
                      "{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}"
+#endif
                     };
     char tmp[1024]={0};
     int i=0;
