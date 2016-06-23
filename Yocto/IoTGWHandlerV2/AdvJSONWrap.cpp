@@ -16,7 +16,7 @@ void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivi
 int AddNodeList_ConnectivityNodeInfo(char* data);
 void AddNodeList_SensorHubNodeInfo(const char* data);
 void AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo);
-int PackConnectivityCapability(char* info_data);
+int BuildData_IPBaseConnectivityCapability(char* info_data);
 int BuildNodeList_GatewayUpdateInfo(char* data, char* info_data, int osInfo);
 int GetOSInfoType(char* data);
 void aTest(const char* mydata);
@@ -417,7 +417,7 @@ int BuildNodeList_GatewayUpdateInfo(char* data, char* info_data, int osInfo){
     return 0;
 }
 
-int PackConnectivityCapability(char* info_data){
+int BuildData_IPBaseConnectivityCapability(char* info_data){
 
     char* e_array[]={"{\"n\":\"SenHubList\",\"sv\":\"%s\",\"asm\":\"%s\"}",
                      "{\"n\":\"Neighbor\",\"sv\":\"%s\",\"asm\":\"%s\"}",
@@ -569,7 +569,7 @@ int AddNodeList_ConnectivityNodeInfo(char* data){
                 if ( osInfo == OS_IP_BASE){
                     //sprintf(connectivityDevID,"0007%s",g_GWInfMAC);
                     char info_data[1024]={0};
-                    PackConnectivityCapability(info_data);
+                    BuildData_IPBaseConnectivityCapability(info_data);
                     strcpy(connectivityInfo,info_data); 
                 }
 #endif
