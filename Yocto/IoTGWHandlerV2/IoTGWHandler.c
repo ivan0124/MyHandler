@@ -1051,7 +1051,7 @@ Exit_ProcSet:
 	return rc;
 }
 
-int RegisterGatewayCapability(char* pCapability, int iCapabilitySize){
+int RegisterToRMM_GatewayCapabilityInfo(char* pCapability, int iCapabilitySize){
 #if 0
 char Capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"WSN\":{\"WSN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"WSN0\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD02\",\"ver\":1},\"WSN1\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"WSN0\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD01\",\"ver\":1}, \"bn\":\"WSN\",\"ver\":1},\"ver\":1}}"};
      g_sendinfospeccbf( &g_PluginInfo, Capability, strlen(Capability), NULL, NULL);
@@ -1062,7 +1062,7 @@ char Capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"WSN\":{\"WSN0\":{\"Info\":{\"e\":
     return 0;
 }
 
-int UpdateGatewayData(char* data){
+int UpdateToRMM_GatewayUpdateInfo(char* data){
 
 #if 0
     char nodeContent[MAX_JSON_NODE_SIZE]={0};

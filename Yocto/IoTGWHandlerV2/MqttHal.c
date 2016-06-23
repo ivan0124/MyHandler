@@ -795,7 +795,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    printf("---------------Gateway capability----------------------------\n");
 		    printf(gateway_capability);
 		    printf("\n-------------------------------------------\n");
-                    if ( RegisterGatewayCapability(gateway_capability, strlen(gateway_capability)) < 0){
+                    if ( RegisterToRMM_GatewayCapabilityInfo(gateway_capability, strlen(gateway_capability)) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;
@@ -821,7 +821,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s]@@@@@ OS info type:%d packed info_data=%s\n", __FILE__, __func__, osInfo, info_data);
                     printf("------------------------------------------------\n");
 #if 1
-                    if ( UpdateGatewayData(info_data) < 0){
+                    if ( UpdateToRMM_GatewayUpdateInfo(info_data) < 0){
                         printf("[%s][%s] Update Gateway Data FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;
@@ -954,7 +954,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    printf("---------------Gateway capability----------------------------\n");
 		    printf(gateway_capability);
 		    printf("\n-------------------------------------------\n");
-                    if ( RegisterGatewayCapability(gateway_capability, strlen(gateway_capability)) < 0){
+                    if ( RegisterToRMM_GatewayCapabilityInfo(gateway_capability, strlen(gateway_capability)) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;
