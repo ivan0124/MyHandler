@@ -817,9 +817,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         
                     //pack connectivity info
                     PackConnectivityInfo(message->payload, info_data, osInfo);
-                    printf("[%s][%s]@@@@@[IP-base] packed info_data=%s\n", __FILE__, __func__, info_data);
+                    printf("[%s][%s]@@@@@ OS info type:%d packed info_data=%s\n", __FILE__, __func__, osInfo, info_data);
 #if 1
-                    if ( UpdateGatewayData(json) < 0){
+                    if ( UpdateGatewayData(info_data) < 0){
                         printf("[%s][%s] Update Gateway Data FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;

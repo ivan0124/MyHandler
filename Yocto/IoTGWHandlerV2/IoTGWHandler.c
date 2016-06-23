@@ -1062,9 +1062,9 @@ char Capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"WSN\":{\"WSN0\":{\"Info\":{\"e\":
     return 0;
 }
 
-int UpdateGatewayData(JSONode *json){
+int UpdateGatewayData(char* data){
 
-#if 1
+#if 0
     char nodeContent[MAX_JSON_NODE_SIZE]={0};
 
     memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
@@ -1094,7 +1094,7 @@ char ConnectivityInfo4[1024]={"{\"IoTGW\":{\"BLE\":{\"BLE0\":{\"Info\":{\"e\":[{
 
 #else
     //printf(nodeContent);
-    return UpdateInterfaceData(nodeContent, strlen(nodeContent));
+    return UpdateInterfaceData(data, strlen(data));
 #endif
 
 }
