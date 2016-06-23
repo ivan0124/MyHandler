@@ -305,7 +305,10 @@ int PackIPBaseConnectivityInfo(char* info_data){
 
     char* e_array[]={"{\"n\":\"SenHubList\",\"sv\":\"%s\"}",
                      "{\"n\":\"Neighbor\",\"sv\":\"%s\"}",
-                     "{\"n\":\"Name\",\"sv\":\"Ethernet\"}"
+                     "{\"n\":\"Name\",\"sv\":\"Ethernet\"}",
+                     "{\"n\":\"Health\",\"v\":\"100.000000\"}",
+                     "{\"n\":\"sw\",\"sv\":\"1.2.1.12\"}",
+                     "{\"n\":\"reset\",\"bv\":\"0\"}"
                     };
     int i=0;
     int max_e_array_size=sizeof(e_array)/sizeof(char*);
@@ -317,7 +320,9 @@ int PackIPBaseConnectivityInfo(char* info_data){
         return -1;
     }
 
-    strcat(info_data,"{\"IoTGW\":{\"Ethernet\":{\"Ethernet0\":");
+    //strcat(info_data,"{\"IoTGW\":{\"Ethernet\":{\"Ethernet0\":");
+    strcat(info_data,"{\"IoTGW\":{\"Ethernet\":");
+    strcat(info_data,"{\"Ethernet\":");
     strcat(info_data,"{\"Info\":");
     //
     strcat(info_data,"{");
@@ -366,7 +371,9 @@ int PackIPBaseConnectivityInfo(char* info_data){
     strcat(info_data,",");
     strcat(info_data,"\"ver\":1");
     strcat(info_data,"}");
-    strcat(info_data,"}}}");
+    strcat(info_data,",");
+    strcat(info_data,"\"bn\":\"Ethernet\"},\"ver\":1}");
+    strcat(info_data,"}");
 
     return 0;
 
@@ -475,7 +482,10 @@ int PackConnectivityCapability(char* info_data){
 
     char* e_array[]={"{\"n\":\"SenHubList\",\"sv\":\"%s\",\"asm\":\"%s\"}",
                      "{\"n\":\"Neighbor\",\"sv\":\"%s\",\"asm\":\"%s\"}",
-                     "{\"n\":\"Name\",\"sv\":\"Ethernet\",\"asm\":\"r\"}"
+                     "{\"n\":\"Name\",\"sv\":\"Ethernet\",\"asm\":\"r\"}",
+                     "{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"}",
+                     "{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"}",
+                     "{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}"
                     };
     char tmp[1024]={0};
     int i=0;
