@@ -554,7 +554,7 @@ int FindConnectivityInfoNodeListIndex(char* pType){
 }
 
 
-int BuildGatewayCapabilityInfo(struct node* head, char* pResult){
+int BuildNodeList_GatewayCapabilityInfo(struct node* head, char* pResult){
   
     printf("##################################################################\n");
     memset(&g_ConnectivityInfoNodeList,0,sizeof(g_ConnectivityInfoNodeList));
@@ -778,7 +778,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         OSInfo=OS_IP_BASE;
                     }
                     //test_link_list();
-                    UpdateVirtualGatewayOSInfoToDataListNode(message->payload, OSInfo);
+                    AddNodeList_VirtualGatewayNodeInfo(message->payload, OSInfo);
                     printf("------------------------------------------------\n");
                     break;
                 }
@@ -789,9 +789,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     //test_link_list();
 #if 1
-                    UpdateVirtualGatewayDataListNode(message->payload);
+                    AddNodeList_ConnectivityNodeInfo(message->payload);
                     char gateway_capability[2048]={0};
-                    BuildGatewayCapabilityInfo(g_pVirtualGatewayDataListHead, gateway_capability);
+                    BuildNodeList_GatewayCapabilityInfo(g_pVirtualGatewayDataListHead, gateway_capability);
 		    printf("---------------Gateway capability----------------------------\n");
 		    printf(gateway_capability);
 		    printf("\n-------------------------------------------\n");
@@ -810,14 +810,16 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    printf("[%s][%s]\033[33m #Update Gateway Data# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 
-                    UpdateConnectivitySensorHubListNode(message->payload);
+                    AddNodeList_SensorHubNodeInfo(message->payload);
                     
                     char info_data[1024]={0};
                     int osInfo=GetOSInfoType(message->payload);
                         
-                    //pack connectivity info
-                    PackConnectivityInfo(message->payload, info_data, osInfo);
+                    //Build gateway update info
+                    BuildNodeList_GatewayUpdateInfo(message->payload, info_data, osInfo);
+                    printf("------------------------------------------------\n");
                     printf("[%s][%s]@@@@@ OS info type:%d packed info_data=%s\n", __FILE__, __func__, osInfo, info_data);
+                    printf("------------------------------------------------\n");
 #if 1
                     if ( UpdateGatewayData(info_data) < 0){
                         printf("[%s][%s] Update Gateway Data FAIL !!!\n", __FILE__, __func__);
@@ -948,7 +950,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     DeleteDataListNodeByGatewayUID(DeviceUID);
                     //
                     char gateway_capability[2048]={0};
-                    BuildGatewayCapabilityInfo(g_pVirtualGatewayDataListHead, gateway_capability);
+                    BuildNodeList_GatewayCapabilityInfo(g_pVirtualGatewayDataListHead, gateway_capability);
 		    printf("---------------Gateway capability----------------------------\n");
 		    printf(gateway_capability);
 		    printf("\n-------------------------------------------\n");

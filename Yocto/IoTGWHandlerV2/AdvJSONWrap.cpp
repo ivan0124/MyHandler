@@ -13,11 +13,11 @@ struct node* g_pVirtualGatewayDataListHead=NULL;
 struct node * GetVirtualGatewayDataListNode(char* devID, int devType);
 int DeleteVirtualGatewayDataListNode(char* devID, int devType);
 void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType, int iOSInfo, char* pSensorHubDevID);
-int UpdateVirtualGatewayDataListNode(char* data);
-void UpdateConnectivitySensorHubListNode(const char* data);
-void UpdateVirtualGatewayOSInfoToDataListNode(char* data, int iOSInfo);
+int AddNodeList_ConnectivityNodeInfo(char* data);
+void AddNodeList_SensorHubNodeInfo(const char* data);
+void AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo);
 int PackConnectivityCapability(char* info_data);
-int PackConnectivityInfo(char* data, char* info_data, int osInfo);
+int BuildNodeList_GatewayUpdateInfo(char* data, char* info_data, int osInfo);
 int GetOSInfoType(char* data);
 void aTest(const char* mydata);
 void printNodeInfo();
@@ -146,7 +146,7 @@ int DeleteVirtualGatewayDataListNode(char* devID, int devType)
 
     return 0;
 }
-void UpdateVirtualGatewayOSInfoToDataListNode(char* data, int iOSInfo){
+void AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo){
 
     printf("UpdateVirtualGatewayOSInfoToDataListNode\n");
     struct node *temp=NULL;
@@ -396,7 +396,7 @@ int PackNoneIPBaseConnectivityInfo(char* data, char* info_data){
 }
 
 
-int PackConnectivityInfo(char* data, char* info_data, int osInfo){
+int BuildNodeList_GatewayUpdateInfo(char* data, char* info_data, int osInfo){
 
     switch(osInfo){
         case OS_IP_BASE:
@@ -493,7 +493,7 @@ int GetOSInfoType(char* data){
     return osInfo;
 }
 
-int UpdateVirtualGatewayDataListNode(char* data){
+int AddNodeList_ConnectivityNodeInfo(char* data){
 
 #if 0
 //sample message:
@@ -582,7 +582,7 @@ int UpdateVirtualGatewayDataListNode(char* data){
     return 0;
 }
 
-void UpdateConnectivitySensorHubListNode(const char* data){
+void AddNodeList_SensorHubNodeInfo(const char* data){
 
     AdvJSON json(data);
     int i=0, j=0, k=0;
