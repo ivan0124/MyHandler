@@ -17,6 +17,8 @@ int UpdateVirtualGatewayDataListNode(char* data);
 void UpdateConnectivitySensorHubListNode(const char* data);
 void UpdateVirtualGatewayOSInfoToDataListNode(char* data, int iOSInfo);
 int PackConnectivityCapability(char* info_data);
+int PackConnectivityInfo(char* data, char* info_data, int osInfo);
+int GetOSInfoType(char* data);
 void aTest(const char* mydata);
 void printNodeInfo();
 
@@ -299,8 +301,110 @@ int GetSensorHubList(char* sensorHubList, int osInfo, char* connectivityDevID){
     return 0;
 }
 
-int PackConnectivityInfo(char* info_data){
+int PackIPBaseConnectivityInfo(char* info_data){
 
+    char* e_array[]={"{\"n\":\"SenHubList\",\"sv\":\"%s\"}",
+                     "{\"n\":\"Neighbor\",\"sv\":\"%s\"}",
+                     "{\"n\":\"Name\",\"sv\":\"Ethernet\"}"
+                    };
+    int i=0;
+    int max_e_array_size=sizeof(e_array)/sizeof(char*);
+    char sensorHubList[1024]={0};
+    char tmp[1024]={0};
+
+    if ( GetSensorHubList(sensorHubList, OS_IP_BASE, NULL) < 0 ){
+        printf("[%s][%s] get sensor hub list fail\n", __FILE__, __func__);
+        return -1;
+    }
+
+    strcat(info_data,"{\"IoTGW\":{\"Ethernet\":{\"Ethernet0\":");
+    strcat(info_data,"{\"Info\":");
+    //
+    strcat(info_data,"{");
+    //
+    strcat(info_data,"\"e\":[");
+#if 1
+    for(i=0; i < max_e_array_size ; i++){
+        memset(tmp,0,sizeof(tmp));
+        AdvJSON json(e_array[i]);
+
+        if ( strcmp("SenHubList", json[0].Value().c_str()) == 0){
+            if ( strlen(sensorHubList) == 0){
+                strcpy(tmp,"{\"n\":\"SenHubList\",\"sv\":\"\"}");
+            }
+            else{
+                sprintf(tmp,e_array[i],sensorHubList);
+            }
+        }
+        else if ( strcmp("Neighbor", json[0].Value().c_str()) == 0){
+            if ( strlen(sensorHubList) == 0){
+                strcpy(tmp,"{\"n\":\"Neighbor\",\"sv\":\"\"}");
+            }
+            else{
+                sprintf(tmp,e_array[i],sensorHubList);
+            };
+        }
+        else{
+            strcpy(tmp,e_array[i]);
+        }
+        strcat(info_data,tmp);
+        strcat(info_data,",");
+    }
+    int len=strlen(info_data);
+    info_data[len-1]=0;
+#endif
+    strcat(info_data,"]");
+    //
+    strcat(info_data,",");
+    strcat(info_data,"\"bn\":\"Info\"");
+    //
+    strcat(info_data,"}");
+    //
+    strcat(info_data,",");
+    sprintf(tmp,"\"bn\":\"0007%s\"",g_GWInfMAC);
+    strcat(info_data,tmp);
+    strcat(info_data,",");
+    strcat(info_data,"\"ver\":1");
+    strcat(info_data,"}");
+    strcat(info_data,"}}}");
+
+    return 0;
+
+}
+
+int PackNoneIPBaseConnectivityInfo(char* data, char* info_data){
+
+    char nodeContent[MAX_JSON_NODE_SIZE]={0};
+
+    AdvJSON json(data);
+
+    strcpy(info_data,json["susiCommData"]["data"].Value().c_str());
+    if(strcmp(info_data, "NULL") == 0){
+        return -1;
+    }
+
+    return 0;
+}
+
+
+int PackConnectivityInfo(char* data, char* info_data, int osInfo){
+
+    switch(osInfo){
+        case OS_IP_BASE:
+        {
+            return PackIPBaseConnectivityInfo(info_data);
+        }
+        case OS_NONE_IP_BASE:
+        {
+            return PackNoneIPBaseConnectivityInfo(data, info_data);
+        }
+        default:
+        {
+            printf("[%s][%s] unknown os info type:%d\n", __FILE__, __func__, osInfo);
+            return -1;
+        }
+    }
+#if 0
     char* e_array[]={"{\"n\":\"SenHubList\",\"sv\":\"%s\"}",
                      "{\"n\":\"Neighbor\",\"sv\":\"%s\"}",
                      "{\"n\":\"Name\",\"sv\":\"Ethernet\"}"
@@ -363,7 +467,7 @@ int PackConnectivityInfo(char* info_data){
     strcat(info_data,",");
     strcat(info_data,"\"ver\":1");
     strcat(info_data,"}");
-
+#endif
     return 0;
 }
 
@@ -418,6 +522,24 @@ int PackConnectivityCapability(char* info_data){
     strcat(info_data,"}");
 
     return 0;
+}
+
+int GetOSInfoType(char* data){
+
+    char virtualGatewayDevID[MAX_DEVICE_ID_LEN]={0};
+    int osInfo=OS_TYPE_UNKNOWN;
+
+    AdvJSON json(data);
+    strcpy(virtualGatewayDevID,json["susiCommData"]["agentID"].Value().c_str());
+    
+
+    struct node* temp= GetVirtualGatewayDataListNode(virtualGatewayDevID,TYPE_GATEWAY);
+    if ( temp != NULL ){
+        osInfo=temp->virtualGatewayOSInfo;
+    }
+      
+    printf("[%s][%s] virtualGatewayDevID=%s, os info type:%d\n", __FILE__, __func__, virtualGatewayDevID, osInfo);
+    return osInfo;
 }
 
 int UpdateVirtualGatewayDataListNode(char* data){
@@ -494,7 +616,7 @@ int UpdateVirtualGatewayDataListNode(char* data){
                 //Add Node
 #if 1
                 if ( osInfo == OS_IP_BASE){
-                    sprintf(connectivityDevID,"0007%s",g_GWInfMAC);
+                    //sprintf(connectivityDevID,"0007%s",g_GWInfMAC);
                     char info_data[1024]={0};
                     PackConnectivityCapability(info_data);
                     strcpy(connectivityInfo,info_data); 
@@ -606,11 +728,6 @@ void UpdateConnectivitySensorHubListNode(const char* data){
                                      strcpy(virtualConnectivityDevID,connectivityDevID);
                                      AddVirtualGatewayDataListNode(virtualGatewayDevID,NULL,virtualConnectivityDevID,NULL, 0, TYPE_SENSOR_HUB, osInfo, sensorHubDevID);
                                  }
-                                 //pack connectivity info
-                                 char info_data[1024]={0};
-                                 char trueConnectivityDevID[MAX_DEVICE_ID_LEN]={0};
-                                 PackConnectivityInfo(info_data);
-                                 printf("[%s][%s]@@@@@[IP-base] packed info_data=%s\n", __FILE__, __func__, info_data);
 #if 0
                                  sprintf(trueConnectivityDevID,"0007%s", g_GWInfMAC);
 				 temp=GetVirtualGatewayDataListNode(trueConnectivityDevID, TYPE_CONNECTIVITY);

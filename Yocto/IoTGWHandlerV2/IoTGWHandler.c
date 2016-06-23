@@ -1064,6 +1064,7 @@ char Capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"WSN\":{\"WSN0\":{\"Info\":{\"e\":
 
 int UpdateGatewayData(JSONode *json){
 
+#if 1
     char nodeContent[MAX_JSON_NODE_SIZE]={0};
 
     memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
@@ -1071,6 +1072,7 @@ int UpdateGatewayData(JSONode *json){
     if(strcmp(nodeContent, "NULL") == 0){
         return -1;
     }
+#endif
 
 #if 0
 char ConnectivityInfo[1024]={"{\"IoTGW\":{\"WSN\":{\"WSN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"0017000E40000000\"},{\"n\":\"Neighbor\",\"sv\":\"0017000E40000000\"},{\"n\":\"Name\",\"sv\":\"WSN0\"},{\"n\":\"Health\",\"v\":\"100.000000\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\"},{\"n\":\"reset\",\"bv\":\"0\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD01\",\"ver\":1},\"bn\":\"WSN\"},\"ver\":1}}"};

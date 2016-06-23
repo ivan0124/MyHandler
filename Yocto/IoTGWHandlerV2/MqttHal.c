@@ -809,7 +809,15 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("------------------------------------------------\n");
 		    printf("[%s][%s]\033[33m #Update Gateway Data# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    char gateway_info_data[2048]={0};
                     UpdateConnectivitySensorHubListNode(message->payload);
+                    
+                    char info_data[1024]={0};
+                    int osInfo=GetOSInfoType(message->payload);
+                        
+                    //pack connectivity info
+                    PackConnectivityInfo(message->payload, info_data, osInfo);
+                    printf("[%s][%s]@@@@@[IP-base] packed info_data=%s\n", __FILE__, __func__, info_data);
 #if 1
                     if ( UpdateGatewayData(json) < 0){
                         printf("[%s][%s] Update Gateway Data FAIL !!!\n", __FILE__, __func__);
