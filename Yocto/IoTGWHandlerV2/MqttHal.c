@@ -904,6 +904,21 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("------------------------------------------------\n");
                     break;
                 }
+            case SENSOR_HUB_DISCONNECT:
+                {
+                    printf("------------------------------------------------\n");
+                    printf("[%s][%s]\033[33m #SensorHub Disconnect# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    char DeviceUID[64]={0};
+		    if ( GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID)) < 0){
+		        printf("[%s][%s] Can't find DeviceUID topic=%s\r\n",__FILE__, __func__, message->topic);
+			return -1;
+		    }
+                    printf("DeviceUID = %s\n", DeviceUID);
+                    DisconnectToRMM_SensorHub(DeviceUID);
+                    printf("------------------------------------------------\n");
+                    break;
+                }
             case REGISTER_SENSOR_HUB_CAPABILITY:
                 {
                     printf("------------------------------------------------\n");
