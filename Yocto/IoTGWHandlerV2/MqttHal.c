@@ -429,9 +429,14 @@ int PrepareInfoToRegisterSensorHub(JSONode *json, senhub_info_t* pshinfo){
 int ParseAgentactionreqTopic(JSONode *json){
 
     int SusiCommand=-1;
+    
+    if ( GetSusiCommand(json, &SusiCommand) < 0){
+        printf("[%s][%s] get susi command FAIL!\n",__FILE__, __func__);
+        return -1;
+    }
 
-    if ( GetSusiCommand(json, &SusiCommand) == 0){
-        printf("SusiCommand = %d\n", SusiCommand);
+    //if ( GetSusiCommand(json, &SusiCommand) == 0){
+        //printf("SusiCommand = %d\n", SusiCommand);
         switch(SusiCommand){
             case IOTGW_GET_SENSOR_REPLY:
                 return REPLY_GET_SENSOR_REQUEST;
@@ -459,7 +464,7 @@ int ParseAgentactionreqTopic(JSONode *json){
                     break;
                 }
         }
-    }
+    //}
     return -1;
 }
 
