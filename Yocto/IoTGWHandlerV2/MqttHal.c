@@ -435,36 +435,33 @@ int ParseAgentactionreqTopic(JSONode *json){
         return -1;
     }
 
-    //if ( GetSusiCommand(json, &SusiCommand) == 0){
-        //printf("SusiCommand = %d\n", SusiCommand);
-        switch(SusiCommand){
-            case IOTGW_GET_SENSOR_REPLY:
-                return REPLY_GET_SENSOR_REQUEST;
-            case IOTGW_SET_SENSOR_REPLY:
-                return REPLY_SET_SENSOR_REQUEST;
-            case IOTGW_OS_INFO:
-                {
-                    return GATEWAY_OS_INFO;
-                }
-            case IOTGW_HANDLER_GET_CAPABILITY_REPLY:
-                {
-                    printf("Get capability reply\n");
-		    if(isRegisterGatewayCapability(json) == 0){
-                        return REGISTER_GATEWAY_CAPABILITY;
-		    }
+    switch(SusiCommand){
+        case IOTGW_GET_SENSOR_REPLY:
+            return REPLY_GET_SENSOR_REQUEST;
+        case IOTGW_SET_SENSOR_REPLY:
+            return REPLY_SET_SENSOR_REQUEST;
+        case IOTGW_OS_INFO:
+            {
+                return GATEWAY_OS_INFO;
+            }
+        case IOTGW_HANDLER_GET_CAPABILITY_REPLY:
+            {
+		if(isRegisterGatewayCapability(json) == 0){
+                    return REGISTER_GATEWAY_CAPABILITY;
+		}
 
-                    if(isRegisterSensorHubCapability(json) == 0){
-                        return REGISTER_SENSOR_HUB_CAPABILITY;
-                    }
-                    break;
+                if(isRegisterSensorHubCapability(json) == 0){
+                    return REGISTER_SENSOR_HUB_CAPABILITY;
                 }
-            default:
-                {
-                    printf("SusiCommand = %d not supported\n", SusiCommand);
-                    break;
-                }
-        }
-    //}
+                break;
+            }
+        default:
+            {
+                printf("[%s][%s]SusiCommand = %d not supported\n", __FILE__, __func__, SusiCommand);
+                break;
+            }
+    }
+
     return -1;
 }
 
