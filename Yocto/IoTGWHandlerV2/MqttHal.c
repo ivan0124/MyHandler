@@ -338,7 +338,7 @@ int isRegisterGatewayCapability(JSONode *json){
     char nodeContent[MAX_JSON_NODE_SIZE]={0};
 
     if ( GetJSONValue(json, OBJ_IOTGW_INFO_SPEC, nodeContent) < 0){
-        printf("[%s][%s] susi get %s value FAIL\n", __FILE__, __func__, OBJ_IOTGW_INFO_SPEC);
+        //printf("[%s][%s] susi get %s value FAIL\n", __FILE__, __func__, OBJ_IOTGW_INFO_SPEC);
         return -1;
     }
 
@@ -350,7 +350,7 @@ int isRegisterSensorHubCapability(JSONode *json){
     char nodeContent[MAX_JSON_NODE_SIZE]={0};
 
     if ( GetJSONValue(json, OBJ_SENHUB_INFO_SPEC, nodeContent) < 0){
-        printf("[%s][%s] susi get %s value FAIL\n", __FILE__, __func__, OBJ_SENHUB_INFO_SPEC);
+        //printf("[%s][%s] susi get %s value FAIL\n", __FILE__, __func__, OBJ_SENHUB_INFO_SPEC);
         return -1;
     }
 
