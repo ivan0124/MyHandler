@@ -286,6 +286,7 @@ int ReplySensorHubGetSetRequest(char* ptopic, JSONode *json, int cmdID){
     memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
     JSON_Get(json, "[susiCommData][sessionID]", nodeContent, sizeof(nodeContent));
     if(strcmp(nodeContent, "NULL") == 0){
+        printf("[%s][%s] [susiCommData][sessionID] value is NULL\n", __FILE__, __func__);
         return -1;
     }
     strcpy(sessionID,nodeContent);
@@ -295,6 +296,7 @@ int ReplySensorHubGetSetRequest(char* ptopic, JSONode *json, int cmdID){
     memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
     JSON_Get(json, "[susiCommData][sensorInfoList]", nodeContent, sizeof(nodeContent));
     if(strcmp(nodeContent, "NULL") == 0){
+        printf("[%s][%s] [susiCommData][sensorInfoList] value is NULL\n", __FILE__, __func__);
         return -1;
     }
     strcpy(sensorInfoList,nodeContent);
@@ -903,6 +905,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
                     printf("[%s][%s]\033[33m #Reply Get Sensor Request# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     char DeviceUID[64]={0};
 		    if ( GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID)) < 0){
 		        printf("[%s][%s] Can't find DeviceUID topic=%s\r\n",__FILE__, __func__, message->topic);
