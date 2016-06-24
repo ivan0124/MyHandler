@@ -914,7 +914,6 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		        printf("[%s][%s] Can't find DeviceUID topic=%s\r\n",__FILE__, __func__, message->topic);
 			return -1;
 		    }
-                    printf("DeviceUID = %s\n", DeviceUID);
                     DisconnectToRMM_SensorHub(DeviceUID);
                     printf("------------------------------------------------\n");
                     break;
