@@ -49,6 +49,7 @@ typedef enum{
 	IOTGW_ERROR_REPLY								 = 600,
 	IOTGW_HANDLER_GET_CAPABILITY_REQUEST     = 2051,
 	IOTGW_HANDLER_GET_CAPABILITY_REPLY     = 2052,
+        IOTGW_UPDATE_DATA = 2055,
 	//-----------------------------------------------------------------------------------------
 }IOTGW_CMD_ID;
 
