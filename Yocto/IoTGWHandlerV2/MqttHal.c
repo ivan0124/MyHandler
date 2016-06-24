@@ -264,7 +264,7 @@ int GetSusiCommand(JSONode *json, int* piSusiCommand){
     return 0;
 }
 
-int ReplySensorHubGetSetRequest(char* ptopic, JSONode *json, int cmdID){
+int ReplyToRMM_SensorHubGetSetRequest(char* ptopic, JSONode *json, int cmdID){
 
     char nodeContent[MAX_JSON_NODE_SIZE];
     char sessionID[256]={0};
@@ -921,7 +921,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #endif
 
 #if 1
-                    if ( ReplySensorHubGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY) < 0){
+                    if ( ReplyToRMM_SensorHubGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY) < 0){
                         printf("[%s][%s] Reply Get Sensor Request FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;
@@ -948,7 +948,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     }
 #endif
 #if 1
-                    if ( ReplySensorHubGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY) < 0){
+                    if ( ReplyToRMM_SensorHubGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY) < 0){
                         printf("[%s][%s] Reply Set Sensor Request FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
                         return -1;
