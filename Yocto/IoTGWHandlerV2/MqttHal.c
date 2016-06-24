@@ -826,6 +826,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
 		    printf("[%s][%s]\033[33m #Gateway OS Info# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     int OSInfo=OS_NONE_IP_BASE;
 
@@ -845,6 +846,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
 		    printf("[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     //test_link_list();
 #if 1
@@ -867,6 +869,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
 		    printf("[%s][%s]\033[33m #Update Gateway Data# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 
                     AddNodeList_SensorHubNodeInfo(message->payload);
@@ -893,6 +896,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
                     printf("[%s][%s]\033[33m #SensorHub Connect# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 #if 1
                     if ( ConnectToRMM_SensorHub(json) < 0){
@@ -908,6 +912,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
                     printf("[%s][%s]\033[33m #SensorHub Disconnect# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     char DeviceUID[64]={0};
 		    if ( GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID)) < 0){
@@ -922,8 +927,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
 		    printf("[%s][%s]\033[33m #Register SensorHub Capability# \033[0m\n", __FILE__, __func__);
-#if 1
+                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+#if 1
                     if(RegisterToRMM_SensorHubCapability(message->topic, json) < 0){
                         printf("[%s][%s] Register SensorHub Capability FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
@@ -950,6 +956,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
                     printf("[%s][%s]\033[33m #Reply Get Sensor Request# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     char DeviceUID[64]={0};
 		    if ( GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID)) < 0){
@@ -979,6 +986,8 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 {
                     printf("------------------------------------------------\n");
                     printf("[%s][%s]\033[33m #Reply Set Sensor Request# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 
                     char DeviceUID[64]={0};
 		    if ( GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID)) < 0){
