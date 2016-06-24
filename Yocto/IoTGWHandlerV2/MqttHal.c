@@ -335,9 +335,8 @@ int isRegisterGatewayCapability(JSONode *json){
 
     char nodeContent[MAX_JSON_NODE_SIZE]={0};
 
-    JSON_Get(json, OBJ_IOTGW_INFO_SPEC, nodeContent, sizeof(nodeContent));
-
-    if(strcmp(nodeContent, "NULL") == 0){
+    if ( GetJSONValue(json, OBJ_IOTGW_INFO_SPEC, nodeContent) < 0){
+        printf("[%s][%s] susi get %s value FAIL\n", __FILE__, __func__, OBJ_IOTGW_INFO_SPEC);
         return -1;
     }
 
@@ -348,9 +347,8 @@ int isRegisterSensorHubCapability(JSONode *json){
 
     char nodeContent[MAX_JSON_NODE_SIZE]={0};
 
-    JSON_Get(json, OBJ_SENHUB_INFO_SPEC, nodeContent, sizeof(nodeContent));
-
-    if(strcmp(nodeContent, "NULL") == 0){
+    if ( GetJSONValue(json, OBJ_SENHUB_INFO_SPEC, nodeContent) < 0){
+        printf("[%s][%s] susi get %s value FAIL\n", __FILE__, __func__, OBJ_SENHUB_INFO_SPEC);
         return -1;
     }
 
@@ -453,6 +451,8 @@ int ParseAgentactionreqTopic(JSONode *json){
                 if(isRegisterSensorHubCapability(json) == 0){
                     return REGISTER_SENSOR_HUB_CAPABILITY;
                 }
+                 
+                printf("[%s][%s] susi cmd=%d, unknown capability type.\n", __FILE__, __func__, IOTGW_HANDLER_GET_CAPABILITY_REPLY );
                 break;
             }
         default:
