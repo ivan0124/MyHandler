@@ -915,7 +915,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #if 1
                     if ( GetUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
                         printf("found virtual gateway device ID\n");
-                        ReplyToRMM_GetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY);
+                        ReplyToRMM_GatewayGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY);
                         return 0;
                     }
 #endif
@@ -943,11 +943,10 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("DeviceUID = %s\n", DeviceUID);
 #if 1
                     if ( GetUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
-                        ReplyToRMM_GetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY);
+                        ReplyToRMM_GatewayGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY);
                         return 0;
                     }
 #endif
-
 #if 1
                     if ( ReplySensorHubGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY) < 0){
                         printf("[%s][%s] Reply Set Sensor Request FAIL !!!\n", __FILE__, __func__);
