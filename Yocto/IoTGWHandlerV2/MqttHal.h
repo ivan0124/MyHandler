@@ -82,7 +82,7 @@ typedef enum {
         TYPE_GATEWAY,
 	TYPE_CONNECTIVITY,
         TYPE_SENSOR_HUB
-} DEVICE_TYPE;
+} NODE_TYPE;
 
 typedef enum {
         OS_TYPE_UNKNOWN = 0,
