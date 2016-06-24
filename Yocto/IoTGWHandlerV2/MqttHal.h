@@ -88,7 +88,7 @@ typedef enum {
         OS_TYPE_UNKNOWN = 0,
         OS_NONE_IP_BASE,
 	OS_IP_BASE
-} GATEWYA_OS_INFO;
+} GATEWAY_OS_INFO_TYPE;
 
 typedef enum {
 	Mote_Report_CMD2000 = 0,
