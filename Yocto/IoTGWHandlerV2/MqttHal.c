@@ -488,12 +488,36 @@ int ParseDeviceinfoTopic(JSONode *json){
 int ParseAgentinfoackTopic(JSONode *json){
 
     char nodeContent[MAX_JSON_NODE_SIZE]={0};
+    int SusiCommand=-1;
 
-    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-    JSON_Get(json, OBJ_DEVICE_TYPE, nodeContent, sizeof(nodeContent));
+    if ( GetSusiCommand(json, &SusiCommand) < 0){
+        printf("[%s][%s] get susi command FAIL!\n",__FILE__, __func__);
+        return -1;
+    }
 
-    if(strcmp(nodeContent, "SenHub") == 0){
-        return SENSOR_HUB_CONNECT;
+    switch(SusiCommand){
+        case IOTGW_CONNECT:
+            {
+		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);	
+                if ( GetJSONValue(json, OBJ_DEVICE_TYPE, nodeContent) < 0){
+                    printf("[%s][%s] susi cmd=%d, get %s value FAIL\n", __FILE__, __func__, IOTGW_CONNECT, OBJ_DEVICE_TYPE);
+                    return -1;
+                }
+
+		if(strcmp(nodeContent, "SenHub") == 0){
+			return SENSOR_HUB_CONNECT;
+		}
+                else{
+                    printf("[%s][%s] susi cmd=%d, %s wrong value(%s)\n", __FILE__, __func__, IOTGW_CONNECT, OBJ_DEVICE_TYPE, nodeContent);
+                    return -1;
+                }
+                break;
+            }
+        default:
+            {
+                printf("[%s][%s]SusiCommand = %d not supported\n", __FILE__, __func__, SusiCommand);
+                break;
+            }
     }
 
     return -1;
