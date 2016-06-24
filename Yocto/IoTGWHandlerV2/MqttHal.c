@@ -515,18 +515,18 @@ int ParseAgentinfoackTopic(JSONode *json){
     }
 
     switch(SusiCommand){
-        case IOTGW_CONNECT:
+        case IOTGW_CONNECT_STATUS:
             {
 		memset(nodeContent, 0, MAX_JSON_NODE_SIZE);	
                 if ( GetJSONValue(json, OBJ_DEVICE_TYPE, nodeContent) < 0){
-                    printf("[%s][%s] susi cmd=%d, get %s value FAIL\n", __FILE__, __func__, IOTGW_CONNECT, OBJ_DEVICE_TYPE);
+                    printf("[%s][%s] susi cmd=%d, get %s value FAIL\n", __FILE__, __func__, IOTGW_CONNECT_STATUS, OBJ_DEVICE_TYPE);
                     return -1;
                 }
 
 		if(strcmp(nodeContent, "SenHub") == 0){
                     memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
 		    if ( GetJSONValue(json, OBJ_DEVICE_STATUS, nodeContent) < 0){
-		        printf("[%s][%s] susi cmd=%d, get %s value FAIL\n", __FILE__, __func__, IOTGW_CONNECT, OBJ_DEVICE_STATUS);
+		        printf("[%s][%s] susi cmd=%d, get %s value FAIL\n", __FILE__, __func__, IOTGW_CONNECT_STATUS, OBJ_DEVICE_STATUS);
 			return -1;
 		    }
                     
@@ -538,10 +538,10 @@ int ParseAgentinfoackTopic(JSONode *json){
 		        return SENSOR_HUB_DISCONNECT;
                     }
 
-                    printf("[%s][%s] susi cmd=%d, UNKNOWN status %s value\n", __FILE__, __func__, IOTGW_CONNECT, nodeContent);
+                    printf("[%s][%s] susi cmd=%d, UNKNOWN status %s value\n", __FILE__, __func__, IOTGW_CONNECT_STATUS, nodeContent);
 		}
                 else{
-                    printf("[%s][%s] susi cmd=%d, %s wrong value(%s)\n", __FILE__, __func__, IOTGW_CONNECT, OBJ_DEVICE_TYPE, nodeContent);
+                    printf("[%s][%s] susi cmd=%d, %s wrong type value(%s)\n", __FILE__, __func__, IOTGW_CONNECT_STATUS, OBJ_DEVICE_TYPE, nodeContent);
                     return -1;
                 }
                 break;
