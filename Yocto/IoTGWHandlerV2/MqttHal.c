@@ -134,6 +134,7 @@ void  DisplayAllVirtualGatewayDataListNode(struct node* head, struct node *r)
     while(r!=NULL)
     {
     printf("[%s][%s]\n----------------------------------\n", __FILE__, __func__);
+    printf("nodeType:%d\n", r->nodeType);
     printf("virtualGatewayDevID:%s\n",r->virtualGatewayDevID);
     printf("connectivityType:%s\n",r->connectivityType);
     printf("connectivityDevID:%s\n",r->connectivityDevID);
@@ -633,12 +634,14 @@ int BuildNodeList_GatewayCapabilityInfo(struct node* head, char* pResult){
     while(r!=NULL)
     {
 	printf("[%s][%s]\n----------------------------------\n", __FILE__, __func__);
+        printf("nodeType:%d\n", r->nodeType);
 	printf("virtualGatewayDevID:%s\n",r->virtualGatewayDevID);
         printf("osInfo:%d\n",r->virtualGatewayOSInfo);
 	printf("connectivityType:%s\n",r->connectivityType);
 	printf("connectivityDevID:%s\n",r->connectivityDevID);
 	printf("connectivityInfo:%s\n",r->connectivityInfo);
-	printf("----------------------------------\n");
+        printf("sensorHubDevID:%s",r->sensorHubDevID);
+	printf("\n----------------------------------\n");
         //WSN0:{Info...}
         //sprintf(tmp,"\"%s%d\":%s",r->connectivityType, i, r->connectivityInfo);
         index=FindConnectivityInfoNodeListIndex(r->connectivityType);
@@ -873,10 +876,10 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 
                     AddNodeList_SensorHubNodeInfo(message->payload);
-                    
+
                     char info_data[1024]={0};
                     int osInfo=GetOSInfoType(message->payload);
-                        
+
                     //Build gateway update info
                     BuildNodeList_GatewayUpdateInfo(message->payload, info_data, osInfo);
                     printf("------------------------------------------------\n");
@@ -1023,12 +1026,14 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 char DeviceUID[64]={0};
                 GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID));
                 printf("DeviceUID = %s\n", DeviceUID);
-
                 //
                 if ( GetUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
                     printf("found virtual gateway device ID\n");
                     DisconnectSensorHubInVirtualGateway(g_pVirtualGatewayDataListHead, DeviceUID);
-                    DeleteDataListNodeByGatewayUID(DeviceUID);
+                    struct node* n;
+                    DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
+#if 0
+                    //DeleteDataListNodeByGatewayUID(DeviceUID);
                     //
                     char gateway_capability[2048]={0};
                     BuildNodeList_GatewayCapabilityInfo(g_pVirtualGatewayDataListHead, gateway_capability);
@@ -1040,6 +1045,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         JSON_Destory(&json);
                         return -1;
                     }
+#endif
                 }
                 else{
                     DisconnectToRMM_SensorHub(DeviceUID);
