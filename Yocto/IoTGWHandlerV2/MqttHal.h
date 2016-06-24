@@ -29,6 +29,7 @@
 #define OBJ_SENHUB_DATA            "[susiCommData][data][SenHub]"
 #define OBJ_AGENT_ID              "[susiCommData][agentID]"
 #define OBJ_DEVICE_TYPE            "[susiCommData][type]"
+#define OBJ_DEVICE_STATUS          "[susiCommData][status]"
 #define OBJ_DEVICE_ID              "[susiCommData][devID]"
 #define OBJ_DEVICE_MAC             "[susiCommData][mac]"
 #define OBJ_DEVICE_SN              "[susiCommData][sn]"
@@ -72,6 +73,7 @@ typedef enum {
         REGISTER_SENSOR_HUB_CAPABILITY,
 	UPDATE_GATEWAY_DATA,
 	SENSOR_HUB_CONNECT,
+        SENSOR_HUB_DISCONNECT,
 	UPDATE_SENSOR_HUB_DATA,
         REPLY_GET_SENSOR_REQUEST,
         REPLY_SET_SENSOR_REQUEST

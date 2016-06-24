@@ -524,7 +524,21 @@ int ParseAgentinfoackTopic(JSONode *json){
                 }
 
 		if(strcmp(nodeContent, "SenHub") == 0){
-			return SENSOR_HUB_CONNECT;
+                    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		    if ( GetJSONValue(json, OBJ_DEVICE_STATUS, nodeContent) < 0){
+		        printf("[%s][%s] susi cmd=%d, get %s value FAIL\n", __FILE__, __func__, IOTGW_CONNECT, OBJ_DEVICE_STATUS);
+			return -1;
+		    }
+                    
+                    if ( strcmp(nodeContent,"1") == 0 ){
+		        return SENSOR_HUB_CONNECT;
+                    }
+
+                    if ( strcmp(nodeContent,"0") == 0 ){
+		        return SENSOR_HUB_DISCONNECT;
+                    }
+
+                    printf("[%s][%s] susi cmd=%d, UNKNOWN status %s value\n", __FILE__, __func__, IOTGW_CONNECT, nodeContent);
 		}
                 else{
                     printf("[%s][%s] susi cmd=%d, %s wrong value(%s)\n", __FILE__, __func__, IOTGW_CONNECT, OBJ_DEVICE_TYPE, nodeContent);
