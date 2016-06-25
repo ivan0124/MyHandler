@@ -774,7 +774,7 @@ int CheckUIDType(struct node* head, const char *uid){
     return TYPE_UNKNOWN;
 }
 
-int DisconnectSensorHubInVirtualGateway(struct node* head, char* VirtualGatewayUID){
+int DisconnectToRMM_AllSensorHubNode(struct node* head, char* VirtualGatewayUID){
 
     struct node *r;
 
@@ -1031,7 +1031,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 //
                 if ( CheckUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
 #if 1
-                    DisconnectSensorHubInVirtualGateway(g_pVirtualGatewayDataListHead, DeviceUID);
+                    DisconnectToRMM_AllSensorHubNode(g_pVirtualGatewayDataListHead, DeviceUID);
                     DeleteNodeList_AllGatewayUID(DeviceUID);
                     struct node* n;
                     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
