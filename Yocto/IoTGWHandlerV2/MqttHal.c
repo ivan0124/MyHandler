@@ -623,6 +623,7 @@ int BuildNodeList_GatewayCapabilityInfo(struct node* head, char* pResult){
     char tmp[1024]={0};
     char capability[1024]={0};
     struct node *r;
+    int IPbaseConnectivityNotAdd=1;
 
     r=head;
     if(r==NULL)
@@ -647,16 +648,23 @@ int BuildNodeList_GatewayCapabilityInfo(struct node* head, char* pResult){
         index=FindConnectivityInfoNodeListIndex(r->connectivityType);
         if ( index >= 0 ){
             if (r->nodeType == TYPE_CONNECTIVITY){
-                //if (r->virtualGatewayOSInfo == OS_NONE_IP_BASE){
+                if (r->virtualGatewayOSInfo == OS_NONE_IP_BASE){
                     sprintf(tmp,"\"%s%d\":%s",r->connectivityType, g_ConnectivityInfoNodeList[index].index, r->connectivityInfo);
                     strcat(g_ConnectivityInfoNodeList[index].Info,tmp);
                     strcat(g_ConnectivityInfoNodeList[index].Info,",");
                     strcpy(g_ConnectivityInfoNodeList[index].type,r->connectivityType);
                     g_ConnectivityInfoNodeList[index].index++;
-                //}
-                //else if (r->virtualGatewayOSInfo == OS_IP_BASE){
-                    //ToDo
-                //}
+                }
+                else if (r->virtualGatewayOSInfo == OS_IP_BASE && IPbaseConnectivityNotAdd){
+
+                    IPbaseConnectivityNotAdd=0;
+
+                    sprintf(tmp,"\"%s%d\":%s",r->connectivityType, g_ConnectivityInfoNodeList[index].index, r->connectivityInfo);
+                    strcat(g_ConnectivityInfoNodeList[index].Info,tmp);
+                    strcat(g_ConnectivityInfoNodeList[index].Info,",");
+                    strcpy(g_ConnectivityInfoNodeList[index].type,r->connectivityType);
+                    g_ConnectivityInfoNodeList[index].index++;
+                }
             }
         }
         else{
