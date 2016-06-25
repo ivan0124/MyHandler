@@ -751,13 +751,7 @@ int GetVirtualGatewayUIDfromData(struct node* head, const char *data, char *uid 
     return -1;
 }
 
-int GetUIDType(struct node* head, const char *uid){
-
-#if 0
-    if ( strcmp(uid, "0000000E40ABCDEF") == 0 ){
-        return TYPE_VIRTUAL_GATEWAY;
-    }
-#endif
+int CheckUIDType(struct node* head, const char *uid){
 
     struct node *r;
 
@@ -977,7 +971,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    }
                     printf("DeviceUID = %s\n", DeviceUID);
 #if 1
-                    if ( GetUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
+                    if ( CheckUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
                         printf("found virtual gateway device ID\n");
                         ReplyToRMM_GatewayGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY);
                         return 0;
@@ -1008,7 +1002,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    }
                     printf("DeviceUID = %s\n", DeviceUID);
 #if 1
-                    if ( GetUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
+                    if ( CheckUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
                         ReplyToRMM_GatewayGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY);
                         return 0;
                     }
@@ -1036,7 +1030,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID));
                 printf("DeviceUID = %s\n", DeviceUID);
                 //
-                if ( GetUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
+                if ( CheckUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
                     printf("found virtual gateway device ID\n");
                     DisconnectSensorHubInVirtualGateway(g_pVirtualGatewayDataListHead, DeviceUID);
                     struct node* n;
