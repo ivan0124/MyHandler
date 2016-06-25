@@ -77,7 +77,7 @@ char g_connectivity_capability[1024]={0};
 extern struct node* g_pVirtualGatewayDataListHead;
 
 
-int DeleteNodeList_AllGatewayUID(char* devID)
+int DeleteNodeList_AllGatewayUIDNode(char* devID)
 {
     struct node *temp, *prev;
     temp=g_pVirtualGatewayDataListHead;
@@ -1032,7 +1032,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 if ( CheckUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
 #if 1
                     DisconnectToRMM_AllSensorHubNode(g_pVirtualGatewayDataListHead, DeviceUID);
-                    DeleteNodeList_AllGatewayUID(DeviceUID);
+                    DeleteNodeList_AllGatewayUIDNode(DeviceUID);
                     struct node* n;
                     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
                     //
