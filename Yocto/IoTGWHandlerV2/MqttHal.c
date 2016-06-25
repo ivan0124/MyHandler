@@ -1033,8 +1033,10 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #if 1
                     DisconnectToRMM_AllSensorHubNode(g_pVirtualGatewayDataListHead, DeviceUID);
                     DeleteNodeList_AllGatewayUIDNode(DeviceUID);
+#if 0
                     struct node* n;
                     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
+#endif
                     //
                     char gateway_capability[2048]={0};
                     BuildNodeList_GatewayCapabilityInfo(g_pVirtualGatewayDataListHead, gateway_capability);
