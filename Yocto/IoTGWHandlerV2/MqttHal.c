@@ -77,34 +77,34 @@ char g_connectivity_capability[1024]={0};
 extern struct node* g_pVirtualGatewayDataListHead;
 
 
-int DeleteDataListNodeByGatewayUID(char* devID)
+int DeleteNodeList_AllGatewayUID(char* devID)
 {
     struct node *temp, *prev;
     temp=g_pVirtualGatewayDataListHead;
     while(temp!=NULL)
     {
-    if( strcmp(temp->virtualGatewayDevID,devID) == 0 )
-    {
-        if(temp==g_pVirtualGatewayDataListHead)
-        {
-        g_pVirtualGatewayDataListHead=temp->next;
-        free(temp->connectivityInfo);
-        free(temp);
-        return 1;
+        if( strcmp(temp->virtualGatewayDevID,devID) == 0 ){
+            if(temp==g_pVirtualGatewayDataListHead){
+                g_pVirtualGatewayDataListHead=temp->next;
+                if (temp->connectivityInfo){
+                    free(temp->connectivityInfo);
+                }
+                free(temp);
+                temp=g_pVirtualGatewayDataListHead;
+            }
+            else{
+                prev->next=temp->next;
+                if (temp->connectivityInfo){
+                    free(temp->connectivityInfo);
+                }
+                free(temp);
+                temp= prev->next;
+            }
         }
-        else
-        {
-        prev->next=temp->next;
-        free(temp->connectivityInfo);
-        free(temp);
-        return 1;
+        else{
+            prev=temp;
+            temp= temp->next;
         }
-    }
-    else
-    {
-        prev=temp;
-        temp= temp->next;
-    }
     }
 
     return 0;
@@ -1033,10 +1033,11 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 if ( CheckUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
                     printf("found virtual gateway device ID\n");
                     DisconnectSensorHubInVirtualGateway(g_pVirtualGatewayDataListHead, DeviceUID);
+                    
                     struct node* n;
                     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
 #if 0
-                    //DeleteDataListNodeByGatewayUID(DeviceUID);
+                    DeleteNodeList_AllGatewayUID(DeviceUID);
                     //
                     char gateway_capability[2048]={0};
                     BuildNodeList_GatewayCapabilityInfo(g_pVirtualGatewayDataListHead, gateway_capability);
