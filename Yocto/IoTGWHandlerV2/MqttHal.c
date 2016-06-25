@@ -129,19 +129,20 @@ void  DisplayAllVirtualGatewayDataListNode(struct node* head, struct node *r)
     r=head;
     if(r==NULL)
     {
-    return;
+        printf("[%s][%s] node list is NULL\n", __FILE__, __func__);
+        return;
     }
     while(r!=NULL)
     {
-    printf("[%s][%s]\n----------------------------------\n", __FILE__, __func__);
-    printf("nodeType:%d\n", r->nodeType);
-    printf("virtualGatewayDevID:%s\n",r->virtualGatewayDevID);
-    printf("connectivityType:%s\n",r->connectivityType);
-    printf("connectivityDevID:%s\n",r->connectivityDevID);
-    printf("connectivityInfo:%s\n",r->connectivityInfo);
-    printf("sensorHubDevID:%s\n",r->sensorHubDevID);
-    printf("----------------------------------\n");
-    r=r->next;
+        printf("[%s][%s]\n----------------------------------\n", __FILE__, __func__);
+        printf("nodeType:%d\n", r->nodeType);
+        printf("virtualGatewayDevID:%s\n",r->virtualGatewayDevID);
+        printf("connectivityType:%s\n",r->connectivityType);
+        printf("connectivityDevID:%s\n",r->connectivityDevID);
+        printf("connectivityInfo:%s\n",r->connectivityInfo);
+        printf("sensorHubDevID:%s\n",r->sensorHubDevID);
+        printf("----------------------------------\n");
+        r=r->next;
     }
     printf("\n");
 }
@@ -879,6 +880,10 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 
                     AddNodeList_SensorHubNodeInfo(message->payload);
+#if 0
+                    struct node* n;
+                    DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
+#endif
 
                     char info_data[1024]={0};
                     int osInfo=GetOSInfoType(message->payload);
@@ -1031,13 +1036,11 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 printf("DeviceUID = %s\n", DeviceUID);
                 //
                 if ( CheckUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
-                    printf("found virtual gateway device ID\n");
+#if 1
                     DisconnectSensorHubInVirtualGateway(g_pVirtualGatewayDataListHead, DeviceUID);
-                    
+                    DeleteNodeList_AllGatewayUID(DeviceUID);
                     struct node* n;
                     DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
-#if 0
-                    DeleteNodeList_AllGatewayUID(DeviceUID);
                     //
                     char gateway_capability[2048]={0};
                     BuildNodeList_GatewayCapabilityInfo(g_pVirtualGatewayDataListHead, gateway_capability);
