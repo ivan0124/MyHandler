@@ -787,6 +787,10 @@ int DisconnectSensorHubInVirtualGateway(struct node* head, char* VirtualGatewayU
     while(r!=NULL)
     {
         if (strcmp(r->virtualGatewayDevID, VirtualGatewayUID) == 0){
+            if (r->nodeType == TYPE_SENSOR_HUB){
+                DisconnectToRMM_SensorHub(r->sensorHubDevID);
+            }
+#if 0
             char tmp[1024]={0};
             char* pSave = NULL;
             strcpy(tmp,r->connectivitySensorHubList);
@@ -796,6 +800,7 @@ int DisconnectSensorHubInVirtualGateway(struct node* head, char* VirtualGatewayU
                 DisconnectToRMM_SensorHub(SensorHubUID);
 		SensorHubUID = strtok_r(NULL, ",", &pSave);
 	    }
+#endif
         }
         //
 	r=r->next;
