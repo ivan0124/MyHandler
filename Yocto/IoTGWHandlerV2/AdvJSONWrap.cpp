@@ -682,7 +682,7 @@ void AddNodeList_SensorHubNodeInfo(const char* data){
                                         //printf("connectivitySensorHubList:%s\n",SensorHubUID);
                                         strcpy(sensorHubDevID,SensorHubUID);
                                         if ( strcmp(sensorHubDevID,"NULL") != 0){
-					    AddVirtualGatewayDataListNode(virtualGatewayDevID,NULL,virtualConnectivityDevID,NULL, 0, TYPE_SENSOR_HUB, osInfo, sensorHubDevID);
+					    AddVirtualGatewayDataListNode(virtualGatewayDevID,NULL,connectivityDevID,NULL, 0, TYPE_SENSOR_HUB, osInfo, sensorHubDevID);
                                         }
 					SensorHubUID = strtok_r(NULL, ",",&pSave);
 				 } 
