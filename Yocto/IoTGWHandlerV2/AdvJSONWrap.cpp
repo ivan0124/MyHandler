@@ -12,7 +12,7 @@ struct node* g_pNodeListHead=NULL;
 
 struct node * GetVirtualGatewayDataListNode(char* devID, int devType);
 int DeleteVirtualGatewayDataListNode(char* devID, int devType);
-void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType, int iOSInfo, char* pSensorHubDevID);
+void AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType, int iOSInfo, char* pSensorHubDevID);
 int AddNodeList_ConnectivityNodeInfo(char* data);
 void AddNodeList_SensorHubNodeInfo(const char* data);
 void AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo);
@@ -168,12 +168,12 @@ void AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo){
     else{
         printf("Add Node to record OS info = %d\n",iOSInfo);
         //Add Node to record os info
-        AddVirtualGatewayDataListNode(virtualGatewayDevID,NULL,NULL,NULL, 0, TYPE_GATEWAY, iOSInfo, NULL);
+        AddNodeList(virtualGatewayDevID,NULL,NULL,NULL, 0, TYPE_GATEWAY, iOSInfo, NULL);
     }
 
 }
 
-void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType, int iOSInfo, char* pSensorHubDevID)
+void AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType, int iOSInfo, char* pSensorHubDevID)
 {
     struct node *temp=NULL;
     char tmp_devID[32]={0};
@@ -573,7 +573,7 @@ int AddNodeList_ConnectivityNodeInfo(char* data){
                     strcpy(connectivityInfo,info_data); 
                 }
 #endif
-                AddVirtualGatewayDataListNode(virtualGatewayDevID,type,connectivityDevID,connectivityInfo, strlen(connectivityInfo), TYPE_CONNECTIVITY, osInfo, NULL);
+                AddNodeList(virtualGatewayDevID,type,connectivityDevID,connectivityInfo, strlen(connectivityInfo), TYPE_CONNECTIVITY, osInfo, NULL);
             }
         }
 
@@ -682,7 +682,7 @@ void AddNodeList_SensorHubNodeInfo(const char* data){
                                         //printf("connectivitySensorHubList:%s\n",SensorHubUID);
                                         strcpy(sensorHubDevID,SensorHubUID);
                                         if ( strcmp(sensorHubDevID,"NULL") != 0){
-					    AddVirtualGatewayDataListNode(virtualGatewayDevID,NULL,connectivityDevID,NULL, 0, TYPE_SENSOR_HUB, osInfo, sensorHubDevID);
+					    AddNodeList(virtualGatewayDevID,NULL,connectivityDevID,NULL, 0, TYPE_SENSOR_HUB, osInfo, sensorHubDevID);
                                         }
 					SensorHubUID = strtok_r(NULL, ",",&pSave);
 				 } 
@@ -694,7 +694,7 @@ void AddNodeList_SensorHubNodeInfo(const char* data){
                                  strcpy(sensorHubDevID, IoTGW_device_info[k][l+1].Value().c_str());
                                  if (strlen(sensorHubDevID) && strcmp(sensorHubDevID,"NULL") != 0 ){
                                      strcpy(virtualConnectivityDevID,connectivityDevID);
-                                     AddVirtualGatewayDataListNode(virtualGatewayDevID,NULL,virtualConnectivityDevID,NULL, 0, TYPE_SENSOR_HUB, osInfo, sensorHubDevID);
+                                     AddNodeList(virtualGatewayDevID,NULL,virtualConnectivityDevID,NULL, 0, TYPE_SENSOR_HUB, osInfo, sensorHubDevID);
                                  }
 
                              }
