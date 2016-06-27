@@ -148,6 +148,22 @@ void Handler_CustMessageRecv(char * const topic, void* const data, const size_t 
 	printf(" %s> Topic:%s, Data:%s\r\n", strPluginName, topic, (char*)data);
 }
 
+static CAGENT_PTHREAD_ENTRY(ThreadCheckLinkedList, args)
+{
+
+    handler_context_t * pHandlerCtx = ( handler_context_t * )args;
+    
+    while( pHandlerCtx->isThreadRunning )
+    {
+        app_os_sleep(5000);
+        printf("[%s][%s] wake up...\n", __FILE__, __func__);
+    }
+    
+    printf("[%s][%s] thread exit\n", __FILE__, __func__);
+    app_os_thread_exit(0);
+
+    return 0;
+}
 
 
 static CAGENT_PTHREAD_ENTRY(ThreadSendSenHubConnect, args)
@@ -355,12 +371,12 @@ void HANDLER_API Handler_OnStatusChange( HANDLER_INFO *pluginfo )
 int HANDLER_API Handler_Start( void )
 {
 	printf("> %s Handler_Start\r\n", strPluginName);
-	//if (app_os_thread_create(&g_HandlerContex.threadHandler, SampleHandlerThreadStart, &g_HandlerContex) != 0)
-	//{
-	//	g_HandlerContex.isThreadRunning = false;
-	//	printf("> start handler thread failed!\r\n");	
-	//	return handler_fail;
- //   }
+	if (app_os_thread_create(&g_HandlerContex.threadHandler, ThreadCheckLinkedList, &g_HandlerContex) != 0)
+	{
+		g_HandlerContex.isThreadRunning = false;
+		printf("[%s][%s] start handler thread failed!\r\n", __FILE__, __func__);	
+		return handler_fail;
+        }
 	g_HandlerContex.isThreadRunning = true;
 	//g_status = handler_start;
 	time(&g_monitortime);
