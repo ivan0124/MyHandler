@@ -1045,12 +1045,11 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID));
                 printf("DeviceUID = %s\n", DeviceUID);
                 //
+                app_os_mutex_lock(&g_NodeListMutex);
                 if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
 #if 1
-                    app_os_mutex_lock(&g_NodeListMutex);
                     DisconnectToRMM_AllSensorHubNode(g_pNodeListHead, DeviceUID);
                     DeleteNodeList_AllGatewayUIDNode(DeviceUID);
-                    
 #if 0
                     struct node* n;
                     DisplayAllVirtualGatewayDataListNode(g_pNodeListHead, n);
@@ -1070,6 +1069,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #endif
                 }
                 else{
+                    app_os_mutex_unlock(&g_NodeListMutex);
                     DisconnectToRMM_SensorHub(DeviceUID);
                 }
 	}
