@@ -159,7 +159,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckLinkedList, args)
     {
         
 #if 1
-        app_os_sleep(10000);
+        app_os_sleep(5000);
         app_os_mutex_lock(&g_LinkedListMutex);
 	printf("[%s][%s] wake up...\n", __FILE__, __func__);
 	app_os_mutex_unlock(&g_LinkedListMutex);
@@ -386,12 +386,17 @@ void HANDLER_API Handler_OnStatusChange( HANDLER_INFO *pluginfo )
 int HANDLER_API Handler_Start( void )
 {
 	printf("> %s Handler_Start\r\n", strPluginName);
-	if (app_os_thread_create(&g_HandlerContex.threadHandler, ThreadCheckLinkedList, &g_HandlerContex) != 0)
+	if (app_os_thread_create(&g_HandlerContex.threadHandler, ThreadCheckLinkedList, &g_HandlerContex) == 0)
+        {
+            app_os_thread_detach(g_HandlerContex.threadHandler);
+        }
+        else
 	{
 		g_HandlerContex.isThreadRunning = false;
 		printf("[%s][%s] start handler thread failed!\r\n", __FILE__, __func__);	
 		return handler_fail;
         }
+        
 	g_HandlerContex.isThreadRunning = true;
 	//g_status = handler_start;
 	time(&g_monitortime);
