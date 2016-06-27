@@ -78,7 +78,7 @@ static char* GetCapability( );
 
 int runing = 0;
 
-extern struct node* g_pVirtualGatewayDataListHead;
+extern struct node* g_pNodeListHead;
 extern char g_connectivity_capability[1024];
 
 //-----------------------------------------------------------------------------
@@ -486,7 +486,7 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 		    g_sendcbf(&g_PluginInfo,IOTGW_GET_SENSOR_REPLY, mydata, strlen(mydata), NULL, NULL);
 #endif
                     char VirtualGatewayUID[64]={0};
-                    if ( GetVirtualGatewayUIDfromData(g_pVirtualGatewayDataListHead, data, VirtualGatewayUID, sizeof(VirtualGatewayUID)) < 0){
+                    if ( GetVirtualGatewayUIDfromData(g_pNodeListHead, data, VirtualGatewayUID, sizeof(VirtualGatewayUID)) < 0){
                         printf("[%s][%s] Can't find VirtualGatewayUID Topic=%s\r\n",__FILE__, __func__, topic );
 	                return;
                     }
@@ -500,7 +500,7 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 		    printf("IOTGW_SET_SENSOR_REQUEST data=%s\r\n",data );
 
                     char VirtualGatewayUID[64]={0};
-                    if ( GetVirtualGatewayUIDfromData(g_pVirtualGatewayDataListHead, data, VirtualGatewayUID, sizeof(VirtualGatewayUID)) < 0){
+                    if ( GetVirtualGatewayUIDfromData(g_pNodeListHead, data, VirtualGatewayUID, sizeof(VirtualGatewayUID)) < 0){
                         printf("[%s][%s] Can't find VirtualGatewayUID Topic=%s\r\n",__FILE__, __func__, topic );
 	                return;
                     }

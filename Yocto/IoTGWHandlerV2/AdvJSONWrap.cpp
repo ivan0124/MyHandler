@@ -8,7 +8,7 @@
 extern "C" {
 #endif
 extern char            g_GWInfMAC[MAX_MACADDRESS_LEN];
-struct node* g_pVirtualGatewayDataListHead=NULL;
+struct node* g_pNodeListHead=NULL;
 
 struct node * GetVirtualGatewayDataListNode(char* devID, int devType);
 int DeleteVirtualGatewayDataListNode(char* devID, int devType);
@@ -39,7 +39,7 @@ void printNodeInfo(struct node * r){
 struct node * GetVirtualGatewayDataListNode(char* devID, int devType)
 {
     struct node * r;
-    r=g_pVirtualGatewayDataListHead;
+    r=g_pNodeListHead;
 
     if(r==NULL)
     {
@@ -91,7 +91,7 @@ struct node * GetVirtualGatewayDataListNode(char* devID, int devType)
 int DeleteVirtualGatewayDataListNode(char* devID, int devType)
 {
     struct node *temp, *prev;
-    temp=g_pVirtualGatewayDataListHead;
+    temp=g_pNodeListHead;
     char tmp_devID[32]={0};
 
     while(temp!=NULL)
@@ -119,9 +119,9 @@ int DeleteVirtualGatewayDataListNode(char* devID, int devType)
         //
         if( strcmp(tmp_devID,devID) == 0 && temp->nodeType == devType)
         {
-            if(temp==g_pVirtualGatewayDataListHead)
+            if(temp==g_pNodeListHead)
             {
-                g_pVirtualGatewayDataListHead=temp->next;
+                g_pNodeListHead=temp->next;
                 if (temp->connectivityInfo){
                     free(temp->connectivityInfo);
                 }
@@ -241,22 +241,22 @@ void AddVirtualGatewayDataListNode(char* pVirtualGatewayDevID, char* pConnectivi
     }
 
     //temp->data=num;
-    if (g_pVirtualGatewayDataListHead == NULL)
+    if (g_pNodeListHead == NULL)
     {
-        g_pVirtualGatewayDataListHead=temp;
-        g_pVirtualGatewayDataListHead->next=NULL;
+        g_pNodeListHead=temp;
+        g_pNodeListHead->next=NULL;
     }
     else
     {
-        temp->next=g_pVirtualGatewayDataListHead;
-        g_pVirtualGatewayDataListHead=temp;
+        temp->next=g_pNodeListHead;
+        g_pNodeListHead=temp;
     }
 
 }
 
 int GetSensorHubList(char* sensorHubList, int osInfo, char* connectivityDevID){
     struct node * r;
-    r=g_pVirtualGatewayDataListHead;
+    r=g_pNodeListHead;
 
     if(r==NULL)
     {

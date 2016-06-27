@@ -75,23 +75,23 @@ char g_connectivity_capability[1024]={0};
 /******************************************************/
 
 extern CAGENT_MUTEX_TYPE g_LinkedListMutex;
-extern struct node* g_pVirtualGatewayDataListHead;
+extern struct node* g_pNodeListHead;
 
 
 int DeleteNodeList_AllGatewayUIDNode(char* devID)
 {
     struct node *temp, *prev;
-    temp=g_pVirtualGatewayDataListHead;
+    temp=g_pNodeListHead;
     while(temp!=NULL)
     {
         if( strcmp(temp->virtualGatewayDevID,devID) == 0 ){
-            if(temp==g_pVirtualGatewayDataListHead){
-                g_pVirtualGatewayDataListHead=temp->next;
+            if(temp==g_pNodeListHead){
+                g_pNodeListHead=temp->next;
                 if (temp->connectivityInfo){
                     free(temp->connectivityInfo);
                 }
                 free(temp);
-                temp=g_pVirtualGatewayDataListHead;
+                temp=g_pNodeListHead;
             }
             else{
                 prev->next=temp->next;
@@ -166,28 +166,28 @@ void test_link_list(){
 
     int cnt=0;
     struct node *n;
-    printf("initital g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
+    printf("initital g_pVirtualGatewayDataListHead = %p\n",g_pNodeListHead);
     printf("-----------count = %d\n", cnt);
     //add1
     AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445501","12345", strlen("12345"), TYPE_SENSOR_HUB, OS_TYPE_UNKNOWN, "0017112233445501");
-    cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
-    printf("add1, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
+    cnt=CountAllVirtualGatewayDataListNode(g_pNodeListHead);
+    printf("add1, g_pVirtualGatewayDataListHead = %p\n",g_pNodeListHead);
     printf("-----------count = %d\n", cnt);
     //add2
     AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445502","67",strlen("67"), TYPE_SENSOR_HUB, OS_TYPE_UNKNOWN, "0017112233445502");
-    cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
-    printf("add2, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
+    cnt=CountAllVirtualGatewayDataListNode(g_pNodeListHead);
+    printf("add2, g_pVirtualGatewayDataListHead = %p\n",g_pNodeListHead);
     printf("-----------count = %d\n", cnt);
     //add3
     AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445503","890",strlen("890"), TYPE_SENSOR_HUB, OS_TYPE_UNKNOWN, "0017112233445503");
-    cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
-    printf("add3, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
+    cnt=CountAllVirtualGatewayDataListNode(g_pNodeListHead);
+    printf("add3, g_pVirtualGatewayDataListHead = %p\n",g_pNodeListHead);
     printf("-----------count = %d\n", cnt);
     //add3 again: we will delete3 then add3 again
     AddVirtualGatewayDataListNode("0000772233445599","WSN","0007112233445503","77777",strlen("77777"), TYPE_SENSOR_HUB, OS_TYPE_UNKNOWN, "0017112233445503");
-    printf("add3 again, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
+    printf("add3 again, g_pVirtualGatewayDataListHead = %p\n",g_pNodeListHead);
     printf("-----------count = %d\n", cnt);
-    DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
+    DisplayAllVirtualGatewayDataListNode(g_pNodeListHead, n);
 
      
     n = GetVirtualGatewayDataListNode("0000772233445599",TYPE_GATEWAY);
@@ -196,20 +196,20 @@ void test_link_list(){
     }
     //del3
     DeleteVirtualGatewayDataListNode("0017112233445503", TYPE_SENSOR_HUB);
-    cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
-    printf("del3, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
+    cnt=CountAllVirtualGatewayDataListNode(g_pNodeListHead);
+    printf("del3, g_pVirtualGatewayDataListHead = %p\n",g_pNodeListHead);
     printf("-----------count = %d\n", cnt);
     //del2
     DeleteVirtualGatewayDataListNode("0017112233445502", TYPE_SENSOR_HUB);
-    cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
-    printf("del2, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
+    cnt=CountAllVirtualGatewayDataListNode(g_pNodeListHead);
+    printf("del2, g_pVirtualGatewayDataListHead = %p\n",g_pNodeListHead);
     printf("-----------count = %d\n", cnt);
     //del1
     DeleteVirtualGatewayDataListNode("0017112233445501", TYPE_SENSOR_HUB);
-    cnt=CountAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead);
-    printf("del1, g_pVirtualGatewayDataListHead = %p\n",g_pVirtualGatewayDataListHead);
+    cnt=CountAllVirtualGatewayDataListNode(g_pNodeListHead);
+    printf("del1, g_pVirtualGatewayDataListHead = %p\n",g_pNodeListHead);
     printf("-----------count = %d\n", cnt);
-    DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
+    DisplayAllVirtualGatewayDataListNode(g_pNodeListHead, n);
 }
 
 /******************************************************/
@@ -857,7 +857,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #if 1
                     AddNodeList_ConnectivityNodeInfo(message->payload);
                     char gateway_capability[2048]={0};
-                    BuildNodeList_GatewayCapabilityInfo(g_pVirtualGatewayDataListHead, gateway_capability);
+                    BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, gateway_capability);
 		    printf("---------------Gateway capability----------------------------\n");
 		    printf(gateway_capability);
 		    printf("\n-------------------------------------------\n");
@@ -880,7 +880,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     AddNodeList_SensorHubNodeInfo(message->payload);
 #if 0
                     struct node* n;
-                    DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
+                    DisplayAllVirtualGatewayDataListNode(g_pNodeListHead, n);
 #endif
 
                     char info_data[1024]={0};
@@ -974,7 +974,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    }
                     printf("DeviceUID = %s\n", DeviceUID);
 #if 1
-                    if ( CheckUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
+                    if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
                         printf("found virtual gateway device ID\n");
                         ReplyToRMM_GatewayGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY);
                         return 0;
@@ -1005,7 +1005,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    }
                     printf("DeviceUID = %s\n", DeviceUID);
 #if 1
-                    if ( CheckUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
+                    if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
                         ReplyToRMM_GatewayGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY);
                         return 0;
                     }
@@ -1033,17 +1033,17 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID));
                 printf("DeviceUID = %s\n", DeviceUID);
                 //
-                if ( CheckUIDType(g_pVirtualGatewayDataListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
+                if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
 #if 1
-                    DisconnectToRMM_AllSensorHubNode(g_pVirtualGatewayDataListHead, DeviceUID);
+                    DisconnectToRMM_AllSensorHubNode(g_pNodeListHead, DeviceUID);
                     DeleteNodeList_AllGatewayUIDNode(DeviceUID);
 #if 0
                     struct node* n;
-                    DisplayAllVirtualGatewayDataListNode(g_pVirtualGatewayDataListHead, n);
+                    DisplayAllVirtualGatewayDataListNode(g_pNodeListHead, n);
 #endif
                     //
                     char gateway_capability[2048]={0};
-                    BuildNodeList_GatewayCapabilityInfo(g_pVirtualGatewayDataListHead, gateway_capability);
+                    BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, gateway_capability);
 		    printf("---------------Gateway capability----------------------------\n");
 		    printf(gateway_capability);
 		    printf("\n-------------------------------------------\n");
