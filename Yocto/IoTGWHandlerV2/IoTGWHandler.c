@@ -150,7 +150,7 @@ void Handler_CustMessageRecv(char * const topic, void* const data, const size_t 
 	printf(" %s> Topic:%s, Data:%s\r\n", strPluginName, topic, (char*)data);
 }
 
-static CAGENT_PTHREAD_ENTRY(ThreadCheckLinkedList, args)
+static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
 {
 
     handler_context_t * pHandlerCtx = ( handler_context_t * )args;
@@ -386,7 +386,7 @@ void HANDLER_API Handler_OnStatusChange( HANDLER_INFO *pluginfo )
 int HANDLER_API Handler_Start( void )
 {
 	printf("> %s Handler_Start\r\n", strPluginName);
-	if (app_os_thread_create(&g_HandlerContex.threadHandler, ThreadCheckLinkedList, &g_HandlerContex) == 0)
+	if (app_os_thread_create(&g_HandlerContex.threadHandler, ThreadCheckNodeList, &g_HandlerContex) == 0)
         {
             app_os_thread_detach(g_HandlerContex.threadHandler);
         }
