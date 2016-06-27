@@ -10,7 +10,7 @@ extern "C" {
 extern char            g_GWInfMAC[MAX_MACADDRESS_LEN];
 struct node* g_pNodeListHead=NULL;
 
-struct node * GetVirtualGatewayDataListNode(char* devID, int devType);
+struct node * GetNode(char* devID, int devType);
 int DeleteNodeList(char* devID, int devType);
 void AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType, int iOSInfo, char* pSensorHubDevID);
 int AddNodeList_ConnectivityNodeInfo(char* data);
@@ -36,7 +36,7 @@ void printNodeInfo(struct node * r){
      printf("-------------------------------------------------\n");
 }
 
-struct node * GetVirtualGatewayDataListNode(char* devID, int devType)
+struct node * GetNode(char* devID, int devType)
 {
     struct node * r;
     r=g_pNodeListHead;
@@ -158,7 +158,7 @@ void AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo){
     strcpy(virtualGatewayDevID,json["susiCommData"]["agentID"].Value().c_str());
     printf("virtualGatewayDevID = %s\n", virtualGatewayDevID);
 
-    temp= GetVirtualGatewayDataListNode(virtualGatewayDevID,TYPE_GATEWAY);
+    temp= GetNode(virtualGatewayDevID,TYPE_GATEWAY);
     if ( temp ){
          printf("Update all Nodes OS info = %d\n", temp->virtualGatewayOSInfo);
         //Update all Nodes which have this gateway device ID
@@ -206,7 +206,7 @@ void AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pCon
             break;
     }
     //
-    temp=GetVirtualGatewayDataListNode(tmp_devID, devType);
+    temp=GetNode(tmp_devID, devType);
     //
     if (temp != NULL){
         DeleteNodeList(tmp_devID, devType);
@@ -484,7 +484,7 @@ int GetOSInfoType(char* data){
     strcpy(virtualGatewayDevID,json["susiCommData"]["agentID"].Value().c_str());
     
 
-    struct node* temp= GetVirtualGatewayDataListNode(virtualGatewayDevID,TYPE_GATEWAY);
+    struct node* temp= GetNode(virtualGatewayDevID,TYPE_GATEWAY);
     if ( temp != NULL ){
         osInfo=temp->virtualGatewayOSInfo;
     }
@@ -560,7 +560,7 @@ int AddNodeList_ConnectivityNodeInfo(char* data){
 		printf("\n********************************************\n");
 #endif
                 int osInfo=OS_TYPE_UNKNOWN;
-                struct node* temp= GetVirtualGatewayDataListNode(virtualGatewayDevID,TYPE_GATEWAY);
+                struct node* temp= GetNode(virtualGatewayDevID,TYPE_GATEWAY);
                 if ( temp != NULL ){
                     osInfo = temp->virtualGatewayOSInfo;
                 }
@@ -598,7 +598,7 @@ void AddNodeList_SensorHubNodeInfo(const char* data){
     //Get virtual gateway devID
     strcpy(virtualGatewayDevID,json["susiCommData"]["agentID"].Value().c_str());
     //check OS type
-    temp=GetVirtualGatewayDataListNode(virtualGatewayDevID, TYPE_GATEWAY);
+    temp=GetNode(virtualGatewayDevID, TYPE_GATEWAY);
     if (temp){
         osInfo = temp->virtualGatewayOSInfo;
     }
@@ -643,7 +643,7 @@ void AddNodeList_SensorHubNodeInfo(const char* data){
 #if 1
                 //get connectivity node
                 if( OS_NONE_IP_BASE == osInfo){
-		    temp=GetVirtualGatewayDataListNode(connectivityDevID, TYPE_CONNECTIVITY);
+		    temp=GetNode(connectivityDevID, TYPE_CONNECTIVITY);
 		    if ( temp == NULL ){
 			printf("[%s][%s]can not find connectivity:%s node\n", __FILE__, __func__, connectivityDevID);
 			continue;
@@ -773,7 +773,7 @@ void aTest(const char* mydata){
 #endif
 		//get connectivity node
 #if 1
-		temp=GetVirtualGatewayDataListNode(connectivityDevID, TYPE_CONNECTIVITY);
+		temp=GetNode(connectivityDevID, TYPE_CONNECTIVITY);
 		if ( temp == NULL ){
 			printf("[%s][%s]can not find connectivity:%s node\n", __FILE__, __func__, connectivityDevID);
 			continue;

@@ -190,7 +190,7 @@ void test_link_list(){
     DisplayAllVirtualGatewayDataListNode(g_pNodeListHead, n);
 
      
-    n = GetVirtualGatewayDataListNode("0000772233445599",TYPE_GATEWAY);
+    n = GetNode("0000772233445599",TYPE_GATEWAY);
     if ( n ){
         printf("virtualGatewayDevID = %s\n",n->virtualGatewayDevID);
     }
