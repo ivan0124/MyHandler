@@ -159,11 +159,12 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckLinkedList, args)
     {
         
 #if 1
+        app_os_sleep(10000);
         app_os_mutex_lock(&g_LinkedListMutex);
-	app_os_sleep(5000);
+	printf("[%s][%s] wake up...\n", __FILE__, __func__);
 	app_os_mutex_unlock(&g_LinkedListMutex);
 #endif
-        printf("[%s][%s] wake up...\n", __FILE__, __func__);
+        
     }
     
     printf("[%s][%s] thread exit\n", __FILE__, __func__);

@@ -36,6 +36,7 @@
 #include "SensorNetwork_APIex.h"
 #include "unistd.h"
 #include "IoTGWHandler.h"
+#include "common.h"
 
 #define MQTT_RESPONSE_TIMEOUT 3
 
@@ -73,7 +74,7 @@ char g_connectivity_capability[1024]={0};
 
 /******************************************************/
 
-
+extern CAGENT_MUTEX_TYPE g_LinkedListMutex;
 extern struct node* g_pVirtualGatewayDataListHead;
 
 
@@ -839,7 +840,10 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         OSInfo=OS_IP_BASE;
                     }
                     //test_link_list();
+                    app_os_mutex_lock(&g_LinkedListMutex);
                     AddNodeList_VirtualGatewayNodeInfo(message->payload, OSInfo);
+                    app_os_mutex_unlock(&g_LinkedListMutex);
+                    printf("AddNodeList_VirtualGatewayNodeInfo done\n");
                     printf("------------------------------------------------\n");
                     break;
                 }
