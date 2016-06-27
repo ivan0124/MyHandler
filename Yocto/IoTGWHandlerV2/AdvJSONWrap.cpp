@@ -11,7 +11,7 @@ extern char            g_GWInfMAC[MAX_MACADDRESS_LEN];
 struct node* g_pNodeListHead=NULL;
 
 struct node * GetVirtualGatewayDataListNode(char* devID, int devType);
-int DeleteVirtualGatewayDataListNode(char* devID, int devType);
+int DeleteNodeList(char* devID, int devType);
 void AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType, int iOSInfo, char* pSensorHubDevID);
 int AddNodeList_ConnectivityNodeInfo(char* data);
 void AddNodeList_SensorHubNodeInfo(const char* data);
@@ -88,7 +88,7 @@ struct node * GetVirtualGatewayDataListNode(char* devID, int devType)
     //printf("\n");
 }
 
-int DeleteVirtualGatewayDataListNode(char* devID, int devType)
+int DeleteNodeList(char* devID, int devType)
 {
     struct node *temp, *prev;
     temp=g_pNodeListHead;
@@ -209,7 +209,7 @@ void AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pCon
     temp=GetVirtualGatewayDataListNode(tmp_devID, devType);
     //
     if (temp != NULL){
-        DeleteVirtualGatewayDataListNode(tmp_devID, devType);
+        DeleteNodeList(tmp_devID, devType);
         temp=NULL;
     }
     //

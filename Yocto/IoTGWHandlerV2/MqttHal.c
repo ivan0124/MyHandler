@@ -195,17 +195,17 @@ void test_link_list(){
         printf("virtualGatewayDevID = %s\n",n->virtualGatewayDevID);
     }
     //del3
-    DeleteVirtualGatewayDataListNode("0017112233445503", TYPE_SENSOR_HUB);
+    DeleteNodeList("0017112233445503", TYPE_SENSOR_HUB);
     cnt=CountAllVirtualGatewayDataListNode(g_pNodeListHead);
     printf("del3, g_pVirtualGatewayDataListHead = %p\n",g_pNodeListHead);
     printf("-----------count = %d\n", cnt);
     //del2
-    DeleteVirtualGatewayDataListNode("0017112233445502", TYPE_SENSOR_HUB);
+    DeleteNodeList("0017112233445502", TYPE_SENSOR_HUB);
     cnt=CountAllVirtualGatewayDataListNode(g_pNodeListHead);
     printf("del2, g_pVirtualGatewayDataListHead = %p\n",g_pNodeListHead);
     printf("-----------count = %d\n", cnt);
     //del1
-    DeleteVirtualGatewayDataListNode("0017112233445501", TYPE_SENSOR_HUB);
+    DeleteNodeList("0017112233445501", TYPE_SENSOR_HUB);
     cnt=CountAllVirtualGatewayDataListNode(g_pNodeListHead);
     printf("del1, g_pVirtualGatewayDataListHead = %p\n",g_pNodeListHead);
     printf("-----------count = %d\n", cnt);
