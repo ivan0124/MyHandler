@@ -74,7 +74,7 @@ char g_connectivity_capability[1024]={0};
 
 /******************************************************/
 
-extern CAGENT_MUTEX_TYPE g_LinkedListMutex;
+extern CAGENT_MUTEX_TYPE g_NodeListMutex;
 extern struct node* g_pNodeListHead;
 
 
@@ -631,7 +631,7 @@ int BuildNodeList_GatewayCapabilityInfo(struct node* head, char* pResult){
     if(r==NULL)
     {
         printf("[%s][%s] node list is null\n",__FILE__, __func__);
-        strcpy(pResult, "{\"IoTGW\":{}}");
+        strcpy(pResult, "{\"IoTGW\":{\"ver\":1}}");
         return -1;
     }
     while(r!=NULL)
@@ -689,9 +689,11 @@ int BuildNodeList_GatewayCapabilityInfo(struct node* head, char* pResult){
             strcat(capability,tmp);
             strcat(capability, "\"ver\":1}");
             strcpy(g_ConnectivityInfoNodeList[i].Info,capability);
+#if 0
             printf("---------------%s capability----------------------------\n", g_ConnectivityInfoNodeList[i].type);
             printf(g_ConnectivityInfoNodeList[i].Info);
             printf("\n-------------------------------------------\n");
+#endif
         }
     }
     //Pack gateway capability
@@ -840,10 +842,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         OSInfo=OS_IP_BASE;
                     }
                     //test_link_list();
-                    app_os_mutex_lock(&g_LinkedListMutex);
+                    app_os_mutex_lock(&g_NodeListMutex);
                     AddNodeList_VirtualGatewayNodeInfo(message->payload, OSInfo);
-                    app_os_mutex_unlock(&g_LinkedListMutex);
-                    printf("AddNodeList_VirtualGatewayNodeInfo done\n");
+                    app_os_mutex_unlock(&g_NodeListMutex);
                     printf("------------------------------------------------\n");
                     break;
                 }
@@ -855,12 +856,18 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     //test_link_list();
 #if 1
+                    app_os_mutex_lock(&g_NodeListMutex);
                     AddNodeList_ConnectivityNodeInfo(message->payload);
+
                     char gateway_capability[2048]={0};
                     BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, gateway_capability);
+                    app_os_mutex_unlock(&g_NodeListMutex);
+
 		    printf("---------------Gateway capability----------------------------\n");
 		    printf(gateway_capability);
 		    printf("\n-------------------------------------------\n");
+                   
+
                     if ( RegisterToRMM_GatewayCapabilityInfo(gateway_capability, strlen(gateway_capability)) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
                         JSON_Destory(&json);
@@ -876,7 +883,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    printf("[%s][%s]\033[33m #Update Gateway Data# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-
+                    app_os_mutex_lock(&g_NodeListMutex);
                     AddNodeList_SensorHubNodeInfo(message->payload);
 #if 0
                     struct node* n;
@@ -889,8 +896,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     //Build gateway update info
                     BuildNodeList_GatewayUpdateInfo(message->payload, info_data, osInfo);
                     printf("------------------------------------------------\n");
-                    printf("[%s][%s]@@@@@ OS info type:%d packed info_data=%s\n", __FILE__, __func__, osInfo, info_data);
+                    printf("[%s][%s]@@@@@@@@@@@@ OS info type:%d packed info_data=%s\n", __FILE__, __func__, osInfo, info_data);
                     printf("------------------------------------------------\n");
+                    app_os_mutex_unlock(&g_NodeListMutex);
 #if 1
                     if ( UpdateToRMM_GatewayUpdateInfo(info_data) < 0){
                         printf("[%s][%s] Update Gateway Data FAIL !!!\n", __FILE__, __func__);
@@ -974,11 +982,13 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    }
                     printf("DeviceUID = %s\n", DeviceUID);
 #if 1
+                    app_os_mutex_lock(&g_NodeListMutex);
                     if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
                         printf("found virtual gateway device ID\n");
                         ReplyToRMM_GatewayGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY);
                         return 0;
                     }
+                    app_os_mutex_unlock(&g_NodeListMutex);
 #endif
 
 #if 1
@@ -1005,10 +1015,12 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    }
                     printf("DeviceUID = %s\n", DeviceUID);
 #if 1
+                    app_os_mutex_lock(&g_NodeListMutex);
                     if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
                         ReplyToRMM_GatewayGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY);
                         return 0;
                     }
+                    app_os_mutex_unlock(&g_NodeListMutex);
 #endif
 #if 1
                     if ( ReplyToRMM_SensorHubGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY) < 0){
@@ -1035,8 +1047,10 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 //
                 if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
 #if 1
+                    app_os_mutex_lock(&g_NodeListMutex);
                     DisconnectToRMM_AllSensorHubNode(g_pNodeListHead, DeviceUID);
                     DeleteNodeList_AllGatewayUIDNode(DeviceUID);
+                    
 #if 0
                     struct node* n;
                     DisplayAllVirtualGatewayDataListNode(g_pNodeListHead, n);
@@ -1044,6 +1058,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     //
                     char gateway_capability[2048]={0};
                     BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, gateway_capability);
+                    app_os_mutex_unlock(&g_NodeListMutex);
 		    printf("---------------Gateway capability----------------------------\n");
 		    printf(gateway_capability);
 		    printf("\n-------------------------------------------\n");

@@ -45,7 +45,7 @@ typedef struct{
    bool isThreadRunning;
 }handler_context_t;
 
-CAGENT_MUTEX_TYPE g_LinkedListMutex;
+CAGENT_MUTEX_TYPE g_NodeListMutex;
 
 //-----------------------------------------------------------------------------
 // Variables
@@ -160,9 +160,9 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckLinkedList, args)
         
 #if 1
         app_os_sleep(5000);
-        app_os_mutex_lock(&g_LinkedListMutex);
+        app_os_mutex_lock(&g_NodeListMutex);
 	printf("[%s][%s] wake up...\n", __FILE__, __func__);
-	app_os_mutex_unlock(&g_LinkedListMutex);
+	app_os_mutex_unlock(&g_NodeListMutex);
 #endif
         
     }
@@ -255,7 +255,7 @@ int HANDLER_API Handler_Initialize( HANDLER_INFO *pluginfo )
 	g_HandlerContex.isThreadRunning = false;
 	//g_status = handler_init;
 	/*Create mutex*/
-	if ( app_os_mutex_setup( &g_LinkedListMutex ) != 0 ) {
+	if ( app_os_mutex_setup( &g_NodeListMutex ) != 0 ) {
 		printf("[%s][%s] Create HDDInfo mutex failed!\n", __FILE__, __func__ );
 		return handler_fail;
 	}
@@ -293,7 +293,7 @@ void Handler_Uninitialize()
 	g_subscribecustcbf = NULL;
 	
         // Release mutex
-        app_os_mutex_cleanup( &g_LinkedListMutex );
+        app_os_mutex_cleanup( &g_NodeListMutex );
 	//<Eric>
 	UnInitSNGWHandler();
 }
