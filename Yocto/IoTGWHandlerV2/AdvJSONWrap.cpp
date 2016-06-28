@@ -669,17 +669,24 @@ void AddNodeList_SensorHubNodeInfo(const char* data){
                              printf("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l+1].Key().c_str(), IoTGW_device_info[k][l+1].Value().c_str());
 
                              char sensorHubDevID[MAX_DEVICE_ID_LEN]={0};
-                             if( OS_NONE_IP_BASE == osInfo){
-                                 strcpy(temp->connectivitySensorHubList, IoTGW_device_info[k][l+1].Value().c_str());
+                             if( OS_TYPE_UNKNOWN != osInfo){
+                                 //strcpy(temp->connectivitySensorHubList, IoTGW_device_info[k][l+1].Value().c_str());
 #if 1
 				 char tmp_data[1024]={0};
                                  char* pSave = NULL;
-				 strcpy(tmp_data,temp->connectivitySensorHubList);
+
+                                 if (OS_NONE_IP_BASE == osInfo){
+				     strcpy(tmp_data,temp->connectivitySensorHubList);
+                                 }
+                                 else if (OS_IP_BASE == osInfo){
+                                     strcpy(tmp_data,IoTGW_device_info[k][l+1].Value().c_str());
+                                 }
+
 				 char *SensorHubUID = strtok_r(tmp_data, ",", &pSave);
 
 				 while(SensorHubUID != NULL)
 				 {
-                                        //printf("connectivitySensorHubList:%s\n",SensorHubUID);
+                                        printf("SensorHubUID:%s\n",SensorHubUID);
                                         strcpy(sensorHubDevID,SensorHubUID);
                                         if ( strcmp(sensorHubDevID,"NULL") != 0){
 					    AddNodeList(virtualGatewayDevID,NULL,connectivityDevID,NULL, 0, TYPE_SENSOR_HUB, osInfo, sensorHubDevID);
@@ -687,15 +694,6 @@ void AddNodeList_SensorHubNodeInfo(const char* data){
 					SensorHubUID = strtok_r(NULL, ",",&pSave);
 				 } 
 #endif
-
-                             }
-                             else if ( OS_IP_BASE == osInfo){
-                                 //add sensor hub node
-                                 strcpy(sensorHubDevID, IoTGW_device_info[k][l+1].Value().c_str());
-                                 if (strlen(sensorHubDevID) && strcmp(sensorHubDevID,"NULL") != 0 ){
-                                     strcpy(virtualConnectivityDevID,connectivityDevID);
-                                     AddNodeList(virtualGatewayDevID,NULL,virtualConnectivityDevID,NULL, 0, TYPE_SENSOR_HUB, osInfo, sensorHubDevID);
-                                 }
 
                              }
                              else{
