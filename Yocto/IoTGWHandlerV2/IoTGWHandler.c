@@ -739,7 +739,6 @@ static int SendMsgToSUSIAccess(  const char* Data, unsigned int const DataLen, v
 // topic: /cagent/admin/%s/agentcallbackreq
 void HandlerCustMessageRecv(char * const topic, void* const data, const size_t datalen, void *pRev1, void* pRev2)
 {
-        printf("---------------------------------------------------------------\n");
 	int cmdID = 0;
 	char SenHubUID[MAX_SN_UID]={0};
 	char buffer[MAX_BUFFER_SIZE]={0};
@@ -814,10 +813,12 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 #endif
 	case IOTGW_GET_SENSOR_REQUEST:
 		{
-			printf("[%s][%s]IOTGW_GET_SENSOR_REQUEST \r\n",__FILE__, __func__);
-                        printf("topic == %s\n data=%s\n",topic, data);
-                        MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);			
-
+                     printf("---------------------------------------------------------------\n");
+                     printf("[%s][%s]\033[33m #Get Sensor Request# \033[0m\n", __FILE__, __func__);
+                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
+                     printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
+                     MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);
+                     printf("---------------------------------------------------------------\n");		
 		}
 		break;
 	case IOTGW_SET_SENSOR_REQUEST:
