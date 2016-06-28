@@ -73,6 +73,13 @@ char g_connectivity_capability[1024]={0};
 #define NAME_ASM ",\"asm\""
 
 /******************************************************/
+struct connectivityInfoNode{
+    int index;
+    char type[MAX_CONNECTIVITY_TYPE_LEN];
+    char Info[1024];
+};
+
+struct connectivityInfoNode g_ConnectivityInfoNodeList[256]={0};
 
 extern CAGENT_MUTEX_TYPE g_NodeListMutex;
 extern struct node* g_pNodeListHead;
@@ -607,15 +614,6 @@ int ParseMQTTMessage(char* ptopic, JSONode *json){
 
     return res;
 }
-
-
-struct connectivityInfoNode{
-    int index;
-    char type[MAX_CONNECTIVITY_TYPE_LEN];
-    char Info[1024];
-};
-
-struct connectivityInfoNode g_ConnectivityInfoNodeList[256]={0};
 
 int FindConnectivityInfoNodeListIndex(char* pType){
     

@@ -458,6 +458,11 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 	{
 	case IOTGW_GET_CAPABILITY_REQUEST:
 		{
+                     printf("---------------------------------------------------------------\n");
+                     printf("[%s][%s]\033[34m #Get Gateway Capability:%s# \033[0m\n", __FILE__, __func__);
+                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
+                     printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
+                     printf("---------------------------------------------------------------\n");
 #if 0			
 			char *pszCapability = NULL;
 			pszCapability = GetCapability();
@@ -479,7 +484,10 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 	case IOTGW_GET_SENSOR_REQUEST:
 		{
 
-		    printf("IOTGW_GET_SENSOR_REQUEST data=%s\r\n",data );
+                     printf("---------------------------------------------------------------\n");
+                     printf("[%s][%s]\033[34m #Get Gateway Request:%s# \033[0m\n", __FILE__, __func__);
+                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
+                     printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
 #if 0			
                     /*example data to test*/
                     char mydata[1024]={"{\"sessionID\":\"801E411759DE2D1C6E441A541EEDCAB5\",\"sensorInfoList\":{\"e\":[{\"n\":\"IoTGW/WSN/0001852CF4B7B0E7/Info/Health\",\"v\":30,\"StatusCode\":200}]}}"};
@@ -493,11 +501,15 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                     printf("VirtualGatewayUID = %s\n", VirtualGatewayUID);
                     //printf(" sensorHubUID = %s\n", sensorHubUID);
                     MqttHal_PublishV2(VirtualGatewayUID,Mote_Cmd_SetMoteReset,data);
+                    printf("---------------------------------------------------------------\n");
 		}
 		break;
 	case IOTGW_SET_SENSOR_REQUEST:
 		{
-		    printf("IOTGW_SET_SENSOR_REQUEST data=%s\r\n",data );
+                     printf("---------------------------------------------------------------\n");
+                     printf("[%s][%s]\033[34m #Set Gateway Request:%s# \033[0m\n", __FILE__, __func__);
+                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
+                     printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
 
                     char VirtualGatewayUID[64]={0};
                     if ( GetVirtualGatewayUIDfromData(g_pNodeListHead, data, VirtualGatewayUID, sizeof(VirtualGatewayUID)) < 0){
@@ -507,6 +519,7 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                     printf("VirtualGatewayUID = %s\n", VirtualGatewayUID);
                     //printf(" sensorHubUID = %s\n", sensorHubUID);
                     MqttHal_PublishV2(VirtualGatewayUID,Mote_Cmd_SetMoteReset,data);
+                    printf("---------------------------------------------------------------\n");
 	
 #if 0		
 			len = ProcSetInterfaceValue(szSessionId, data, buffer, sizeof(buffer));
@@ -571,24 +584,27 @@ void HANDLER_API Handler_AutoReportStop(char *pInQuery)
  * **************************************************************************************/
 int HANDLER_API Handler_Get_Capability( char ** pOutReply ) // JSON Format
 {
-	int len = 0; // Data length of the pOutReply 
-	char *pBuffer = NULL;
-	//char result[MAX_DATA_SIZE]={0};
+    int len = 0; // Data length of the pOutReply 
+    char *pBuffer = NULL;
 #if 1
-    char capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"LAN\":{\"LAN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":-1,\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"LAN0\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.4.5\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":0,\"asm\":\"r\"}],\"bn\":\"Info\"},\"bn\":\"0000080027549787\",\"ver\":1},\"LAN1\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":-1,\"asm\":\"r\"},{\"n\":\"Name\",\"sv\":\"LAN1\",\"asm\":\"r\"},{\"n\":\"sw\",\"sv\":\"1.4.5\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":0,\"asm\":\"r\"}],\"bn\":\"Info\"},\"bn\":\"0000080027549788\",\"ver\":1},\"bn\":\"LAN\",\"ver\":1},\"ver\":1}}"};
-	PRINTF("\r\n\r\n");
-	printf("[%s][%s]IoTGW Handler_Get_Capability\r\n", __FILE__, __func__);
-    printf("[%s][%s]capability data=%s\n", __FILE__, __func__, capability);
-	
+    char capability[MAX_DATA_SIZE]={0};
+
+    app_os_mutex_lock(&g_NodeListMutex);
+    BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, capability);
+    app_os_mutex_unlock(&g_NodeListMutex);
+
+#if 0
+    printf("Handler_Get_Capability\n");
+    printf("---------------Gateway capability----------------------------\n");
+    printf(capability);
+    printf("\n-------------------------------------------\n");	
+#endif
     len = strlen( capability );
-    //g_sendinfospeccbf( &g_PluginInfo, capability, strlen(capability)+1, NULL, NULL);
 
-	*pOutReply = (char *)malloc(len + 1);
-	memset(*pOutReply, 0, len + 1);
-	strcpy(*pOutReply, capability);
+    *pOutReply = (char *)malloc(len + 1);
+    memset(*pOutReply, 0, len + 1);
+    strcpy(*pOutReply, capability);
 
-    len=0;
-    
 #endif
 	{
 	       void* threadHandler;
@@ -598,26 +614,6 @@ int HANDLER_API Handler_Get_Capability( char ** pOutReply ) // JSON Format
 		}
 	}
 
-#if 0
-	if( pSNManagerAPI ) {
-		pBuffer = pSNManagerAPI->SN_Manager_GetCapability( );
-		if( pBuffer ) {
-			len = strlen( pBuffer );
-			*pOutReply = (char *)malloc(len + 1);
-			memset(*pOutReply, 0, len + 1);
-			strcpy(*pOutReply, pBuffer);
-			{
-				void* threadHandler;
-				if (app_os_thread_create(&threadHandler, ThreadSendSenHubConnect, NULL) == 0)
-				{
-					app_os_thread_detach(threadHandler);
-				}
-			}
-		} // End of pBuffer
-	} else {
-		PRINTF("SN_Manager_GetCapability Not Found\r\n");
-	}
-#endif
 	return len;
 }
 
@@ -791,10 +787,12 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 	{
 	case IOTGW_HANDLER_GET_CAPABILITY_REQUEST:
 		{
-			// { "sessionID":"XXX", "StatusCode":200, "SenHub": { xxxx_JSON_Object } }
-			printf("[%s][%s] IOTGW_GET_CAPABILITY_REQUEST: %s\r\n",__FILE__, __func__, SenHubUID);
-                        MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);
-                        printf("---------------------------------------------------------------\n");
+                     printf("---------------------------------------------------------------\n");
+                     printf("[%s][%s]\033[34m #Get Sensor Capability:%s# \033[0m\n", __FILE__, __func__, SenHubUID);
+                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
+                     printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
+                     MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);
+                     printf("---------------------------------------------------------------\n");
 		}
                 break;
 #if 0
@@ -814,7 +812,7 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 	case IOTGW_GET_SENSOR_REQUEST:
 		{
                      printf("---------------------------------------------------------------\n");
-                     printf("[%s][%s]\033[33m #Get Sensor Request# \033[0m\n", __FILE__, __func__);
+                     printf("[%s][%s]\033[34m #Get Sensor Request:%s# \033[0m\n", __FILE__, __func__, SenHubUID);
                      printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
                      printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
                      MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);
@@ -823,8 +821,12 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 		break;
 	case IOTGW_SET_SENSOR_REQUEST:
 		{
-			printf("[%s][%s]IOTGW_SET_SENSOR_REQUEST\r\n",__FILE__, __func__);
-                        MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);
+                     printf("---------------------------------------------------------------\n");
+                     printf("[%s][%s]\033[34m #Set Sensor Request:%s# \033[0m\n", __FILE__, __func__, SenHubUID);
+                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
+                     printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
+                     MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);
+                     printf("---------------------------------------------------------------\n");
 		}
 		break;
 	default:
