@@ -543,6 +543,23 @@ int ParseAgentinfoackTopic(JSONode *json){
 
                     printf("[%s][%s] susi cmd=%d, UNKNOWN status %s value\n", __FILE__, __func__, IOTGW_CONNECT_STATUS, nodeContent);
 		}
+                else if(strcmp(nodeContent, "IoTGW") == 0){
+                    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
+		    if ( GetJSONValue(json, OBJ_DEVICE_STATUS, nodeContent) < 0){
+		        printf("[%s][%s] susi cmd=%d, get %s value FAIL\n", __FILE__, __func__, IOTGW_CONNECT_STATUS, OBJ_DEVICE_STATUS);
+			return -1;
+		    }
+                    
+                    if ( strcmp(nodeContent,"1") == 0 ){
+		        return GATEWAY_CONNECT;
+                    }
+
+                    if ( strcmp(nodeContent,"0") == 0 ){
+		        return GATEWAY_DISCONNECT;
+                    }
+
+                    printf("[%s][%s] susi cmd=%d, UNKNOWN status %s value\n", __FILE__, __func__, IOTGW_CONNECT_STATUS, nodeContent);
+                }
                 else{
                     printf("[%s][%s] susi cmd=%d, %s wrong type value(%s)\n", __FILE__, __func__, IOTGW_CONNECT_STATUS, OBJ_DEVICE_TYPE, nodeContent);
                     return -1;
@@ -569,13 +586,15 @@ int ParseMQTTMessage(char* ptopic, JSONode *json){
         if ( res >= 0 ){
             return res;
         }
+        printf("[%s][%s]\033[31m #parse agentactionreq topic FAIL !# \033[0m\n", __FILE__, __func__);
     }
     //deviceinfo topic
     if(strcmp(ptopic, DEVICEINFO_TOPIC) == 0) {
         res = ParseDeviceinfoTopic(json);
         if ( res >= 0){
             return res;
-        }
+        };
+        printf("[%s][%s]\033[31m #parse deviceinfo topic FAIL !# \033[0m\n", __FILE__, __func__);
     }
     //agentinfoack topic
     if(strcmp(ptopic, AGENTINFOACK_TOPIC) == 0) {
@@ -583,6 +602,7 @@ int ParseMQTTMessage(char* ptopic, JSONode *json){
         if ( res >= 0){
             return res;
         }
+        printf("[%s][%s]\033[31m #parse agentinfoack topic FAIL !# \033[0m\n", __FILE__, __func__);
     }
 
     return res;
@@ -826,6 +846,24 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
         }
 #endif
         switch(action){
+            case GATEWAY_CONNECT:
+                {
+                    printf("------------------------------------------------\n");
+                    printf("[%s][%s]\033[33m #Gateway Connect# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    printf("------------------------------------------------\n");
+                    break;
+                }
+            case GATEWAY_DISCONNECT:
+                {
+                    printf("------------------------------------------------\n");
+                    printf("[%s][%s]\033[33m #Gateway Disconnect# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    printf("------------------------------------------------\n");
+                    break;
+                }
             case GATEWAY_OS_INFO:
                 {
                     printf("------------------------------------------------\n");
