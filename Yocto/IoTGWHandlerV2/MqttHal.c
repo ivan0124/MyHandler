@@ -846,7 +846,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	}
 	sscanf(message->topic, "/%*[^/]/%*[^/]/%*[^/]/%s", topicType);
 	ADV_TRACE("Topic type: %s \n", topicType);
-	printf("Topic type: %s \n", topicType);
+	//printf("Topic type: %s \n", topicType);
 
         action = ParseMQTTMessage(topicType,json);
 #if 0
@@ -856,6 +856,15 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
         }
 #endif
         switch(action){
+            case GATEWAY_HEART_BEAT:
+                {
+                    printf("------------------------------------------------\n");
+                    printf("[%s][%s]\033[33m #HeartBeat# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    printf("------------------------------------------------\n");
+                    break;
+                }
             case GATEWAY_CONNECT:
                 {
                     printf("------------------------------------------------\n");
