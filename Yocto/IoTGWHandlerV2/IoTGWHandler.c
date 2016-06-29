@@ -15,7 +15,7 @@
 #include "IoTGWHandler.h"
 #include "IoTGWFunction.h"
 #include "inc/IoTGW_Def.h"
-#include "inc/SensorNetwork_Manager_API.h"
+//#include "inc/SensorNetwork_Manager_API.h"
 #include "inc/SensorNetwork_BaseDef.h"
 #include "inc/SensorNetwork_API.h"
 #include "common.h"
@@ -635,12 +635,13 @@ void HANDLER_API Handler_MemoryFree(char *pInData)
 
 static char* GetCapability( )
 {
+#if 0
 	if( pSNManagerAPI ) {
 		return pSNManagerAPI->SN_Manager_GetCapability();
 	} else {
 		return "{\"IoTGW\":{\"ver\":1}}";
 	}
-
+#endif
 }
 
 
@@ -662,6 +663,7 @@ static int AutoReportSenData_SenHub( const char *pInJson, const int InDataLen, v
 
 static int ProcSet_Result( const char *pInJson, const int InDataLen, void *pInParam, void *pRev1 );
 
+#if 0
 SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int InDatalen, void **pOutParam, void *pRev1, void *pRev2 )
 {
         printf("[ivan][%s][%s] ======================>\n",__FILE__, __func__);
@@ -721,6 +723,7 @@ SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int 
 	}
 	return rc;
 }
+#endif
 
 static int SendMsgToSUSIAccess(  const char* Data, unsigned int const DataLen, void *pRev1, void* pRev2 )
 {
