@@ -432,6 +432,13 @@ int PrepareInfoToRegisterSensorHub(JSONode *json, senhub_info_t* pshinfo){
     return 0;
 }
 
+int ParseNotifyTopic(JSONode *json){
+
+    return GATEWAY_HEART_BEAT;
+
+    return -1;
+}
+
 int ParseAgentactionreqTopic(JSONode *json){
 
     int SusiCommand=-1;
@@ -583,6 +590,15 @@ int ParseMQTTMessage(char* ptopic, JSONode *json){
 
     int res = -1;
 
+    //notify topic
+    if(strcmp(ptopic, NOTIFY_TOPIC) == 0) {
+        res = ParseNotifyTopic(json);
+        if ( res >= 0 ){
+            return res;
+        }
+        printf("[%s][%s]\033[31m #parse notify topic FAIL !# \033[0m\n", __FILE__, __func__);
+    }
+    
     //agentactionreq topic
     if(strcmp(ptopic, AGENTACTIONREQ_TOPIC) == 0) {
         res = ParseAgentactionreqTopic(json);

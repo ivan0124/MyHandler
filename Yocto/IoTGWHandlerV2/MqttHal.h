@@ -14,6 +14,7 @@
 //-----------------------------------------------------------------------------
 // User API
 //-----------------------------------------------------------------------------
+#define NOTIFY_TOPIC  "notify"
 #define AGENTINFOACK_TOPIC "agentinfoack"
 #define AGENTACTIONREQ_TOPIC  "agentactionreq"
 #define DEVICEINFO_TOPIC      "deviceinfo"
@@ -68,7 +69,8 @@
 
 
 typedef enum {
-        GATEWAY_OS_INFO = 0,
+        GATEWAY_HEART_BEAT = 0,
+        GATEWAY_OS_INFO,
 	REGISTER_GATEWAY_CAPABILITY,
         REGISTER_SENSOR_HUB_CAPABILITY,
         GATEWAY_CONNECT,

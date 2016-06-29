@@ -153,14 +153,18 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
     
     while( pHandlerCtx->isThreadRunning )
     {
-        
 #if 1
-        app_os_sleep(5000);
+        time(&g_monitortime);
+        app_os_sleep(10000);
         app_os_mutex_lock(&g_NodeListMutex);
-	printf("[%s][%s] wake up...\n", __FILE__, __func__);
+	
+        time_t tv;
+	time(&tv);
+	float diff_time=difftime(tv, g_monitortime);
+
+	printf("[%s][%s] wake up...(difftime=%f)\n", __FILE__, __func__, diff_time);
 	app_os_mutex_unlock(&g_NodeListMutex);
 #endif
-        
     }
     
     printf("[%s][%s] thread exit\n", __FILE__, __func__);
