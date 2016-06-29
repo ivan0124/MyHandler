@@ -33,7 +33,7 @@
 #include "AdvLog.h"
 #include "mqtt_client_shared.h"
 #include "MqttHal.h"
-#include "SensorNetwork_APIex.h"
+//#include "SensorNetwork_APIex.h"
 #include "unistd.h"
 #include "IoTGWHandler.h"
 #include "common.h"
