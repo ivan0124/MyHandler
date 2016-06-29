@@ -831,6 +831,37 @@ int DisconnectToRMM_AllSensorHubNode(struct node* head, char* VirtualGatewayUID)
     return 0;
 }
 
+int DisconnectToRMM(char* DeviceUID){
+                app_os_mutex_lock(&g_NodeListMutex);
+                if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
+#if 1
+                    DisconnectToRMM_AllSensorHubNode(g_pNodeListHead, DeviceUID);
+                    DeleteNodeList_AllGatewayUIDNode(DeviceUID);
+#if 0
+                    struct node* n;
+                    DisplayAllVirtualGatewayDataListNode(g_pNodeListHead, n);
+#endif
+                    //
+                    char gateway_capability[2048]={0};
+                    BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, gateway_capability);
+                    app_os_mutex_unlock(&g_NodeListMutex);
+		    printf("---------------Gateway capability----------------------------\n");
+		    printf(gateway_capability);
+		    printf("\n-------------------------------------------\n");
+                    if ( RegisterToRMM_GatewayCapabilityInfo(gateway_capability, strlen(gateway_capability)) < 0){
+                        printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
+                        //JSON_Destory(&json);
+                        return -1;
+                    }
+#endif
+                }
+                else{
+                    app_os_mutex_unlock(&g_NodeListMutex);
+                    DisconnectToRMM_SensorHub(DeviceUID);
+                }
+    return 0;
+}
+
 int MqttHal_Message_Process(const struct mosquitto_message *message)
 {
 	char topicType[32];
@@ -888,6 +919,15 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s]\033[33m #Gateway Disconnect# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    char DeviceUID[64]={0};
+                    GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID));
+                    printf("DeviceUID = %s\n", DeviceUID);
+                    //
+		    if ( DisconnectToRMM(DeviceUID) < 0){
+		        printf("DisconnectToRMM FAIL !\n");
+			JSON_Destory(&json);
+			return -1;
+		    }
                     printf("------------------------------------------------\n");
                     break;
                 }
@@ -1109,34 +1149,12 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 char DeviceUID[64]={0};
                 GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID));
                 printf("DeviceUID = %s\n", DeviceUID);
+                if ( DisconnectToRMM(DeviceUID) < 0){
+                    printf("DisconnectToRMM FAIL !\n");
+                    JSON_Destory(&json);
+                    return -1;
+                }
                 //
-                app_os_mutex_lock(&g_NodeListMutex);
-                if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
-#if 1
-                    DisconnectToRMM_AllSensorHubNode(g_pNodeListHead, DeviceUID);
-                    DeleteNodeList_AllGatewayUIDNode(DeviceUID);
-#if 0
-                    struct node* n;
-                    DisplayAllVirtualGatewayDataListNode(g_pNodeListHead, n);
-#endif
-                    //
-                    char gateway_capability[2048]={0};
-                    BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, gateway_capability);
-                    app_os_mutex_unlock(&g_NodeListMutex);
-		    printf("---------------Gateway capability----------------------------\n");
-		    printf(gateway_capability);
-		    printf("\n-------------------------------------------\n");
-                    if ( RegisterToRMM_GatewayCapabilityInfo(gateway_capability, strlen(gateway_capability)) < 0){
-                        printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
-                        JSON_Destory(&json);
-                        return -1;
-                    }
-#endif
-                }
-                else{
-                    app_os_mutex_unlock(&g_NodeListMutex);
-                    DisconnectToRMM_SensorHub(DeviceUID);
-                }
 	}
 	
 	JSON_Destory(&json);
