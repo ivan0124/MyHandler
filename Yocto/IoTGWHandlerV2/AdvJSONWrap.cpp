@@ -158,6 +158,8 @@ void AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo){
     strcpy(virtualGatewayDevID,json["susiCommData"]["agentID"].Value().c_str());
     printf("virtualGatewayDevID = %s\n", virtualGatewayDevID);
 
+    AddNodeList(virtualGatewayDevID,NULL,NULL,NULL, 0, TYPE_GATEWAY, iOSInfo, NULL);
+#if 0
     temp= GetNode(virtualGatewayDevID,TYPE_GATEWAY);
     if ( temp ){
          printf("Update all Nodes OS info = %d\n", temp->virtualGatewayOSInfo);
@@ -170,6 +172,7 @@ void AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo){
         //Add Node to record os info
         AddNodeList(virtualGatewayDevID,NULL,NULL,NULL, 0, TYPE_GATEWAY, iOSInfo, NULL);
     }
+#endif
 
 }
 
