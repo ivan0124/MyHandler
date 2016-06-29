@@ -260,13 +260,8 @@ int HANDLER_API Handler_Initialize( HANDLER_INFO *pluginfo )
 		return handler_fail;
 	}
 
-/*ivan del start 20160521*/
-#if 1
-	// <Eric>
 	if( InitSNGWHandler() < 0 )
-		return handler_fail;
-#endif
-/*ivan del end*/
+	    return handler_fail;
  
 /*ivan add start 20160521*/ 
     printf("[%s][%s]SN_Initialize() --------------------------->\n",__FILE__, __func__);
@@ -1362,55 +1357,16 @@ int ReplyToRMM_GatewayGetSetRequest(char* ptopic, JSONode *json, int cmdID){
 
 // <IoTGW>
 int InitSNGWHandler()
-{
-	
+{	
 	int i = 0;
         int rc = 0;
-
-#if 0
-	char libpath[MAX_PATH]={0};
-
-	//snprintf(libpath,sizeof(libpath),"%s/%s",GetLibaryDir(IoTGW_HANDLE_NAME),SN_MANAGER_LIB_NAME);
-	snprintf(libpath,sizeof(libpath),"%s",SN_MANAGER_LIB_NAME);
-
-	PRINTF("LibPath=%s\n",libpath);
-	// 1. Load Sensor Network Manager Libary  & Get Library function point
-	if( GetSNManagerAPILibFn( libpath,&pSNManagerAPI ) == 0 ) {
-		PRINTF("Failed: InitSNGWHandler: GetSNManagerAPILibFn\r\n");
-		return rc;
-	}
-#endif
-	// 2. Allocate Handler_info array buffer point
+	// Allocate Handler_info array buffer point
 	for( i = 0; i< MAX_SENNODES ; i ++ ) {
 		memcpy(&g_SenPluginInfo[i],&g_PluginInfo,sizeof(Handler_info));
 		memcpy(&g_SenHubAgentInfo[i],&g_PluginInfo.agentInfo,sizeof(cagent_agent_info_body_t));
 		g_SenHubAgentInfo[i].status = 0;
 		g_SenPluginInfo[i].agentInfo = &g_SenHubAgentInfo[i];
 	}
-
-#if 0
-	// 3. Set ProcSNManagerCbf
-	if( pSNManagerAPI->SN_Manager_ActionProc( SN_Set_ReportSNManagerDataCbf, ProceSNManagerDataCbf,0,0,0) == SN_ER_FAILED ){
-		PRINTF("Failed: InitSNGWHandler: SN_Set_ReportSNManagerDataCbf\r\n");
-		return rc;
-	}
-
-	// 4. SN_Manager_Initialize
-	if( pSNManagerAPI->SN_Manager_Initialize( ) == SN_ER_FAILED ) {
-		PRINTF("Failed: InitSNGWHandler: SN_Manager_Initialize\r\n");
-		return rc;
-	}
-
-	pSNManagerAPI->SN_Manager_GetCapability( );
-	//5. Init AdvApiMux Server
-#ifdef LINUX
-	InitAdvAPIMux_Server();
-#endif
-
-#endif
-	rc = 1; 
-	PRINTF("Success: Initial Sensor Network Handler\r\n");
-
 
 	return rc;
 }
