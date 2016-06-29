@@ -439,7 +439,6 @@ int ParseNotifyTopic(JSONode *json){
         return -1;
     }
 
-    printf ("[hb][devID]=%s\n", nodeContent);
     return GATEWAY_HEART_BEAT;
 }
 
@@ -862,6 +861,11 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s]\033[33m #HeartBeat# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                     
+                    char nodeContent[MAX_JSON_NODE_SIZE]={0};
+                    if ( GetJSONValue(json, "[hb][devID]", nodeContent) < 0 ){
+                        return -1;
+                    }
                     printf("------------------------------------------------\n");
                     break;
                 }
