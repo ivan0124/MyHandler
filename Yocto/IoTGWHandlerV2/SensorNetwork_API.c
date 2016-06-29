@@ -411,10 +411,12 @@ int SensorHub_DisConn(senhub_info_t *pMote)
 //-----------------------------------------------------------------------------
 SN_CODE SN_Initialize(void *_pInUserData)
 {
+#if 0
 	g_UserData = _pInUserData;
 	g_UpdateDataCbf = NULL;
 	SN_Manager_Initialize();
-    SN_SetUpdateDataCbf(&ProcUpdateSNDataCbf);
+        SN_SetUpdateDataCbf(&ProcUpdateSNDataCbf);
+#endif
 	// Your protocol handler 
 	MqttHal_Proc();
 

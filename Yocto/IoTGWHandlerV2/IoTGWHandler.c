@@ -263,9 +263,10 @@ int HANDLER_API Handler_Initialize( HANDLER_INFO *pluginfo )
 	if( InitSNGWHandler() < 0 )
 	    return handler_fail;
  
+        MqttHal_Proc();
 /*ivan add start 20160521*/ 
-    printf("[%s][%s]SN_Initialize() --------------------------->\n",__FILE__, __func__);
-    SN_Initialize(NULL);
+    //printf("[%s][%s]SN_Initialize() --------------------------->\n",__FILE__, __func__);
+    //SN_Initialize(NULL);
     
 /*ivan add end*/
 
@@ -985,7 +986,6 @@ static int SendInfoSpec_SenHub( const char *pInJson, const int InDataLen, void *
 
 static int AutoReportSenData_SenHub( const char *pInJson, const int InDataLen, void *pInParam, void *pRev1 )
 {
-        //PRINTF("[ivan][%s][%s] =====>\n", __FILE__, __func__);
 	int rc = 0;
 #if 1
         int index = -1;
@@ -1101,16 +1101,6 @@ char Capability[MAX_DATA_SIZE]={"{\"IoTGW\":{\"WSN\":{\"WSN0\":{\"Info\":{\"e\":
 }
 
 int UpdateToRMM_GatewayUpdateInfo(char* data){
-
-#if 0
-    char nodeContent[MAX_JSON_NODE_SIZE]={0};
-
-    memset(nodeContent, 0, MAX_JSON_NODE_SIZE);
-    JSON_Get(json, OBJ_DATA, nodeContent, sizeof(nodeContent));
-    if(strcmp(nodeContent, "NULL") == 0){
-        return -1;
-    }
-#endif
 
 #if 0
 char ConnectivityInfo[1024]={"{\"IoTGW\":{\"WSN\":{\"WSN0\":{\"Info\":{\"e\":[{\"n\":\"SenHubList\",\"sv\":\"0017000E40000000\"},{\"n\":\"Neighbor\",\"sv\":\"0017000E40000000\"},{\"n\":\"Name\",\"sv\":\"WSN0\"},{\"n\":\"Health\",\"v\":\"100.000000\"},{\"n\":\"sw\",\"sv\":\"1.2.1.12\"},{\"n\":\"reset\",\"bv\":\"0\"}],\"bn\":\"Info\"},\"bn\":\"0007000E40ABCD01\",\"ver\":1},\"bn\":\"WSN\"},\"ver\":1}}"};
@@ -1368,6 +1358,10 @@ int InitSNGWHandler()
 		g_SenPluginInfo[i].agentInfo = &g_SenHubAgentInfo[i];
 	}
 
+	//Init AdvApiMux Server
+#ifdef LINUX
+	InitAdvAPIMux_Server();
+#endif
 	return rc;
 }
 
