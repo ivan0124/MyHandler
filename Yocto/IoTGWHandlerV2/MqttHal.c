@@ -28,12 +28,10 @@
 #include <assert.h>
 #include <errno.h>
 #include <mosquitto.h>
-//#include "list.h"
 #include "AdvJSON.h"
 #include "AdvLog.h"
 #include "mqtt_client_shared.h"
 #include "MqttHal.h"
-//#include "SensorNetwork_APIex.h"
 #include "unistd.h"
 #include "IoTGWHandler.h"
 #include "common.h"
