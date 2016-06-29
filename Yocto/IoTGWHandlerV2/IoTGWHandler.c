@@ -15,7 +15,6 @@
 #include "IoTGWHandler.h"
 #include "IoTGWFunction.h"
 #include "inc/IoTGW_Def.h"
-//#include "inc/SensorNetwork_Manager_API.h"
 #include "inc/SensorNetwork_BaseDef.h"
 #include "inc/SensorNetwork_API.h"
 #include "common.h"
