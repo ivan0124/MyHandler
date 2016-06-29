@@ -159,20 +159,6 @@ void AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo){
     printf("virtualGatewayDevID = %s\n", virtualGatewayDevID);
 
     AddNodeList(virtualGatewayDevID,NULL,NULL,NULL, 0, TYPE_GATEWAY, iOSInfo, NULL);
-#if 0
-    temp= GetNode(virtualGatewayDevID,TYPE_GATEWAY);
-    if ( temp ){
-         printf("Update all Nodes OS info = %d\n", temp->virtualGatewayOSInfo);
-        //Update all Nodes which have this gateway device ID
-      
-        //Get virtual gateway info
-    }
-    else{
-        printf("Add Node to record OS info = %d\n",iOSInfo);
-        //Add Node to record os info
-        AddNodeList(virtualGatewayDevID,NULL,NULL,NULL, 0, TYPE_GATEWAY, iOSInfo, NULL);
-    }
-#endif
 
 }
 
