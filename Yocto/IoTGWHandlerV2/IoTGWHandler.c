@@ -72,9 +72,6 @@ static cagent_agent_info_body_t g_SenHubAgentInfo[MAX_SENNODES];
 static cagent_agent_info_body_t g_gw;
 
 
-// IoTGW 
-static char* GetCapability( );
-
 int runing = 0;
 
 extern struct node* g_pNodeListHead;
@@ -464,22 +461,6 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 		     BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, capability);
 		     app_os_mutex_unlock(&g_NodeListMutex);
 		     g_sendcbf(&g_PluginInfo, IOTGW_GET_CAPABILITY_REPLY, capability, strlen( capability )+1, NULL, NULL);
-#if 0			
-			char *pszCapability = NULL;
-			pszCapability = GetCapability();
-			if( pszCapability != NULL ) {
-				g_sendcbf(&g_PluginInfo, IOTGW_GET_CAPABILITY_REPLY, pszCapability, strlen( pszCapability )+1, NULL, NULL);
-				{
-					void* threadHandler;
-					if (app_os_thread_create(&threadHandler, ThreadSendSenHubConnect, NULL) == 0)
-					{
-						app_os_thread_detach(threadHandler);
-					}
-				}
-			} else {
-				g_sendcbf(&g_PluginInfo, IOTGW_ERROR_REPLY, g_szErrorCapability, strlen( g_szErrorCapability )+1, NULL, NULL);
-			}
-#endif
 		}
 		break;
 	case IOTGW_GET_SENSOR_REQUEST:
@@ -632,20 +613,6 @@ void HANDLER_API Handler_MemoryFree(char *pInData)
 	}
 }
 
-static char* GetCapability( )
-{
-#if 0
-	if( pSNManagerAPI ) {
-		return pSNManagerAPI->SN_Manager_GetCapability();
-	} else {
-		return "{\"IoTGW\":{\"ver\":1}}";
-	}
-#endif
-}
-
-
-
-
 /****************************************************************************/
 /* Below Functions are IoTGW Handler source code                   			 */
 /****************************************************************************/
@@ -658,71 +625,7 @@ static int Disconnect_SenHub( void *pOutParam );
 
 static int SendInfoSpec_SenHub( const char *pInJson, const int InDataLen, void *pOutParam, void *pRev1 );
 
-static int AutoReportSenData_SenHub( const char *pInJson, const int InDataLen, void *pOutParam, void *pRev1 );
-
 static int ProcSet_Result( const char *pInJson, const int InDataLen, void *pInParam, void *pRev1 );
-
-#if 0
-SN_CODE ProceSNManagerDataCbf ( const int cmdId, const char *pInJson, const int InDatalen, void **pOutParam, void *pRev1, void *pRev2 )
-{
-        printf("[ivan][%s][%s] ======================>\n",__FILE__, __func__);
-	int rc = 0;
-
-	switch( cmdId)
-	{
-	case SN_Inf_UpdateInterface_Data:
-		{
-#if 0
-
-         printf("Update Interface ===============================================================================>\n");
-         
-	
-                        
-          
-						PRINTF("[ivan][%s][%s] SN_Inf_UpdateInterface_Data======================>\n",__FILE__, __func__);
-
-                        printf("[ivan][%s][%s]Interface Data=%s\n",__FILE__, __func__, mydata);
-			rc = UpdateInterfaceData( mydata/*pInJson*/, strlen(mydata)/*InDatalen*/ );
-#endif
-		}
-		break;
-	case SN_SenHub_Register:
-		{
-                        SenHubInfo *pSenHubInfo = (SenHubInfo*)pRev1;
-                        PRINTF("[ivan][%s][%s] ****************************************\n",__FILE__, __func__);
-			rc = Register_SenHub( 0, 0, 0, pRev1, 0 );
-		}
-		break;
-	case SN_SenHub_SendInfoSpec:
-		{
-                        PRINTF("[ivan][%s][%s] SN_SenHub_SendInfoSpec======================>\n",__FILE__, __func__);
-			rc = SendInfoSpec_SenHub( pInJson, InDatalen, *pOutParam, pRev1 );
-		}
-		break;
-	case SN_SenHub_AutoReportData:
-		{
-                        PRINTF("[ivan][%s][%s] SN_SenHub_AutoReportData======================>\n",__FILE__, __func__);
-			rc = AutoReportSenData_SenHub( 0, 0, 0, 0 );
-		}
-		break;
-	case SN_SetResult:
-		{
-                        PRINTF("[ivan][%s][%s] SN_SetResult======================>\n",__FILE__, __func__);
-			rc = ProcSet_Result( pInJson, InDatalen, *pOutParam, pRev1 );
-		}
-		break;
-	case SN_SenHub_Disconnect:
-		{
-                        printf("[ivan][%s][%s] SN_SenHub_Disconnect======================>\n",__FILE__, __func__);
-			rc = Disconnect_SenHub( 0 );
-		}
-		break;	
-	default:
-		PRINTF("ReportSNManagerDtatCbf Cmd Not Support = %d\r\n", cmdId);
-	}
-	return rc;
-}
-#endif
 
 static int SendMsgToSUSIAccess(  const char* Data, unsigned int const DataLen, void *pRev1, void* pRev2 )
 {
@@ -917,11 +820,7 @@ static int Register_SenHub( const char *pJSON, const int nLen, void **pOutParam,
 	int rc = 0;
 	int index = 0;
 
-        PRINTF("[ivan][%s][%s] ---------------------------------=====>\n", __FILE__, __func__ );
 	SenHubInfo *pSenHubInfo = (SenHubInfo*)pRev1;
-
-	PRINTF("[ivan][%s][%s] MAC=%s HostName=%s SN=%s Product=%s\n",__FILE__,__func__,		pSenHubInfo->sUID,
-	pSenHubInfo->sHostName,										pSenHubInfo->sSN,										pSenHubInfo->sProduct);
 
 	Handler_info  *pSenHander = NULL;
 
@@ -983,35 +882,6 @@ static int SendInfoSpec_SenHub( const char *pInJson, const int InDataLen, void *
 		rc = 1;
 	}
 
-	return rc;
-}
-
-static int AutoReportSenData_SenHub( const char *pInJson, const int InDataLen, void *pInParam, void *pRev1 )
-{
-	int rc = 0;
-#if 1
-        int index = -1;
-        char SenHubUID[MAX_SN_UID]={"000E40000005"};
-        strcpy(SenHubUID,g_mac_to_register);
-	if( ( index = GetSenHubAgentInfobyUID(&g_SenHubAgentInfo, 256, SenHubUID) ) == -1 ) {
-		PRINTF(" Can't find SenHub UID in Table =%s\r\n",g_mac_to_register );
-		return 0;
-	}
-
-        //PRINTF(" find SenHub UID in Table =%s, index=%d\r\n","000E40000005", index );
-#endif 
-#if 1
-	//Handler_info *pHandler_info = (Handler_info*)pInParam;
-        char mydata[1024]={"{\"SenHub\":{\"SenData\":{\"e\":[{\"n\":\"Temperature\",\"v\":8.000000},{\"n\":\"Humidity\",\"v\":64.000000},{\"n\":\"GPIO1\",\"bv\":0},{\"n\":\"GPIO2\",\"bv\":0}],\"bn\":\"SenData\"},\"Info\":{\"e\":[{\"n\":\"Name\",\"sv\":\"123456789012345678901234567890\",\"asm\":\"rw\"},{\"n\":\"sw\",\"sv\":\"1.0.00\",\"asm\":\"r\"},{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Info\"},\"Net\":{\"e\":[{\"n\":\"sw\",\"sv\":\"1.0.00\",\"asm\":\"r\"},{\"n\":\"Neighbor\",\"sv\":\"\",\"asm\":\"r\"},{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"}],\"bn\":\"Net\"},\"Action\":{\"e\":[{\"n\":\"AutoReport\",\"bv\":\"0\",\"asm\":\"rw\"}],\"bn\":\"Action\"},\"ver\":1}}"};
-        Handler_info *pHandler_info = (Handler_info*)&g_SenPluginInfo[index];
-
-	if( pHandler_info == NULL ) return rc;
-
-	if( g_sendreportcbf ) {
-		g_sendreportcbf( pHandler_info, mydata, strlen(mydata), NULL, NULL );
-		rc = 1;
-	}
-#endif
 	return rc;
 }
 
@@ -1310,10 +1180,6 @@ int ReplyToRMM_GatewayGetSetRequest(char* ptopic, JSONode *json, int cmdID){
     char nodeContent[MAX_JSON_NODE_SIZE];
     char sessionID[256]={0};
     char sensorInfoList[256]={0};
-#if 0
-    char tmp_sensorHubUID[64]={0};
-    char sensorHubUID[64]={0};
-#endif
     char respone_data[1024]={0};
 
     //message topic
@@ -1370,7 +1236,6 @@ int InitSNGWHandler()
 int StartSNGWHandler()
 {
 	int rc = 0;
-
 
 	return rc;
 }
