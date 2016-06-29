@@ -28,7 +28,7 @@
 #include <assert.h>
 #include <errno.h>
 #include <mosquitto.h>
-#include "list.h"
+//#include "list.h"
 #include "AdvJSON.h"
 #include "AdvLog.h"
 #include "mqtt_client_shared.h"
@@ -53,7 +53,7 @@ static int g_mid_sent = 0;
 static int g_pubResp = 0;
 static char g_sessionID[34];
 
-static senhub_list_t   *g_SensorHubList;
+//static senhub_list_t   *g_SensorHubList;
 char            g_GWInfMAC[MAX_MACADDRESS_LEN];
 char g_connectivity_capability[1024]={0};
 
@@ -1236,6 +1236,7 @@ static void *MqttHal_Thread(void *arg) {
 //-----------------------------------------------------------------------------
 int MqttHal_GetMacAddrList(char *pOutBuf, const int outBufLen, int withHead)
 {
+#if 0
     senhub_list_t *target;
 	char *pos = NULL;
 
@@ -1258,7 +1259,7 @@ int MqttHal_GetMacAddrList(char *pOutBuf, const int outBufLen, int withHead)
 		*pos=0;
 	}
 	//printf("%s: string len=%d (%s)\n", __func__, strlen(pOutBuf), pOutBuf);
-
+#endif
 	return 0;
 }
 
@@ -1307,7 +1308,7 @@ int MqttHal_Init()
 	int rc = 0;
 	//struct mosq_config mosq_cfg;
 	senhub_info_t *pshinfo;
-	g_SensorHubList = NULL;
+	//g_SensorHubList = NULL;
 	
 	//ADV_INFO("%s: \n", __func__);
 	rc = mqtt_client_config_load(&g_mosq_cfg, CLIENT_SUB, 1, NULL);
@@ -1391,7 +1392,8 @@ void MqttHal_UpdateIntf(int bUpdate)
 
 senhub_info_t* MqttHal_GetMoteInfoByMac(char *strMacAddr)
 {
-	return (senhub_info_t *)senhub_list_find_by_mac(g_SensorHubList, strMacAddr);
+	//return (senhub_info_t *)senhub_list_find_by_mac(g_SensorHubList, strMacAddr);
+        return 0;
 }
 
 int MqttHal_Publish(char *macAddr, int cmdType, char *strName, char *strValue)
