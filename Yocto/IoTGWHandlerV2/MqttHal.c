@@ -346,7 +346,6 @@ int isRegisterGatewayCapability(JSONode *json){
     char nodeContent[MAX_JSON_NODE_SIZE]={0};
 
     if ( GetJSONValue(json, OBJ_IOTGW_INFO_SPEC, nodeContent) < 0){
-        //printf("[%s][%s] susi get %s value FAIL\n", __FILE__, __func__, OBJ_IOTGW_INFO_SPEC);
         return -1;
     }
 
@@ -358,7 +357,6 @@ int isRegisterSensorHubCapability(JSONode *json){
     char nodeContent[MAX_JSON_NODE_SIZE]={0};
 
     if ( GetJSONValue(json, OBJ_SENHUB_INFO_SPEC, nodeContent) < 0){
-        //printf("[%s][%s] susi get %s value FAIL\n", __FILE__, __func__, OBJ_SENHUB_INFO_SPEC);
         return -1;
     }
 
@@ -727,9 +725,6 @@ int BuildNodeList_GatewayCapabilityInfo(struct node* head, char* pResult){
 }
 
 int GetVirtualGatewayUIDfromData(struct node* head, const char *data, char *uid , const int size ){
-    
-    //printf("[%s] data=%s\n", __func__, data);
-    //strcpy(uid,"0000000E40ABCDEF");
 
 #if 0 
 //sample data to test  
@@ -1108,14 +1103,6 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 }
 	}
 	
-	// CmdID=1000
-#if 0
-	if(g_doUpdateInterface) {
-		GatewayIntf_Update();
-		g_doUpdateInterface = 0;
-	}
-#endif
-
 	JSON_Destory(&json);
 
 	return 0;

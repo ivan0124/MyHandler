@@ -260,11 +260,6 @@ int HANDLER_API Handler_Initialize( HANDLER_INFO *pluginfo )
 	    return handler_fail;
  
         MqttHal_Proc();
-/*ivan add start 20160521*/ 
-    //printf("[%s][%s]SN_Initialize() --------------------------->\n",__FILE__, __func__);
-    //SN_Initialize(NULL);
-    
-/*ivan add end*/
 
 	return handler_success;
 }
