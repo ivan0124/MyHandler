@@ -433,10 +433,14 @@ int PrepareInfoToRegisterSensorHub(JSONode *json, senhub_info_t* pshinfo){
 }
 
 int ParseNotifyTopic(JSONode *json){
+    
+    char nodeContent[MAX_JSON_NODE_SIZE]={0};
+    if ( GetJSONValue(json, "[hb][devID]", nodeContent) < 0 ){
+        return -1;
+    }
 
+    printf ("[hb][devID]=%s\n", nodeContent);
     return GATEWAY_HEART_BEAT;
-
-    return -1;
 }
 
 int ParseAgentactionreqTopic(JSONode *json){
@@ -840,7 +844,6 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		printf("json parse err!\n");
 		return -1;
 	}
-
 	sscanf(message->topic, "/%*[^/]/%*[^/]/%*[^/]/%s", topicType);
 	ADV_TRACE("Topic type: %s \n", topicType);
 	printf("Topic type: %s \n", topicType);
