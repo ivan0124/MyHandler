@@ -864,6 +864,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                      
                     char nodeContent[MAX_JSON_NODE_SIZE]={0};
                     if ( GetJSONValue(json, "[hb][devID]", nodeContent) < 0 ){
+                        JSON_Destory(&json);
                         return -1;
                     }
                     printf("------------------------------------------------\n");
