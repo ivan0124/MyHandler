@@ -513,7 +513,7 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 		break;
 	default:
 		{
-#if 0
+#if 1
 			PRINTF("Unknow CMD ID=%d\r\n", cmdID );
 			/*  {"sessionID":"1234","errorRep":"Unknown cmd!"}  */
 			if(strlen(szSessionId)>0)
@@ -686,8 +686,6 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 
 
 #if 1
-
-
 	switch (cmdID)
 	{
 	case IOTGW_HANDLER_GET_CAPABILITY_REQUEST:
