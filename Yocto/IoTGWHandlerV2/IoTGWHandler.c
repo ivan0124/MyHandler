@@ -463,6 +463,12 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                      printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
                      printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
                      printf("---------------------------------------------------------------\n");
+                     char capability[MAX_DATA_SIZE]={0};
+			
+		     app_os_mutex_lock(&g_NodeListMutex);
+		     BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, capability);
+		     app_os_mutex_unlock(&g_NodeListMutex);
+		     g_sendcbf(&g_PluginInfo, IOTGW_GET_CAPABILITY_REPLY, capability, strlen( capability )+1, NULL, NULL);
 #if 0			
 			char *pszCapability = NULL;
 			pszCapability = GetCapability();
@@ -586,7 +592,6 @@ int HANDLER_API Handler_Get_Capability( char ** pOutReply ) // JSON Format
 {
     int len = 0; // Data length of the pOutReply 
     char *pBuffer = NULL;
-#if 1
     char capability[MAX_DATA_SIZE]={0};
 
     app_os_mutex_lock(&g_NodeListMutex);
@@ -605,16 +610,15 @@ int HANDLER_API Handler_Get_Capability( char ** pOutReply ) // JSON Format
     memset(*pOutReply, 0, len + 1);
     strcpy(*pOutReply, capability);
 
-#endif
-	{
-	       void* threadHandler;
-	       if (app_os_thread_create(&threadHandler, ThreadSendSenHubConnect, NULL) == 0)
-		{
-		     app_os_thread_detach(threadHandler);
-		}
+    {
+        void* threadHandler;
+	if (app_os_thread_create(&threadHandler, ThreadSendSenHubConnect, NULL) == 0)
+        {
+            app_os_thread_detach(threadHandler);
 	}
+    }
 
-	return len;
+    return len;
 }
 
 /* **************************************************************************************
