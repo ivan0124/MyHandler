@@ -69,7 +69,7 @@
 
 
 typedef enum {
-        GATEWAY_HEART_BEAT = 0,
+        GATEWAY_HEART_BEAT = 1,
         GATEWAY_OS_INFO,
 	REGISTER_GATEWAY_CAPABILITY,
         REGISTER_SENSOR_HUB_CAPABILITY,
@@ -84,14 +84,14 @@ typedef enum {
 } MQTT_ACTION;
 
 typedef enum {
-        DEVICE_TYPE_UNKNOWN = 0,
+        DEVICE_TYPE_UNKNOWN = 1,
         TYPE_GATEWAY,
 	TYPE_CONNECTIVITY,
         TYPE_SENSOR_HUB
 } NODE_TYPE;
 
 typedef enum {
-        OS_TYPE_UNKNOWN = 0,
+        OS_TYPE_UNKNOWN = 1,
         OS_NONE_IP_BASE,
 	OS_IP_BASE
 } GATEWAY_OS_INFO_TYPE;
@@ -135,6 +135,7 @@ struct node
     char connectivityNeighborList[1024];
     char* connectivityInfo;
     char sensorHubDevID[MAX_DEVICE_ID_LEN];
+    time_t last_hb_time;
     struct node *next;
 };
 

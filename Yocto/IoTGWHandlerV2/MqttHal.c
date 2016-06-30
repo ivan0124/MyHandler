@@ -898,6 +898,12 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         JSON_Destory(&json);
                         return -1;
                     }
+                    app_os_mutex_lock(&g_NodeListMutex);
+                    struct node hb_data;
+                    memset(&hb_data,0,sizeof(struct node));
+                    time(&hb_data.last_hb_time);
+                    UpdateNodeList(nodeContent, TYPE_GATEWAY, &hb_data);
+                    app_os_mutex_unlock(&g_NodeListMutex);
                     printf("------------------------------------------------\n");
                     break;
                 }
@@ -907,9 +913,20 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s]\033[33m #Gateway Connect# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+ 
+                    printf("[%s][%s] app_os_mutex_lock\n",__FILE__, __func__);
                     app_os_mutex_lock(&g_NodeListMutex);
                     AddNodeList_VirtualGatewayNodeInfo(message->payload, OS_TYPE_UNKNOWN);
+                    //
+#if 1
+                    struct node hb_data;
+                    memset(&hb_data,0,sizeof(struct node));
+                    time(&hb_data.last_hb_time);
+                    printf("The number of seconds since January 1,1970 is %ld\n",hb_data.last_hb_time);
+                    UpdateNodeList("0000000E40ABCDEF", TYPE_GATEWAY, &hb_data);
+#endif
                     app_os_mutex_unlock(&g_NodeListMutex);
+                    printf("[%s][%s] app_os_mutex_unlock\n",__FILE__, __func__);
                     printf("------------------------------------------------\n");
                     break;
                 }
@@ -948,7 +965,11 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     }
                     //test_link_list();
                     app_os_mutex_lock(&g_NodeListMutex);
-                    AddNodeList_VirtualGatewayNodeInfo(message->payload, OSInfo);
+                    //AddNodeList_VirtualGatewayNodeInfo(message->payload, OSInfo);
+                    struct node node_data;
+                    memset(&node_data,0,sizeof(struct node));
+                    node_data.virtualGatewayOSInfo = OSInfo;
+                    UpdateNodeList("0000000E40ABCDEF", TYPE_GATEWAY, &node_data);
                     app_os_mutex_unlock(&g_NodeListMutex);
                     printf("------------------------------------------------\n");
                     break;

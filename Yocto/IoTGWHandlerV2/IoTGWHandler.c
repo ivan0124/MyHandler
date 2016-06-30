@@ -150,20 +150,46 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
 {
 
     handler_context_t * pHandlerCtx = ( handler_context_t * )args;
-    
+
     while( pHandlerCtx->isThreadRunning )
     {
 #if 1
         time(&g_monitortime);
-        app_os_sleep(10000);
-        app_os_mutex_lock(&g_NodeListMutex);
-	
+        app_os_sleep(5000);
+
+#if 1	
         time_t tv;
 	time(&tv);
 	float diff_time=difftime(tv, g_monitortime);
+        printf("[%s][%s] wake up...(difftime=%f)\n", __FILE__, __func__, diff_time);
+#endif
+	
 
-	printf("[%s][%s] wake up...(difftime=%f)\n", __FILE__, __func__, diff_time);
+#if 1
+        printf("[%s][%s] app_os_mutex_lock\n",__FILE__, __func__);
+        app_os_mutex_lock(&g_NodeListMutex);
+        struct node * r;
+        r=g_pNodeListHead;
+
+        if(r==NULL)
+        {
+            app_os_mutex_unlock(&g_NodeListMutex);
+            continue;
+        }
+        while(r!=NULL)
+        {
+            if ( r->nodeType == TYPE_GATEWAY) {
+		    //time_t tv;
+		    //time(&tv);
+		    //float diff_time=difftime(tv, r->last_hb_time);
+                    //printf("[%s][%s] wake up...(difftime=%f)\n", __FILE__, __func__, diff_time);
+                    printf("[%s][%s] last_hb_time=%ld\n", __FILE__, __func__, r->last_hb_time);
+            }
+            r=r->next;
+        }
+#endif
 	app_os_mutex_unlock(&g_NodeListMutex);
+        
 #endif
     }
     

@@ -13,6 +13,7 @@ struct node* g_pNodeListHead=NULL;
 struct node * GetNode(char* devID, int devType);
 int DeleteNodeList(char* devID, int devType);
 void AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType, int iOSInfo, char* pSensorHubDevID);
+int UpdateNodeList(char* devID, int devType, struct node* pNode);
 int AddNodeList_ConnectivityNodeInfo(char* data);
 void AddNodeList_SensorHubNodeInfo(const char* data);
 void AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo);
@@ -241,6 +242,82 @@ void AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pCon
         g_pNodeListHead=temp;
     }
 
+}
+
+int UpdateNodeList(char* devID, int devType, struct node* pNode){
+#if 0
+    int nodeType;
+    char virtualGatewayDevID[MAX_DEVICE_ID_LEN];
+    int virtualGatewayOSInfo;
+    char connectivityType[MAX_CONNECTIVITY_TYPE_LEN];
+    char connectivityDevID[MAX_DEVICE_ID_LEN];
+    char connectivitySensorHubList[1024];
+    char connectivityNeighborList[1024];
+    char* connectivityInfo;
+    char sensorHubDevID[MAX_DEVICE_ID_LEN];
+    time_t last_hb_time;
+#endif
+    printf("@@@@@@@@@@@@ UpdateNodeList @@@@@@@@@@@@@\n");
+    struct node * r;
+    r=g_pNodeListHead;
+
+    if(r==NULL)
+    {
+        return -1;
+    }
+    while(r!=NULL)
+    {
+        switch(devType){
+            case TYPE_GATEWAY:
+            {
+
+                if (strcmp(r->virtualGatewayDevID, devID) == 0){
+                    if ( r->nodeType == TYPE_GATEWAY) {
+                        if ( pNode->virtualGatewayOSInfo != 0 ){ 
+                            r->virtualGatewayOSInfo = pNode->virtualGatewayOSInfo;
+                            printf("[%s][%s] update virtualGatewayOSInfo\n", __FILE__, __func__);
+                        }
+                        if ( pNode->connectivityInfo != 0 ){ 
+                            printf("[%s][%s] update connectivityInfo\n", __FILE__, __func__);
+                        }
+                        printf("[%s][%s] last_hb_time=%ld\n", __FILE__, __func__, pNode->last_hb_time);
+                        if ( pNode->last_hb_time != 0 ){ 
+                            r->last_hb_time = pNode->last_hb_time;
+                            printf("[%s][%s] update last_hb_time\n", __FILE__, __func__);
+                            printf("[%s][%s] r->last_hb_time=%ld\n", __FILE__, __func__, r->last_hb_time);
+                        }
+                        return 0;
+                    }
+                }
+
+                break;
+            }
+            case TYPE_CONNECTIVITY:
+            {
+                if (strcmp(r->connectivityDevID, devID) == 0){
+                    if ( r->nodeType == TYPE_CONNECTIVITY) {
+                        return 0;
+                    }
+                }
+                break;
+            }
+            case TYPE_SENSOR_HUB:
+            {
+                if (strcmp(r->sensorHubDevID, devID) == 0){
+                    if ( r->nodeType == TYPE_SENSOR_HUB) {
+                        return 0;
+                    }
+                }
+                break;
+            }
+            default:
+                printf("[%s][%s]Unknown device type\n", __FILE__, __func__);
+                break;
+        }
+        r=r->next;
+    }
+
+    return -1;
 }
 
 int GetSensorHubList(char* sensorHubList, int osInfo, char* connectivityDevID){
