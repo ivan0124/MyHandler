@@ -9,6 +9,8 @@ void test();
 int GW_list_AddNode(struct gw_node ** head, char* pVirtualGatewayDevID );
 struct gw_node * GW_list_GetNode(struct gw_node ** head, char* devID);
 int GW_list_DeleteNode(struct gw_node ** head, char* devID);
+int GW_list_ClearAll(struct gw_node ** head);
+
 
 void test(){
     //add1
@@ -25,6 +27,9 @@ void test(){
     printf( "Node3=%p\n", g_pGWNodeListHead);
     printf( "    , g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
 
+    GW_list_ClearAll(&g_pGWNodeListHead);
+    printf( "GW_list_ClearAll: g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
+#if 0
     //delete
     printf( "Del2, g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
     GW_list_DeleteNode(&g_pGWNodeListHead, "2_123");
@@ -39,7 +44,28 @@ void test(){
     printf( "Del1, g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
     GW_list_DeleteNode(&g_pGWNodeListHead, "1_123");
     printf( "    , g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
+#endif
     
+}
+
+int GW_list_ClearAll(struct gw_node ** head){
+
+    struct gw_node *temp, *prev;
+    temp=(*head);
+
+    while(temp!=NULL)
+    {
+            if(temp==(*head)){
+                (*head)=temp->next;
+                free(temp);
+                temp=(*head);
+            }
+            else{
+                prev->next=temp->next;
+                free(temp);
+                temp= prev->next;
+            }
+    }
 }
 
 struct gw_node * GW_list_GetNode(struct gw_node ** head, char* devID)
@@ -105,6 +131,7 @@ int GW_list_AddNode(struct gw_node ** head, char* pVirtualGatewayDevID )
     if ( temp == NULL){
         return -1;
     }
+
     memset(temp,0,sizeof(struct node));
    
     strcpy(temp->virtualGatewayDevID,pVirtualGatewayDevID);
