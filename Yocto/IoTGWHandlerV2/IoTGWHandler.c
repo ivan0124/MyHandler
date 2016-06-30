@@ -166,7 +166,6 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
 	
 
 #if 1
-        printf("[%s][%s] app_os_mutex_lock\n",__FILE__, __func__);
         app_os_mutex_lock(&g_NodeListMutex);
         struct node * r;
         r=g_pNodeListHead;
