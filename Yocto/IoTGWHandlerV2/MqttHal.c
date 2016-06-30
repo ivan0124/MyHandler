@@ -919,12 +919,12 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     AddNodeList_VirtualGatewayNodeInfo(message->payload, OS_TYPE_UNKNOWN);
                     //
 #if 1
-                    struct node hb_data;
-                    memset(&hb_data,0,sizeof(struct node));
-                    time(&hb_data.last_hb_time);
-                    printf("The number of seconds since January 1,1970 is %ld\n",hb_data.last_hb_time);
                     char gateway_devID[128]={0};
                     if ( GetAgentID(message->payload, gateway_devID, sizeof(gateway_devID)) == 0){
+                        struct node hb_data;
+                        memset(&hb_data,0,sizeof(struct node));
+                        time(&hb_data.last_hb_time);
+                        printf("The number of seconds since January 1,1970 is %ld\n",hb_data.last_hb_time);
                         UpdateNodeList(gateway_devID, TYPE_GATEWAY, &hb_data);
                     }
                     else{
@@ -971,13 +971,11 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     }
                     //test_link_list();
                     app_os_mutex_lock(&g_NodeListMutex);
-                    //AddNodeList_VirtualGatewayNodeInfo(message->payload, OSInfo);
-                    struct node node_data;
                     char gateway_devID[128]={0};
-
-                    memset(&node_data,0,sizeof(struct node));
-                    node_data.virtualGatewayOSInfo = OSInfo;
                     if ( GetAgentID(message->payload, gateway_devID, sizeof(gateway_devID)) == 0){
+                        struct node node_data;
+                        memset(&node_data,0,sizeof(struct node));
+                        node_data.virtualGatewayOSInfo = OSInfo;
                         UpdateNodeList(gateway_devID, TYPE_GATEWAY, &node_data);
                     }
                     else{
