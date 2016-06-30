@@ -3,11 +3,12 @@
 #include <stdlib.h>
 #include "MqttHal.h"
 
-struct gw_node* g_pGWNodeListHead=NULL;
+static struct gw_node* g_pGWNodeListHead=NULL;
 
 void test();
 int GW_list_AddNode(char* pVirtualGatewayDevID );
 struct gw_node * GW_list_GetNode(char* devID);
+struct gw_node * GW_list_GetHeadNode();
 int GW_list_DeleteNode(char* devID);
 int GW_list_ClearAll();
 
@@ -32,7 +33,7 @@ void test(){
     printf( "GW_list_ClearAll: g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
 #endif
 
-#if 1
+#if 0
     //delete
     printf( "Del2, g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
     GW_list_DeleteNode("2_123");
@@ -48,7 +49,35 @@ void test(){
     GW_list_DeleteNode("1_123");
     printf( "    , g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
 #endif
+
+#if 1
+    //delete
+    struct gw_node* tmp;
+    //printf( "Del2, g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
+    tmp=GW_list_GetHeadNode();
+    printf( "Del address=%p\n", tmp);
+    GW_list_DeleteNode(tmp->virtualGatewayDevID);
+    printf( "node2=%p\n", GW_list_GetNode("2_123"));
+    printf( "node1=%p\n", GW_list_GetNode("1_123"));
+    //
+    tmp=GW_list_GetHeadNode();
+    printf( "Del address=%p\n", tmp);
+    int res=GW_list_DeleteNode(tmp->virtualGatewayDevID);
+    printf( "res=%d\n", res);
+    //
+    tmp=GW_list_GetHeadNode();
+    printf( "Del address=%p\n", tmp);
+    GW_list_DeleteNode(tmp->virtualGatewayDevID);
+    //
+    tmp=GW_list_GetHeadNode();
+    printf( "Del address=%p\n", tmp);
+    printf( "g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
+#endif
     
+}
+
+struct gw_node * GW_list_GetHeadNode(){
+    return g_pGWNodeListHead;
 }
 
 int GW_list_ClearAll(){

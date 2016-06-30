@@ -178,6 +178,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
         while(r!=NULL)
         {
             if ( r->nodeType == TYPE_GATEWAY) {
+                    GW_list_AddNode(r->virtualGatewayDevID);
 		    diff_time=difftime(tv, r->last_hb_time);
                     printf("[%s][%s] last_hb_time=%ld\n", __FILE__, __func__, r->last_hb_time);
                     printf("[%s][%s] last_hb_time (difftime=%f)\n", __FILE__, __func__, diff_time);
@@ -186,6 +187,22 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
         }
 #endif
 	app_os_mutex_unlock(&g_NodeListMutex);
+
+        
+#if 1
+        //Send Re-connect
+        char data[128]={0};
+        char VirtualGatewayUID[128]={0};
+	struct gw_node* tmp_node=GW_list_GetHeadNode();
+
+        while ( tmp_node != NULL){
+            //MqttHal_PublishV2(tmp_node->virtualGatewayDevID,Mote_Cmd_SetMoteReset,data);
+            printf("Re-connect devID=%s\n", tmp_node->virtualGatewayDevID);
+            GW_list_DeleteNode(tmp_node->virtualGatewayDevID);
+	    tmp_node=GW_list_GetHeadNode();
+        }
+        printf("@@@@@ Re-connect finish @@@@ head node=%p\n", GW_list_GetHeadNode());
+#endif
         
 #endif
     }
