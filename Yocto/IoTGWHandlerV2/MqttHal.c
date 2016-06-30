@@ -923,7 +923,14 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     memset(&hb_data,0,sizeof(struct node));
                     time(&hb_data.last_hb_time);
                     printf("The number of seconds since January 1,1970 is %ld\n",hb_data.last_hb_time);
-                    UpdateNodeList("0000000E40ABCDEF", TYPE_GATEWAY, &hb_data);
+                    char gateway_devID[128]={0};
+                    if ( GetAgentID(message->payload, gateway_devID, sizeof(gateway_devID)) == 0){
+                        printf("gateway_devID = %s\n", gateway_devID);
+                        UpdateNodeList(gateway_devID, TYPE_GATEWAY, &hb_data);
+                    }
+                    else{
+                        printf("[%s][%s] GetAgentID() FAIL!\n",__FILE__, __func__);
+                    }
 #endif
                     app_os_mutex_unlock(&g_NodeListMutex);
                     printf("[%s][%s] app_os_mutex_unlock\n",__FILE__, __func__);

@@ -10,22 +10,40 @@ extern "C" {
 extern char            g_GWInfMAC[MAX_MACADDRESS_LEN];
 struct node* g_pNodeListHead=NULL;
 
-struct node * GetNode(char* devID, int devType);
-int DeleteNodeList(char* devID, int devType);
 void AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType, int iOSInfo, char* pSensorHubDevID);
 int UpdateNodeList(char* devID, int devType, struct node* pNode);
+struct node * GetNode(char* devID, int devType);
+int DeleteNodeList(char* devID, int devType);
 int AddNodeList_ConnectivityNodeInfo(char* data);
 void AddNodeList_SensorHubNodeInfo(const char* data);
 void AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo);
 int BuildData_IPBaseConnectivityCapability(char* info_data);
 int BuildNodeList_GatewayUpdateInfo(char* data, char* info_data, int osInfo);
 int GetOSInfoType(char* data);
+int GetAgentID(char* data, char* out_agent_id, int out_agent_id_size);
 void aTest(const char* mydata);
 void printNodeInfo();
 
 #ifdef __cplusplus
 }
 #endif
+
+int GetAgentID(char* data, char* out_agent_id, int out_agent_id_size){
+    
+    if ( out_agent_id_size < 5 ){
+        return -1;
+    }
+
+    AdvJSON json(data);
+    //Get virtual gateway devID
+    strncpy(out_agent_id,json["susiCommData"]["agentID"].Value().c_str(), out_agent_id_size-1);
+
+    if ( strcmp(out_agent_id,"NULL") == 0){
+        return -1;
+    }
+
+    return 0;
+}
 
 void printNodeInfo(struct node * r){
 
