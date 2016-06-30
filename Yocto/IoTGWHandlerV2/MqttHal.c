@@ -915,7 +915,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s]\033[33m #Gateway Connect# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
- 
+
                     printf("[%s][%s] app_os_mutex_lock\n",__FILE__, __func__);
                     app_os_mutex_lock(&g_NodeListMutex);
                     AddNodeList_VirtualGatewayNodeInfo(message->payload, OS_TYPE_UNKNOWN);

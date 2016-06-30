@@ -139,6 +139,12 @@ struct node
     struct node *next;
 };
 
+struct gw_node
+{
+    char virtualGatewayDevID[MAX_DEVICE_ID_LEN];
+    struct gw_node *next;
+};
+
 
 int MqttHal_GetNetworkIntfaceMAC(char *_ifname, char* _ifmac);
 int MqttHal_Init();
