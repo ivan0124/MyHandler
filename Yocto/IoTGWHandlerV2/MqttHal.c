@@ -832,6 +832,7 @@ int DisconnectToRMM_AllSensorHubNode(struct node* head, char* VirtualGatewayUID)
 }
 
 int DisconnectToRMM(char* DeviceUID){
+
                 app_os_mutex_lock(&g_NodeListMutex);
                 if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
 #if 1
@@ -845,6 +846,7 @@ int DisconnectToRMM(char* DeviceUID){
                     char gateway_capability[2048]={0};
                     BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, gateway_capability);
                     app_os_mutex_unlock(&g_NodeListMutex);
+
 		    printf("---------------Gateway capability----------------------------\n");
 		    printf(gateway_capability);
 		    printf("\n-------------------------------------------\n");
