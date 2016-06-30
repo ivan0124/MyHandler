@@ -12,20 +12,20 @@ int GW_list_DeleteNode(char* devID);
 
 void test(){
     //add
-    printf( "g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
+    printf( "Add1, g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
     GW_list_AddNode(&g_pGWNodeListHead, "1_123");
-    printf( "g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
+    printf( "Add2, g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
     GW_list_AddNode(&g_pGWNodeListHead, "2_123");
-    printf( "g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
+    printf( "Add3, g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
     GW_list_AddNode(&g_pGWNodeListHead, "3_123");
     printf( "g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
 
     //delete
-    printf( "g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
+    printf( "Del3, g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
     GW_list_DeleteNode("3_123");
-    printf( "g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
+    printf( "Del2, g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
     GW_list_DeleteNode("2_123");
-    printf( "g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
+    printf( "Del3, g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
     GW_list_DeleteNode("1_123");
     printf( "g_pGWNodeListHead=%p\n", g_pGWNodeListHead);
     
