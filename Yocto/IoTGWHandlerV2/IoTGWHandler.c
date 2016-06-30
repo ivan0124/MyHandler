@@ -156,7 +156,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
 #if 1
         time(&g_monitortime);
         app_os_sleep(5000);
-
+        
 #if 1	
         time_t tv;
 	time(&tv);
@@ -178,11 +178,9 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
         while(r!=NULL)
         {
             if ( r->nodeType == TYPE_GATEWAY) {
-		    //time_t tv;
-		    //time(&tv);
-		    //float diff_time=difftime(tv, r->last_hb_time);
-                    //printf("[%s][%s] wake up...(difftime=%f)\n", __FILE__, __func__, diff_time);
+		    diff_time=difftime(tv, r->last_hb_time);
                     printf("[%s][%s] last_hb_time=%ld\n", __FILE__, __func__, r->last_hb_time);
+                    printf("[%s][%s] last_hb_time (difftime=%f)\n", __FILE__, __func__, diff_time);
             }
             r=r->next;
         }
