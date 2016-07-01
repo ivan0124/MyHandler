@@ -167,15 +167,15 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
 	
 
 #if 1
-        app_os_mutex_lock(&g_NodeListMutex);
         struct node * r;
         r=g_pNodeListHead;
 
         if(r==NULL)
         {
-            app_os_mutex_unlock(&g_NodeListMutex);
             continue;
         }
+
+        app_os_mutex_lock(&g_NodeListMutex);
         while(r!=NULL)
         {
             if ( r->nodeType == TYPE_GATEWAY) {
