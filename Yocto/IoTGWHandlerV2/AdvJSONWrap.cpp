@@ -291,6 +291,10 @@ int UpdateNodeList(char* devID, int devType, struct node* pNode){
 
                 if (strcmp(r->virtualGatewayDevID, devID) == 0){
                     if ( r->nodeType == TYPE_GATEWAY) {
+                        if ( pNode->state != 0 ){ 
+                            r->state = pNode->state;
+                            printf("[%s][%s] update state = %d\n", __FILE__, __func__, r->state);
+                        }
                         if ( pNode->virtualGatewayOSInfo != 0 ){ 
                             r->virtualGatewayOSInfo = pNode->virtualGatewayOSInfo;
                             printf("[%s][%s] update virtualGatewayOSInfo\n", __FILE__, __func__);

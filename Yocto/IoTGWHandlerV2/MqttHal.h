@@ -97,6 +97,13 @@ typedef enum {
 } GATEWAY_OS_INFO_TYPE;
 
 typedef enum {
+        STATUS_UNKNOWN = 1,
+        STATUS_CONNECTING,
+	STATUS_CONNECTED,
+        STATUS_DISCONNECTED
+} DEVICE_STATUS;
+
+typedef enum {
 	Mote_Report_CMD2000 = 0,
 	Mote_Report_CMD2001,
 	Mote_Report_CMD2002,
@@ -127,6 +134,7 @@ typedef struct _senhub_info_t {
 struct node
 {
     int nodeType;
+    int state;
     char virtualGatewayDevID[MAX_DEVICE_ID_LEN];
     int virtualGatewayOSInfo;
     char connectivityType[MAX_CONNECTIVITY_TYPE_LEN];
@@ -136,6 +144,8 @@ struct node
     char* connectivityInfo;
     char sensorHubDevID[MAX_DEVICE_ID_LEN];
     time_t last_hb_time;
+    time_t start_connecting_time;
+
     struct node *next;
 };
 

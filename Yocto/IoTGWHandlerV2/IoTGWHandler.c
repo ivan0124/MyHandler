@@ -177,20 +177,78 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
         while(r!=NULL)
         {
             if ( r->nodeType == TYPE_GATEWAY) {
-                    
-		    diff_time=difftime(tv, r->last_hb_time);
-                    printf("[%s][%s] last_hb_time=%ld\n", __FILE__, __func__, r->last_hb_time);
-                    printf("[%s][%s] last_hb_time (difftime=%f)\n", __FILE__, __func__, diff_time);
-                    if ( diff_time > 20 ){
-                        GW_list_AddNode(r->virtualGatewayDevID);
+                    switch(r->state){
+                        case STATUS_CONNECTED:
+                        {
+		            diff_time=difftime(tv, r->last_hb_time);
+                            printf("[%s][%s] connected: last_hb_time (difftime=%f)\n", __FILE__, __func__, diff_time);
+			    if ( diff_time > 20 ){
+				r->state = STATUS_CONNECTING;
+                                time(&(r->start_connecting_time));
+                                //add to connecting list
+				GW_list_AddNode(r->virtualGatewayDevID);
+			    }
+                            break;
+                        }
+                        case STATUS_CONNECTING:
+                        {
+                            diff_time=difftime(tv, r->start_connecting_time);
+                            printf("[%s][%s] connecting time (difftime=%f)\n", __FILE__, __func__, diff_time);
+                            if ( diff_time > 10){
+                                r->state = STATUS_DISCONNECTED;
+                                r->start_connecting_time = 0;
+                            }
+                            break;
+                        }
+                        case STATUS_DISCONNECTED:
+                        {
+                            break;
+                        }
                     }
+
             }
             r=r->next;
         }
 #endif
+        //Disconnect all sensor hub
+        printf("[%s][%s] Disconnect all sensor hub START\n", __FILE__, __func__);
+        r=g_pNodeListHead;
+
+        while(r!=NULL)
+        {
+            if ( r->nodeType == TYPE_GATEWAY) {
+                if ( r->state == STATUS_DISCONNECTED ){
+                    printf("[%s][%s] Disconnect all sensor hub(GW=%s)\n", __FILE__, __func__, r->virtualGatewayDevID);
+                    DisconnectToRMM_AllSensorHubNode(g_pNodeListHead, r->virtualGatewayDevID);
+                }
+            }
+            r=r->next;
+        }
+        printf("[%s][%s] Disconnect all sensor hub END\n", __FILE__, __func__);
+
+        //Delete all gateway dvice id node
+        printf("[%s][%s] Delete all gateway dvice id node START\n", __FILE__, __func__);
+        r=g_pNodeListHead;
+
+        while(r!=NULL)
+        {
+            if ( r->state == STATUS_DISCONNECTED ){
+                if ( r->nodeType == TYPE_GATEWAY) {
+                    printf("[%s][%s] Delete all gateway dvice id node (GW:%s)\n", __FILE__, __func__, r->virtualGatewayDevID);
+                    DeleteNodeList_AllGatewayUIDNode(r->virtualGatewayDevID);
+                    if ( g_pNodeListHead != NULL){
+                        r=g_pNodeListHead;
+                    }
+                    else{
+                        break;
+                    }
+                }
+            }
+            r=r->next;
+        }
+        printf("[%s][%s] Delete all gateway dvice id node END\n", __FILE__, __func__);
 	app_os_mutex_unlock(&g_NodeListMutex);
 
-        
 #if 1
         char mydata[512]={"{\"susiCommData\":{\"commCmd\":125,\"handlerName\":\"general\",\"response\":{\"statuscode\":4,\"msg\": \"Reconnect\"}}}"};
         //Send Re-connect
