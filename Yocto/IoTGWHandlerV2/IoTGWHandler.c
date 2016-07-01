@@ -214,6 +214,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
         DisconnectToRMM_AllDisconnectedSensorHubNode();
         //Delete all disconnected dvice id node
         DeleteNodeList_AllDisconnectedGatewayUIDNode();
+        //Rebuild gateway capability and send to RMM
 
 	app_os_mutex_unlock(&g_NodeListMutex);
 
