@@ -116,6 +116,32 @@ int DeleteNodeList_AllGatewayUIDNode(char* devID)
     return 0;
 }
 
+int DeleteNodeList_AllDisconnectedGatewayUIDNode(){
+
+        struct node * r;
+        printf("[%s][%s] Delete all gateway dvice id node START\n", __FILE__, __func__);
+        r=g_pNodeListHead;
+
+        while(r!=NULL)
+        {
+            if ( r->state == STATUS_DISCONNECTED ){
+                if ( r->nodeType == TYPE_GATEWAY) {
+                    printf("[%s][%s] Delete all gateway dvice id node (GW:%s)\n", __FILE__, __func__, r->virtualGatewayDevID);
+                    DeleteNodeList_AllGatewayUIDNode(r->virtualGatewayDevID);
+                    if ( g_pNodeListHead != NULL){
+                        r=g_pNodeListHead;
+                    }
+                    else{
+                        break;
+                    }
+                }
+            }
+            r=r->next;
+        }
+        printf("[%s][%s] Delete all gateway dvice id node END\n", __FILE__, __func__);
+
+}
+
 int GetJSONValue(JSONode *json, char* pPath, char* pResult){
 	
     char nodeContent[MAX_JSON_NODE_SIZE]={0};

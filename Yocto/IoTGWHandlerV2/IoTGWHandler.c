@@ -227,26 +227,8 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
         printf("[%s][%s] Disconnect all sensor hub END\n", __FILE__, __func__);
 
         //Delete all gateway dvice id node
-        printf("[%s][%s] Delete all gateway dvice id node START\n", __FILE__, __func__);
-        r=g_pNodeListHead;
+        DeleteNodeList_AllDisconnectedGatewayUIDNode();
 
-        while(r!=NULL)
-        {
-            if ( r->state == STATUS_DISCONNECTED ){
-                if ( r->nodeType == TYPE_GATEWAY) {
-                    printf("[%s][%s] Delete all gateway dvice id node (GW:%s)\n", __FILE__, __func__, r->virtualGatewayDevID);
-                    DeleteNodeList_AllGatewayUIDNode(r->virtualGatewayDevID);
-                    if ( g_pNodeListHead != NULL){
-                        r=g_pNodeListHead;
-                    }
-                    else{
-                        break;
-                    }
-                }
-            }
-            r=r->next;
-        }
-        printf("[%s][%s] Delete all gateway dvice id node END\n", __FILE__, __func__);
 	app_os_mutex_unlock(&g_NodeListMutex);
 
 #if 1
