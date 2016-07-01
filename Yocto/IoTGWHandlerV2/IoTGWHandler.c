@@ -183,7 +183,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
 		            diff_time=difftime(tv, r->last_hb_time);
                             printf("[%s][%s] connected: last_hb_time (difftime=%f)\n", __FILE__, __func__, diff_time);
 			    if ( diff_time > 20 ){
-				r->state = STATUS_CONNECTING;
+				r->state = STATUS_DISCONNECTED;
                                 time(&(r->start_connecting_time));
                                 //add to connecting list
 				GW_list_AddNode(r->virtualGatewayDevID);
@@ -192,12 +192,14 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
                         }
                         case STATUS_CONNECTING:
                         {
+#if 0
                             diff_time=difftime(tv, r->start_connecting_time);
                             printf("[%s][%s] connecting time (difftime=%f)\n", __FILE__, __func__, diff_time);
                             if ( diff_time > 10){
                                 r->state = STATUS_DISCONNECTED;
                                 r->start_connecting_time = 0;
                             }
+#endif
                             break;
                         }
                         case STATUS_DISCONNECTED:
