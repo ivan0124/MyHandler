@@ -67,6 +67,8 @@
 #define CONNECTIVITY_CAPABILITY  1
 #define SENSOR_HUB_CAPABILITY    2
 
+#define HEART_BEAT_TIMEOUT 3*5
+
 
 typedef enum {
         GATEWAY_HEART_BEAT = 1,
