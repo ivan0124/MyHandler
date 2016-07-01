@@ -192,14 +192,15 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
 
         
 #if 1
+        char mydata[512]={"{\"susiCommData\":{\"commCmd\":125,\"handlerName\":\"general\",\"response\":{\"statuscode\":4,\"msg\": \"Reconnect\"}}}"};
         //Send Re-connect
         char data[128]={0};
         char VirtualGatewayUID[128]={0};
 	struct gw_node* tmp_node=GW_list_GetHeadNode();
 
         while ( tmp_node != NULL){
-            //MqttHal_PublishV2(tmp_node->virtualGatewayDevID,Mote_Cmd_SetMoteReset,data);
             printf("Re-connect devID=%s\n", tmp_node->virtualGatewayDevID);
+            SendRequestToWiseSnail(tmp_node->virtualGatewayDevID,Mote_Cmd_SetMoteReset,mydata);
             GW_list_DeleteNode(tmp_node->virtualGatewayDevID);
 	    tmp_node=GW_list_GetHeadNode();
         }
