@@ -857,6 +857,27 @@ int DisconnectToRMM_AllSensorHubNode(struct node* head, char* VirtualGatewayUID)
     return 0;
 }
 
+int DisconnectToRMM_AllDisconnectedSensorHubNode(){
+
+        //Disconnect all sensor hub
+        struct node *r;
+
+        printf("[%s][%s] Disconnect all sensor hub START\n", __FILE__, __func__);
+        r=g_pNodeListHead;
+
+        while(r!=NULL)
+        {
+            if ( r->nodeType == TYPE_GATEWAY) {
+                if ( r->state == STATUS_DISCONNECTED ){
+                    printf("[%s][%s] Disconnect all sensor hub(GW=%s)\n", __FILE__, __func__, r->virtualGatewayDevID);
+                    DisconnectToRMM_AllSensorHubNode(g_pNodeListHead, r->virtualGatewayDevID);
+                }
+            }
+            r=r->next;
+        }
+        printf("[%s][%s] Disconnect all sensor hub END\n", __FILE__, __func__);
+}
+
 int DisconnectToRMM(char* DeviceUID){
 
                 app_os_mutex_lock(&g_NodeListMutex);
