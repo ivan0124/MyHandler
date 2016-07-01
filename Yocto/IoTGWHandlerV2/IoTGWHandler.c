@@ -210,9 +210,9 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
             r=r->next;
         }
 #endif
-        //Disconnect all sensor hub
+        //Disconnect all disconnected sensor hub
         DisconnectToRMM_AllDisconnectedSensorHubNode();
-        //Delete all gateway dvice id node
+        //Delete all disconnected dvice id node
         DeleteNodeList_AllDisconnectedGatewayUIDNode();
 
 	app_os_mutex_unlock(&g_NodeListMutex);
