@@ -970,11 +970,13 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #if 1
                     char gateway_devID[128]={0};
                     if ( GetAgentID(message->payload, gateway_devID, sizeof(gateway_devID)) == 0){
+
                         struct node node_data;
                         memset(&node_data,0,sizeof(struct node));
                         node_data.state = STATUS_CONNECTED;
-                        time(&node_data.last_hb_time);
+                        //time(&node_data.last_hb_time);
                         UpdateNodeList(gateway_devID, TYPE_GATEWAY, &node_data);
+
                         //Send "get capability" message to WiseSnail
                         char mydata[512]={"{\"susiCommData\":{\"requestID\":1001,\"catalogID\": 4,\"commCmd\":2051,\"handlerName\":\"general\"}}"};
                         SendRequestToWiseSnail(gateway_devID,Mote_Cmd_SetMoteReset,mydata);

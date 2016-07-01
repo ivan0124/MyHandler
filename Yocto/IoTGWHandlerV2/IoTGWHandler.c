@@ -150,9 +150,11 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
 {
 
     handler_context_t * pHandlerCtx = ( handler_context_t * )args;
+    
 
     while( pHandlerCtx->isThreadRunning )
     {
+        struct gw_node* tmp_node=NULL;
 #if 1
         time(&g_monitortime);
         app_os_sleep(5000);
@@ -180,14 +182,16 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
                     switch(r->state){
                         case STATUS_CONNECTED:
                         {
-		            diff_time=difftime(tv, r->last_hb_time);
-                            printf("[%s][%s] connected: last_hb_time (difftime=%f)\n", __FILE__, __func__, diff_time);
-			    if ( diff_time > 20 ){
-				r->state = STATUS_DISCONNECTED;
-                                time(&(r->start_connecting_time));
-                                //add to connecting list
-				GW_list_AddNode(r->virtualGatewayDevID);
-			    }
+                            if ( r->last_hb_time != 0){
+		                diff_time=difftime(tv, r->last_hb_time);
+                                printf("[%s][%s] connected: last_hb_time (difftime=%f)\n", __FILE__, __func__, diff_time);
+			        if ( diff_time > 20 ){
+				    r->state = STATUS_DISCONNECTED;
+                                    time(&(r->start_connecting_time));
+                                    //add to connecting list
+				    GW_list_AddNode(r->virtualGatewayDevID);
+			        }
+                            }
                             break;
                         }
                         case STATUS_CONNECTING:
@@ -212,11 +216,15 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
             r=r->next;
         }
 #endif
-        //Disconnect all disconnected sensor hub
-        DisconnectToRMM_AllDisconnectedSensorHubNode();
-        //Delete all disconnected dvice id node
-        DeleteNodeList_AllDisconnectedGatewayUIDNode();
-        //Rebuild gateway capability and send to RMM
+        tmp_node=GW_list_GetHeadNode();
+
+        if ( tmp_node ){
+            //Disconnect all disconnected sensor hub
+            DisconnectToRMM_AllDisconnectedSensorHubNode();
+            //Delete all disconnected dvice id node
+            DeleteNodeList_AllDisconnectedGatewayUIDNode();
+            //Rebuild gateway capability and send to RMM
+        }
 
 	app_os_mutex_unlock(&g_NodeListMutex);
 
@@ -225,7 +233,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
         //Send Re-connect
         char data[128]={0};
         char VirtualGatewayUID[128]={0};
-	struct gw_node* tmp_node=GW_list_GetHeadNode();
+	tmp_node=GW_list_GetHeadNode();
 
         while ( tmp_node != NULL){
             printf("Re-connect devID=%s\n", tmp_node->virtualGatewayDevID);
