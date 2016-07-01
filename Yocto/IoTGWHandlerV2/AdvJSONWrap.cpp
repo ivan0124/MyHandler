@@ -167,7 +167,6 @@ int DeleteNodeList(char* devID, int devType)
 }
 void AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo){
 
-    printf("UpdateVirtualGatewayOSInfoToDataListNode\n");
     struct node *temp=NULL;
     char virtualGatewayDevID[MAX_DEVICE_ID_LEN]={0};
     
@@ -175,7 +174,6 @@ void AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo){
 
     //Get virtual gateway devID
     strcpy(virtualGatewayDevID,json["susiCommData"]["agentID"].Value().c_str());
-    printf("virtualGatewayDevID = %s\n", virtualGatewayDevID);
 
     AddNodeList(virtualGatewayDevID,NULL,NULL,NULL, 0, TYPE_GATEWAY, iOSInfo, NULL);
 
