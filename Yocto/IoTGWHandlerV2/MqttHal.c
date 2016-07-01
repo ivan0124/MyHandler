@@ -975,6 +975,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         node_data.state = STATUS_CONNECTED;
                         time(&node_data.last_hb_time);
                         UpdateNodeList(gateway_devID, TYPE_GATEWAY, &node_data);
+                        //Send "get capability" message to WiseSnail
+                        char mydata[512]={"{\"susiCommData\":{\"requestID\":1001,\"catalogID\": 4,\"commCmd\":2051,\"handlerName\":\"general\"}}"};
+                        SendRequestToWiseSnail(gateway_devID,Mote_Cmd_SetMoteReset,mydata);
                     }
                     else{
                         printf("[%s][%s] case %d: GetAgentID() FAIL!\n",__FILE__, __func__, GATEWAY_CONNECT);
