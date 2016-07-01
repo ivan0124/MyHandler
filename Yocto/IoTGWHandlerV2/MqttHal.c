@@ -917,6 +917,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 
                     printf("[%s][%s] app_os_mutex_lock\n",__FILE__, __func__);
+                    test();
                     app_os_mutex_lock(&g_NodeListMutex);
                     AddNodeList_VirtualGatewayNodeInfo(message->payload, OS_TYPE_UNKNOWN);
                     //
@@ -1530,7 +1531,7 @@ int MqttHal_Publish(char *macAddr, int cmdType, char *strName, char *strValue)
 	return 0;
 }
 
-int MqttHal_PublishV2(char *macAddr, int cmdType, const char *pData)
+int SendRequestToWiseSnail(char *macAddr, int cmdType, const char *pData)
 {
 	int rc = MOSQ_ERR_SUCCESS;
 	char topic[128];

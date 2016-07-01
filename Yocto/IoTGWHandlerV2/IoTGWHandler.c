@@ -156,7 +156,6 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
 #if 1
         time(&g_monitortime);
         app_os_sleep(5000);
-        
 #if 1	
         time_t tv;
 	time(&tv);
@@ -178,10 +177,13 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
         while(r!=NULL)
         {
             if ( r->nodeType == TYPE_GATEWAY) {
-                    GW_list_AddNode(r->virtualGatewayDevID);
+                    
 		    diff_time=difftime(tv, r->last_hb_time);
                     printf("[%s][%s] last_hb_time=%ld\n", __FILE__, __func__, r->last_hb_time);
                     printf("[%s][%s] last_hb_time (difftime=%f)\n", __FILE__, __func__, diff_time);
+                    if ( diff_time > 20 ){
+                        GW_list_AddNode(r->virtualGatewayDevID);
+                    }
             }
             r=r->next;
         }
@@ -521,7 +523,7 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                     }
                     printf("VirtualGatewayUID = %s\n", VirtualGatewayUID);
                     //printf(" sensorHubUID = %s\n", sensorHubUID);
-                    MqttHal_PublishV2(VirtualGatewayUID,Mote_Cmd_SetMoteReset,data);
+                    SendRequestToWiseSnail(VirtualGatewayUID,Mote_Cmd_SetMoteReset,data);
                     printf("---------------------------------------------------------------\n");
 		}
 		break;
@@ -539,7 +541,7 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                     }
                     printf("VirtualGatewayUID = %s\n", VirtualGatewayUID);
                     //printf(" sensorHubUID = %s\n", sensorHubUID);
-                    MqttHal_PublishV2(VirtualGatewayUID,Mote_Cmd_SetMoteReset,data);
+                    SendRequestToWiseSnail(VirtualGatewayUID,Mote_Cmd_SetMoteReset,data);
                     printf("---------------------------------------------------------------\n");
 	
 #if 0		
@@ -733,7 +735,7 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
                      printf("[%s][%s]\033[34m #Get Sensor Capability:%s# \033[0m\n", __FILE__, __func__, SenHubUID);
                      printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
                      printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
-                     MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);
+                     SendRequestToWiseSnail(SenHubUID,Mote_Cmd_SetMoteReset,data);
                      printf("---------------------------------------------------------------\n");
 		}
                 break;
@@ -757,7 +759,7 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
                      printf("[%s][%s]\033[34m #Get Sensor Request:%s# \033[0m\n", __FILE__, __func__, SenHubUID);
                      printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
                      printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
-                     MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);
+                     SendRequestToWiseSnail(SenHubUID,Mote_Cmd_SetMoteReset,data);
                      printf("---------------------------------------------------------------\n");		
 		}
 		break;
@@ -767,7 +769,7 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
                      printf("[%s][%s]\033[34m #Set Sensor Request:%s# \033[0m\n", __FILE__, __func__, SenHubUID);
                      printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
                      printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
-                     MqttHal_PublishV2(SenHubUID,Mote_Cmd_SetMoteReset,data);
+                     SendRequestToWiseSnail(SenHubUID,Mote_Cmd_SetMoteReset,data);
                      printf("---------------------------------------------------------------\n");
 		}
 		break;
