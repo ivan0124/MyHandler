@@ -764,7 +764,7 @@ void AddNodeList_SensorHubNodeInfo(const char* data){
                                  char* pSave = NULL;
 
                                  if (OS_NONE_IP_BASE == osInfo){
-				     strcpy(tmp_data,temp->connectivitySensorHubList);
+				     strcpy(tmp_data,IoTGW_device_info[k][l+1].Value().c_str());
                                  }
                                  else if (OS_IP_BASE == osInfo){
                                      strcpy(tmp_data,IoTGW_device_info[k][l+1].Value().c_str());
@@ -774,7 +774,7 @@ void AddNodeList_SensorHubNodeInfo(const char* data){
 
 				 while(SensorHubUID != NULL)
 				 {
-                                        printf("SensorHubUID:%s\n",SensorHubUID);
+                                        //printf("=============== SensorHubUID:%s\n",SensorHubUID);
                                         strcpy(sensorHubDevID,SensorHubUID);
                                         if ( strcmp(sensorHubDevID,"NULL") != 0){
 					    AddNodeList(virtualGatewayDevID,NULL,connectivityDevID,NULL, 0, TYPE_SENSOR_HUB, osInfo, sensorHubDevID);
