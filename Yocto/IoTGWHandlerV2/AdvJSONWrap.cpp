@@ -653,7 +653,7 @@ int AddNodeList_ConnectivityNodeInfo(char* data){
                 //Add Node
 #if 1
                 if ( osInfo == OS_IP_BASE){
-                    sprintf(connectivityDevID,"0007%s",g_GWInfMAC);
+                    //sprintf(connectivityDevID,"0007%s",g_GWInfMAC);
                     char info_data[1024]={0};
                     BuildData_IPBaseConnectivityCapability(info_data);
                     strcpy(connectivityInfo,info_data); 
