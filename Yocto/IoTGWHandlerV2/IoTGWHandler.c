@@ -595,8 +595,7 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                     printf("VirtualGatewayUID = %s\n", VirtualGatewayUID);
 #endif
                     //printf(" sensorHubUID = %s\n", sensorHubUID);
-                    if ( OS_NONE_IP_BASE == osInfo){
-                        printf("!!!!!!!!!!!!!!!!!!!!\n");
+                    if ( OS_NONE_IP_BASE == osInfo){;
                         SendRequestToWiseSnail(VirtualGatewayUID,data);
                     }
                     printf("---------------------------------------------------------------\n");

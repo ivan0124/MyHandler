@@ -1202,6 +1202,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #if 1
                     app_os_mutex_lock(&g_NodeListMutex);
                     if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
+                        app_os_mutex_unlock(&g_NodeListMutex);
                         printf("found virtual gateway device ID\n");
                         ReplyToRMM_GatewayGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY);
                         return 0;
@@ -1235,6 +1236,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #if 1
                     app_os_mutex_lock(&g_NodeListMutex);
                     if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
+                        app_os_mutex_unlock(&g_NodeListMutex);
                         ReplyToRMM_GatewayGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY);
                         return 0;
                     }
