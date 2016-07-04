@@ -29,6 +29,7 @@ typedef enum{
 	UNKNOW_CMD										= 0,
         IOTGW_CONNECT_STATUS   = 1,
         IOTGW_OS_INFO   = 116,
+        IOTGW_QUERY_HEART_BEAT_VALUE = 127,
 	//-----------------------------IoTGW  Control Command Define (521--600)-----------------------
 	IOTGW_GET_CAPABILITY_REQUEST     = 521,
 	IOTGW_GET_CAPABILITY_REPLY		    = 522,

@@ -533,6 +533,20 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 		return;
 
 	PRINTF("Cmd ID=%d\r\n",cmdID);
+        char VirtualGatewayUID[64]={0};
+        if ( GetVirtualGatewayUIDfromData(g_pNodeListHead, data, VirtualGatewayUID, sizeof(VirtualGatewayUID)) < 0){
+            printf("[%s][%s] Can't find VirtualGatewayUID Topic=%s\r\n",__FILE__, __func__, topic );
+	    return;
+        }
+        printf("VirtualGatewayUID = %s\n", VirtualGatewayUID);
+                
+        int osInfo=OS_TYPE_UNKNOWN;
+        struct node* temp= GetNode(VirtualGatewayUID,TYPE_GATEWAY);
+        if ( temp != NULL ){
+            osInfo = temp->virtualGatewayOSInfo;
+        }
+        printf("osInfo = %d\n", osInfo);
+
 	switch (cmdID)
 	{
 	case IOTGW_GET_CAPABILITY_REQUEST:
@@ -550,6 +564,16 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 		     g_sendcbf(&g_PluginInfo, IOTGW_GET_CAPABILITY_REPLY, capability, strlen( capability )+1, NULL, NULL);
 		}
 		break;
+        case IOTGW_QUERY_HEART_BEAT_VALUE:
+                {
+                    printf("---------------------------------------------------------------\n");
+                    printf("[%s][%s]\033[34m #Query HeartBeat value# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
+                    SendRequestToWiseSnail(VirtualGatewayUID,data);
+                    printf("---------------------------------------------------------------\n");
+                    break;
+                }
 	case IOTGW_GET_SENSOR_REQUEST:
 		{
 
@@ -562,12 +586,14 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                     char mydata[1024]={"{\"sessionID\":\"801E411759DE2D1C6E441A541EEDCAB5\",\"sensorInfoList\":{\"e\":[{\"n\":\"IoTGW/WSN/0001852CF4B7B0E7/Info/Health\",\"v\":30,\"StatusCode\":200}]}}"};
 		    g_sendcbf(&g_PluginInfo,IOTGW_GET_SENSOR_REPLY, mydata, strlen(mydata), NULL, NULL);
 #endif
+#if 0
                     char VirtualGatewayUID[64]={0};
                     if ( GetVirtualGatewayUIDfromData(g_pNodeListHead, data, VirtualGatewayUID, sizeof(VirtualGatewayUID)) < 0){
                         printf("[%s][%s] Can't find VirtualGatewayUID Topic=%s\r\n",__FILE__, __func__, topic );
 	                return;
                     }
                     printf("VirtualGatewayUID = %s\n", VirtualGatewayUID);
+#endif
                     //printf(" sensorHubUID = %s\n", sensorHubUID);
                     SendRequestToWiseSnail(VirtualGatewayUID,data);
                     printf("---------------------------------------------------------------\n");
@@ -579,13 +605,14 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                      printf("[%s][%s]\033[34m #Set Gateway Request:%s# \033[0m\n", __FILE__, __func__);
                      printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
                      printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
-
+#if 0
                     char VirtualGatewayUID[64]={0};
                     if ( GetVirtualGatewayUIDfromData(g_pNodeListHead, data, VirtualGatewayUID, sizeof(VirtualGatewayUID)) < 0){
                         printf("[%s][%s] Can't find VirtualGatewayUID Topic=%s\r\n",__FILE__, __func__, topic );
 	                return;
                     }
                     printf("VirtualGatewayUID = %s\n", VirtualGatewayUID);
+#endif
                     //printf(" sensorHubUID = %s\n", sensorHubUID);
                     SendRequestToWiseSnail(VirtualGatewayUID,data);
                     printf("---------------------------------------------------------------\n");

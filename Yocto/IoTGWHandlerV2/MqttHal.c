@@ -787,7 +787,7 @@ int GetVirtualGatewayUIDfromData(struct node* head, const char *data, char *uid 
     printf("\n---------------------------------------------------\n");
     sprintf(topic,"/%s",nodeContent);
     GetUIDfromTopic(topic, connectivity_uid, sizeof(connectivity_uid));
-    printf("uid = %s\n", connectivity_uid);
+    printf("connectivity uid = %s\n", connectivity_uid);
     printf("---------------------------------------------------\n");
 
     struct node *r;
