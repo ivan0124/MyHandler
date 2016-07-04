@@ -150,7 +150,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
 {
 
     handler_context_t * pHandlerCtx = ( handler_context_t * )args;
-    
+    char gateway_capability[2048]={0};
 
     while( pHandlerCtx->isThreadRunning )
     {
@@ -224,11 +224,19 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
             //Delete all disconnected dvice id node
             DeleteNodeList_AllDisconnectedGatewayUIDNode();
             //Rebuild gateway capability and send to RMM
+            BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, gateway_capability);
         }
 
 	app_os_mutex_unlock(&g_NodeListMutex);
 
 #if 1
+        if ( tmp_node ){
+
+            if ( RegisterToRMM_GatewayCapabilityInfo(gateway_capability, strlen(gateway_capability)) < 0){
+                        printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
+            }
+        }
+
         char mydata[512]={"{\"susiCommData\":{\"commCmd\":125,\"handlerName\":\"general\",\"response\":{\"statuscode\":4,\"msg\": \"Reconnect\"}}}"};
         //Send Re-connect
         char data[128]={0};
