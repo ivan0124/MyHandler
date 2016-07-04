@@ -768,6 +768,23 @@ int BuildNodeList_GatewayCapabilityInfo(struct node* head, char* pResult){
     //
     return 0;
 }
+int GetVirtualGatewayUIDOSInfo(char* uid){
+
+    char tmp_uid[64]={0};
+ 
+    sprintf(tmp_uid, "0000%s",g_GWInfMAC );
+    if ( strcmp(tmp_uid, uid) == 0){
+        return OS_IP_BASE;
+    }
+    else{
+        struct node* temp= GetNode(uid,TYPE_GATEWAY);
+        if ( temp != NULL ){
+            return temp->virtualGatewayOSInfo;
+        }
+    }
+
+    return OS_TYPE_UNKNOWN;
+}
 
 int GetVirtualGatewayUIDfromData(struct node* head, const char *data, char *uid , const int size ){
 
@@ -780,7 +797,9 @@ int GetVirtualGatewayUIDfromData(struct node* head, const char *data, char *uid 
     JSONode *json = JSON_Parser(data);
     char nodeContent[MAX_JSON_NODE_SIZE]={0};
     char connectivity_uid[64]={0};
+    char ip_base_connectivityDevID[64]={0};
     char topic[128]={0};
+    int osinfo = OS_NONE_IP_BASE;
 
 
     JSON_Get(json, "[susiCommData][sensorIDList][e][0][n]", nodeContent, sizeof(nodeContent));
@@ -789,6 +808,14 @@ int GetVirtualGatewayUIDfromData(struct node* head, const char *data, char *uid 
     GetUIDfromTopic(topic, connectivity_uid, sizeof(connectivity_uid));
     printf("connectivity uid = %s\n", connectivity_uid);
     printf("---------------------------------------------------\n");
+
+    sprintf(ip_base_connectivityDevID,"0007%s",g_GWInfMAC);
+    if ( strcmp(ip_base_connectivityDevID, connectivity_uid) == 0){
+        osinfo = OS_IP_BASE;
+        sprintf(uid,"0000%s",g_GWInfMAC);
+        return 0;
+    }
+
 
     struct node *r;
 

@@ -526,6 +526,7 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 	int len = 0;
 	char szSessionId[MAX_SIZE_SESSIONID]={0};
 	char buffer[MAX_BUFFER_SIZE]={0};
+        char tmp_uid[64]={0};
 	// Recv Remot Server Command to process
 	PRINTF("%s>Recv Topic [%s] Data %s\r\n", strPluginName, topic, (char*) data );
 
@@ -539,13 +540,8 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 	    return;
         }
         printf("VirtualGatewayUID = %s\n", VirtualGatewayUID);
-                
-        int osInfo=OS_TYPE_UNKNOWN;
-        struct node* temp= GetNode(VirtualGatewayUID,TYPE_GATEWAY);
-        if ( temp != NULL ){
-            osInfo = temp->virtualGatewayOSInfo;
-        }
-        printf("osInfo = %d\n", osInfo);
+ 
+        int osInfo=GetVirtualGatewayUIDOSInfo(VirtualGatewayUID);
 
 	switch (cmdID)
 	{
@@ -570,7 +566,9 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                     printf("[%s][%s]\033[34m #Query HeartBeat value# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
-                    SendRequestToWiseSnail(VirtualGatewayUID,data);
+                    if ( OS_NONE_IP_BASE == osInfo){
+                        SendRequestToWiseSnail(VirtualGatewayUID,data);
+                    }
                     printf("---------------------------------------------------------------\n");
                     break;
                 }
@@ -595,7 +593,9 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                     printf("VirtualGatewayUID = %s\n", VirtualGatewayUID);
 #endif
                     //printf(" sensorHubUID = %s\n", sensorHubUID);
-                    SendRequestToWiseSnail(VirtualGatewayUID,data);
+                    if ( OS_NONE_IP_BASE == osInfo){
+                        SendRequestToWiseSnail(VirtualGatewayUID,data);
+                    }
                     printf("---------------------------------------------------------------\n");
 		}
 		break;
@@ -614,7 +614,9 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                     printf("VirtualGatewayUID = %s\n", VirtualGatewayUID);
 #endif
                     //printf(" sensorHubUID = %s\n", sensorHubUID);
-                    SendRequestToWiseSnail(VirtualGatewayUID,data);
+                    if ( OS_NONE_IP_BASE == osInfo){
+                        SendRequestToWiseSnail(VirtualGatewayUID,data);
+                    }
                     printf("---------------------------------------------------------------\n");
 	
 #if 0		
