@@ -598,6 +598,12 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                     if ( OS_NONE_IP_BASE == osInfo){;
                         SendRequestToWiseSnail(VirtualGatewayUID,data);
                     }
+                    else if ( OS_IP_BASE == osInfo ){
+                        char response_data[1024]={0};
+                        GetConnectivityResponseData(data, response_data);
+                        printf("response_data=%s\n", response_data);
+		        g_sendcbf(&g_PluginInfo, IOTGW_GET_SENSOR_REPLY, response_data, strlen( response_data )+1, NULL, NULL);
+                    } 
                     printf("---------------------------------------------------------------\n");
 		}
 		break;

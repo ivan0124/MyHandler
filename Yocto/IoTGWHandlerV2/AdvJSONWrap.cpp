@@ -21,6 +21,7 @@ int BuildData_IPBaseConnectivityCapability(char* info_data);
 int BuildNodeList_GatewayUpdateInfo(char* data, char* info_data, int osInfo);
 int GetOSInfoType(char* data);
 int GetAgentID(char* data, char* out_agent_id, int out_agent_id_size);
+int GetConnectivityResponseData(char* data, char* response_data);
 void aTest(const char* mydata);
 void printNodeInfo();
 
@@ -898,4 +899,36 @@ void aTest(const char* mydata){
         }
 
     }
+}
+
+int GetConnectivityResponseData(char* data, char* response_data){
+
+    AdvJSON json(data);
+
+    char sessionID[512]={0};
+    char sensorIDList[512]={0};
+    char infoName[512]={0};
+
+
+    //Get session ID
+    strcpy(sessionID,json["susiCommData"]["sessionID"].Value().c_str());
+    printf("session ID = %s\n", sessionID);
+    //Get sensorIDList
+    strcpy(sensorIDList,json["susiCommData"]["sensorIDList"]["e"][0]["n"].Value().c_str());
+    printf("sensorIDList=%s\n", sensorIDList);
+
+    sscanf(sensorIDList, "%*[^/]/%*[^/]/%*[^/]/%s", infoName);
+    printf("infoName=%s\n", infoName);
+    if ( strcmp(infoName, "Info/SenHubList") == 0 ){
+        char sensorHubList[1024]={0};
+
+        if ( GetSensorHubList(sensorHubList, OS_IP_BASE, NULL) < 0 ){
+            printf("[%s][%s] get sensor hub list fail\n", __FILE__, __func__);
+            return -1;
+        }
+        printf("sensorHubList=%s\n", sensorHubList);
+        sprintf(response_data,"{\"sessionID\":\"%s\",\"sensorInfoList\":{\"e\":[{\"n\":\"/Info/SenHubList\",\"sv\":\"%s\",\"StatusCode\":200}]}}",sessionID,sensorHubList);
+    }
+
+    return 0;
 }
