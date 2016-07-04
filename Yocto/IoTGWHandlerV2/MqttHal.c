@@ -979,7 +979,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 
                         //Send "get capability" message to WiseSnail
                         char mydata[512]={"{\"susiCommData\":{\"requestID\":1001,\"catalogID\": 4,\"commCmd\":2051,\"handlerName\":\"general\"}}"};
-                        SendRequestToWiseSnail(gateway_devID,Mote_Cmd_SetMoteReset,mydata);
+                        SendRequestToWiseSnail(gateway_devID,mydata);
                     }
                     else{
                         printf("[%s][%s] case %d: GetAgentID() FAIL!\n",__FILE__, __func__, GATEWAY_CONNECT);
@@ -1582,7 +1582,7 @@ int MqttHal_Publish(char *macAddr, int cmdType, char *strName, char *strValue)
 	return 0;
 }
 
-int SendRequestToWiseSnail(char *macAddr, int cmdType, const char *pData)
+int SendRequestToWiseSnail(char *macAddr, const char *pData)
 {
 	int rc = MOSQ_ERR_SUCCESS;
 	char topic[128];
