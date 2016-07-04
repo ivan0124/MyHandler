@@ -908,6 +908,7 @@ int GetConnectivityResponseData(char* data, char* response_data){
     char sessionID[512]={0};
     char sensorIDList[512]={0};
     char infoName[512]={0};
+    char sensorHubList[1024]={0};
 
 
     //Get session ID
@@ -920,7 +921,6 @@ int GetConnectivityResponseData(char* data, char* response_data){
     sscanf(sensorIDList, "%*[^/]/%*[^/]/%*[^/]/%s", infoName);
     printf("infoName=%s\n", infoName);
     if ( strcmp(infoName, "Info/SenHubList") == 0 ){
-        char sensorHubList[1024]={0};
 
         if ( GetSensorHubList(sensorHubList, OS_IP_BASE, NULL) < 0 ){
             printf("[%s][%s] get sensor hub list fail\n", __FILE__, __func__);
@@ -928,6 +928,18 @@ int GetConnectivityResponseData(char* data, char* response_data){
         }
         printf("sensorHubList=%s\n", sensorHubList);
         sprintf(response_data,"{\"sessionID\":\"%s\",\"sensorInfoList\":{\"e\":[{\"n\":\"/Info/SenHubList\",\"sv\":\"%s\",\"StatusCode\":200}]}}",sessionID,sensorHubList);
+    }
+    else if ( strcmp(infoName, "Info/Neighbor") == 0 ){
+
+        if ( GetSensorHubList(sensorHubList, OS_IP_BASE, NULL) < 0 ){
+            printf("[%s][%s] get sensor hub list fail\n", __FILE__, __func__);
+            return -1;
+        }
+        printf("sensorHubList=%s\n", sensorHubList);
+        sprintf(response_data,"{\"sessionID\":\"%s\",\"sensorInfoList\":{\"e\":[{\"n\":\"/Info/Neighbor\",\"sv\":\"%s\",\"StatusCode\":200}]}}",sessionID,sensorHubList);
+    }
+    else if ( strcmp(infoName, "Info/Name") == 0 ){
+        sprintf(response_data,"{\"sessionID\":\"%s\",\"sensorInfoList\":{\"e\":[{\"n\":\"/Info/Name\",\"sv\":\"%s\",\"StatusCode\":200}]}}",sessionID,"Ethernet");
     }
 
     return 0;

@@ -599,9 +599,14 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                         SendRequestToWiseSnail(VirtualGatewayUID,data);
                     }
                     else if ( OS_IP_BASE == osInfo ){
+
                         char response_data[1024]={0};
+
+		        app_os_mutex_lock(&g_NodeListMutex);
                         GetConnectivityResponseData(data, response_data);
+                        app_os_mutex_unlock(&g_NodeListMutex);
                         printf("response_data=%s\n", response_data);
+
 		        g_sendcbf(&g_PluginInfo, IOTGW_GET_SENSOR_REPLY, response_data, strlen( response_data )+1, NULL, NULL);
                     } 
                     printf("---------------------------------------------------------------\n");
