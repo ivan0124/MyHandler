@@ -576,25 +576,10 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 #endif
 	case IOTGW_GET_SENSOR_REQUEST:
 		{
-
                      printf("---------------------------------------------------------------\n");
                      printf("[%s][%s]\033[34m #Get Gateway Request# \033[0m\n", __FILE__, __func__);
                      printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
                      printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
-#if 0			
-                    /*example data to test*/
-                    char mydata[1024]={"{\"sessionID\":\"801E411759DE2D1C6E441A541EEDCAB5\",\"sensorInfoList\":{\"e\":[{\"n\":\"IoTGW/WSN/0001852CF4B7B0E7/Info/Health\",\"v\":30,\"StatusCode\":200}]}}"};
-		    g_sendcbf(&g_PluginInfo,IOTGW_GET_SENSOR_REPLY, mydata, strlen(mydata), NULL, NULL);
-#endif
-#if 0
-                    char VirtualGatewayUID[64]={0};
-                    if ( GetVirtualGatewayUIDfromData(g_pNodeListHead, data, VirtualGatewayUID, sizeof(VirtualGatewayUID)) < 0){
-                        printf("[%s][%s] Can't find VirtualGatewayUID Topic=%s\r\n",__FILE__, __func__, topic );
-	                return;
-                    }
-                    printf("VirtualGatewayUID = %s\n", VirtualGatewayUID);
-#endif
-                    //printf(" sensorHubUID = %s\n", sensorHubUID);
                     if ( OS_NONE_IP_BASE == osInfo){;
                         SendRequestToWiseSnail(VirtualGatewayUID,data);
                     }
@@ -618,26 +603,11 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                      printf("[%s][%s]\033[34m #Set Gateway Request:%s# \033[0m\n", __FILE__, __func__);
                      printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
                      printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
-#if 0
-                    char VirtualGatewayUID[64]={0};
-                    if ( GetVirtualGatewayUIDfromData(g_pNodeListHead, data, VirtualGatewayUID, sizeof(VirtualGatewayUID)) < 0){
-                        printf("[%s][%s] Can't find VirtualGatewayUID Topic=%s\r\n",__FILE__, __func__, topic );
-	                return;
-                    }
-                    printf("VirtualGatewayUID = %s\n", VirtualGatewayUID);
-#endif
-                    //printf(" sensorHubUID = %s\n", sensorHubUID);
                     if ( OS_NONE_IP_BASE == osInfo){
                         SendRequestToWiseSnail(VirtualGatewayUID,data);
                     }
                     printf("---------------------------------------------------------------\n");
 	
-#if 0		
-			len = ProcSetInterfaceValue(szSessionId, data, buffer, sizeof(buffer));
-			PRINTF("len=%d Ret=%s\r\n",len,buffer);
-			if( len > 0 )
-				g_sendcbf(&g_PluginInfo,IOTGW_GET_SENSOR_REPLY, buffer, len+1, NULL, NULL);
-#endif
 		}
 		break;
 	default:
