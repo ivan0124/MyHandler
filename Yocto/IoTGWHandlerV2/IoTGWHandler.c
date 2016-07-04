@@ -524,8 +524,10 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
         printf("+++++++++++++++ Handler_Recv ++++++++++++++++++++++++++++>\n");
 	int cmdID = 0;
 	int len = 0;
+        int osInfo;
 	char szSessionId[MAX_SIZE_SESSIONID]={0};
 	char buffer[MAX_BUFFER_SIZE]={0};
+        char VirtualGatewayUID[64]={0};
         char tmp_uid[64]={0};
 	// Recv Remot Server Command to process
 	PRINTF("%s>Recv Topic [%s] Data %s\r\n", strPluginName, topic, (char*) data );
@@ -534,14 +536,17 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 		return;
 
 	PRINTF("Cmd ID=%d\r\n",cmdID);
-        char VirtualGatewayUID[64]={0};
+        
+
+        app_os_mutex_lock(&g_NodeListMutex);
         if ( GetVirtualGatewayUIDfromData(g_pNodeListHead, data, VirtualGatewayUID, sizeof(VirtualGatewayUID)) < 0){
             printf("[%s][%s] Can't find VirtualGatewayUID Topic=%s\r\n",__FILE__, __func__, topic );
+            app_os_mutex_unlock(&g_NodeListMutex);
 	    return;
         }
-        printf("VirtualGatewayUID = %s\n", VirtualGatewayUID);
- 
-        int osInfo=GetVirtualGatewayUIDOSInfo(VirtualGatewayUID);
+        //printf("VirtualGatewayUID = %s\n", VirtualGatewayUID);
+        osInfo=GetVirtualGatewayUIDOSInfo(VirtualGatewayUID);
+        app_os_mutex_unlock(&g_NodeListMutex);
 
 	switch (cmdID)
 	{
