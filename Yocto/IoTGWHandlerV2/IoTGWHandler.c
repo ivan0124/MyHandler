@@ -554,7 +554,7 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 		{
 
                      printf("---------------------------------------------------------------\n");
-                     printf("[%s][%s]\033[34m #Get Gateway Request:%s# \033[0m\n", __FILE__, __func__);
+                     printf("[%s][%s]\033[34m #Get Gateway Request# \033[0m\n", __FILE__, __func__);
                      printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
                      printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
 #if 0			
