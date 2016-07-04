@@ -560,6 +560,7 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 		     g_sendcbf(&g_PluginInfo, IOTGW_GET_CAPABILITY_REPLY, capability, strlen( capability )+1, NULL, NULL);
 		}
 		break;
+#if 0
         case IOTGW_QUERY_HEART_BEAT_VALUE:
                 {
                     printf("---------------------------------------------------------------\n");
@@ -572,6 +573,7 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                     printf("---------------------------------------------------------------\n");
                     break;
                 }
+#endif
 	case IOTGW_GET_SENSOR_REQUEST:
 		{
 
@@ -594,6 +596,7 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 #endif
                     //printf(" sensorHubUID = %s\n", sensorHubUID);
                     if ( OS_NONE_IP_BASE == osInfo){
+                        printf("!!!!!!!!!!!!!!!!!!!!\n");
                         SendRequestToWiseSnail(VirtualGatewayUID,data);
                     }
                     printf("---------------------------------------------------------------\n");
