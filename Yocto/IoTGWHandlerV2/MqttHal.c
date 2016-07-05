@@ -1006,8 +1006,6 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         printf("[%s][%s] case %d: GetAgentID() FAIL!\n",__FILE__, __func__, GATEWAY_CONNECT);
                     }
 #endif
-
-                    printf("[%s][%s] app_os_mutex_unlock\n",__FILE__, __func__);
                     printf("------------------------------------------------\n");
                     break;
                 }
