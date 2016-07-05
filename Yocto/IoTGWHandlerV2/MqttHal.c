@@ -943,7 +943,6 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	char topicType[32];
 	JSONode *json;
 	char nodeContent[MAX_JSON_NODE_SIZE];
-	senhub_info_t *pshinfo;
 	int action = 0;
         //printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 	if((json = JSON_Parser(message->payload)) == NULL) {
@@ -952,15 +951,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	}
 	sscanf(message->topic, "/%*[^/]/%*[^/]/%*[^/]/%s", topicType);
 	ADV_TRACE("Topic type: %s \n", topicType);
-	//printf("Topic type: %s \n", topicType);
 
         action = ParseMQTTMessage(topicType,json);
-#if 0
-        if ( action < 0){
-            JSON_Destory(&json);
-            return -1;
-        }
-#endif
+
         switch(action){
             case GATEWAY_HEART_BEAT:
                 {
@@ -1084,7 +1077,6 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    printf("---------------Gateway capability----------------------------\n");
 		    printf(gateway_capability);
 		    printf("\n-------------------------------------------\n");
-                   
 
                     if ( RegisterToRMM_GatewayCapabilityInfo(gateway_capability, strlen(gateway_capability)) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
