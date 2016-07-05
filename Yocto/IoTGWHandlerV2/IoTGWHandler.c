@@ -270,28 +270,14 @@ static CAGENT_PTHREAD_ENTRY(ThreadSendSenHubConnect, args)
 	char buffer[MAX_BUFFER_SIZE]={0};
 	//cagent_agent_info_body_t *pSenAgentInfo = NULL;
 
-
-#if 0		
-	len = ProcGetTotalInterface(buffer, sizeof(buffer));
-	if( len > 0 )
-	{
-		PRINTF("Send SenHub list: %s\r\n", buffer);
-		SendMsgToSUSIAccess(buffer, sizeof(buffer), NULL, NULL);
-	}
-#endif
-
 #if 1
 	PRINTF("[%s][%s] Start send SenHub connect message\r\n", __FILE__, __func__);
 	for( i = 0; i< MAX_SENNODES ; i ++ ) {
 		if(g_SenHubAgentInfo[i].status == 1)
 		{
 			pSenHander = &g_SenPluginInfo[i];
-			//pSenAgentInfo = &g_SenHubAgentInfo[i];
 
-			// 2. Prepare Sensor Node Handler_info data
-			//PackSenHubPlugInfo( pSenHander, &g_PluginInfo, pSenAgentInfo->mac, pSenAgentInfo->hostname, pSenAgentInfo->product, 1 );
-
-			// 3. Register to WISECloud
+			// 1. Register to WISECloud
 			PRINTF("Send SenHub %s\r\n", pSenHander->agentInfo->hostname);
 			SenHubConnectToWISECloud( pSenHander );
 		}
