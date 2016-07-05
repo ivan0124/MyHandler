@@ -527,12 +527,10 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
         app_os_mutex_lock(&g_NodeListMutex);
         if ( GetVirtualGatewayUIDfromData(g_pNodeListHead, data, VirtualGatewayUID, sizeof(VirtualGatewayUID)) < 0){
             printf("[%s][%s] Can't find VirtualGatewayUID Topic=%s\r\n",__FILE__, __func__, topic );
-            app_os_mutex_unlock(&g_NodeListMutex);
-	    return;
+            goto exit;
         }
         //printf("VirtualGatewayUID = %s\n", VirtualGatewayUID);
         osInfo=GetVirtualGatewayUIDOSInfo(VirtualGatewayUID);
-        app_os_mutex_unlock(&g_NodeListMutex);
 
 	switch (cmdID)
 	{
@@ -545,9 +543,8 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                      printf("---------------------------------------------------------------\n");
                      char capability[MAX_DATA_SIZE]={0};
 			
-		     app_os_mutex_lock(&g_NodeListMutex);
 		     BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, capability);
-		     app_os_mutex_unlock(&g_NodeListMutex);
+
 		     g_sendcbf(&g_PluginInfo, IOTGW_GET_CAPABILITY_REPLY, capability, strlen( capability )+1, NULL, NULL);
 		}
 		break;
@@ -571,16 +568,17 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                      printf("[%s][%s]\033[34m #Get Gateway Request# \033[0m\n", __FILE__, __func__);
                      printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
                      printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
-                    if ( OS_NONE_IP_BASE == osInfo){;
+                    if ( OS_NONE_IP_BASE == osInfo){
+                        app_os_mutex_unlock(&g_NodeListMutex);
                         SendRequestToWiseSnail(VirtualGatewayUID,data);
+                        return;
                     }
                     else if ( OS_IP_BASE == osInfo ){
 
                         char response_data[1024]={0};
 
-		        app_os_mutex_lock(&g_NodeListMutex);
                         GetConnectivityResponseData(data, response_data);
-                        app_os_mutex_unlock(&g_NodeListMutex);
+
                         printf("response_data=%s\n", response_data);
 
 		        g_sendcbf(&g_PluginInfo, IOTGW_GET_SENSOR_REPLY, response_data, strlen( response_data )+1, NULL, NULL);
@@ -595,7 +593,9 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                      printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
                      printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
                     if ( OS_NONE_IP_BASE == osInfo){
+                        app_os_mutex_unlock(&g_NodeListMutex);
                         SendRequestToWiseSnail(VirtualGatewayUID,data);
+                        return;
                     }
                     printf("---------------------------------------------------------------\n");
 	
@@ -616,6 +616,10 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 		}
 		break;
 	}
+
+exit:
+    app_os_mutex_unlock(&g_NodeListMutex);
+    return;
 
 }
 
