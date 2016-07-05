@@ -907,7 +907,6 @@ int DisconnectToRMM_AllDisconnectedSensorHubNode(){
 
 int DisconnectToRMM(char* DeviceUID){
 
-                app_os_mutex_lock(&g_NodeListMutex);
                 if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
 #if 1
                     DisconnectToRMM_AllSensorHubNode(g_pNodeListHead, DeviceUID);
@@ -919,7 +918,6 @@ int DisconnectToRMM(char* DeviceUID){
                     //
                     char gateway_capability[2048]={0};
                     BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, gateway_capability);
-                    app_os_mutex_unlock(&g_NodeListMutex);
 
 		    printf("---------------Gateway capability----------------------------\n");
 		    printf(gateway_capability);
@@ -932,7 +930,6 @@ int DisconnectToRMM(char* DeviceUID){
 #endif
                 }
                 else{
-                    app_os_mutex_unlock(&g_NodeListMutex);
                     DisconnectToRMM_SensorHub(DeviceUID);
                 }
     return 0;
@@ -944,6 +941,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 	JSONode *json;
 	char nodeContent[MAX_JSON_NODE_SIZE];
 	int action = 0;
+        int ret=0;
         //printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 	if((json = JSON_Parser(message->payload)) == NULL) {
 		printf("json parse err!\n");
@@ -954,6 +952,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 
         action = ParseMQTTMessage(topicType,json);
 
+        app_os_mutex_lock(&g_NodeListMutex);
         switch(action){
             case GATEWAY_HEART_BEAT:
                 {
@@ -964,15 +963,15 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                      
                     char nodeContent[MAX_JSON_NODE_SIZE]={0};
                     if ( GetJSONValue(json, "[hb][devID]", nodeContent) < 0 ){
-                        JSON_Destory(&json);
-                        return -1;
+                        ret=-1;
+                        goto exit;
                     }
-                    app_os_mutex_lock(&g_NodeListMutex);
+
                     struct node hb_data;
                     memset(&hb_data,0,sizeof(struct node));
                     time(&hb_data.last_hb_time);
                     UpdateNodeList(nodeContent, TYPE_GATEWAY, &hb_data);
-                    app_os_mutex_unlock(&g_NodeListMutex);
+
                     printf("------------------------------------------------\n");
                     break;
                 }
@@ -983,8 +982,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 
-                    printf("[%s][%s] app_os_mutex_lock\n",__FILE__, __func__);
-                    app_os_mutex_lock(&g_NodeListMutex);
+
                     AddNodeList_VirtualGatewayNodeInfo(message->payload, OS_TYPE_UNKNOWN);
                     //
 #if 1
@@ -997,15 +995,18 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         //time(&node_data.last_hb_time);
                         UpdateNodeList(gateway_devID, TYPE_GATEWAY, &node_data);
 
+                        app_os_mutex_unlock(&g_NodeListMutex);
                         //Send "get capability" message to WiseSnail
                         char mydata[512]={"{\"susiCommData\":{\"requestID\":1001,\"catalogID\": 4,\"commCmd\":2051,\"handlerName\":\"general\"}}"};
                         SendRequestToWiseSnail(gateway_devID,mydata);
+                        JSON_Destory(&json);
+                        return 0;
                     }
                     else{
                         printf("[%s][%s] case %d: GetAgentID() FAIL!\n",__FILE__, __func__, GATEWAY_CONNECT);
                     }
 #endif
-                    app_os_mutex_unlock(&g_NodeListMutex);
+
                     printf("[%s][%s] app_os_mutex_unlock\n",__FILE__, __func__);
                     printf("------------------------------------------------\n");
                     break;
@@ -1022,8 +1023,8 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     //mutex protect inside DisconnectToRMM()
 		    if ( DisconnectToRMM(DeviceUID) < 0){
 		        printf("DisconnectToRMM FAIL !\n");
-			JSON_Destory(&json);
-			return -1;
+                        ret=-1;
+                        goto exit;
 		    }
                     printf("------------------------------------------------\n");
                     break;
@@ -1044,7 +1045,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         OSInfo=OS_IP_BASE;
                     }
                     //test_link_list();
-                    app_os_mutex_lock(&g_NodeListMutex);
+
                     char gateway_devID[128]={0};
                     if ( GetAgentID(message->payload, gateway_devID, sizeof(gateway_devID)) == 0){
                         struct node node_data;
@@ -1055,7 +1056,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     else{
                         printf("[%s][%s] case %d: GetAgentID() FAIL!\n",__FILE__, __func__, GATEWAY_OS_INFO);
                     }
-                    app_os_mutex_unlock(&g_NodeListMutex);
+
                     printf("------------------------------------------------\n");
                     break;
                 }
@@ -1067,12 +1068,12 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     //test_link_list();
 #if 1
-                    app_os_mutex_lock(&g_NodeListMutex);
+
                     AddNodeList_ConnectivityNodeInfo(message->payload);
 
                     char gateway_capability[2048]={0};
                     BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, gateway_capability);
-                    app_os_mutex_unlock(&g_NodeListMutex);
+
 
 		    printf("---------------Gateway capability----------------------------\n");
 		    printf(gateway_capability);
@@ -1080,8 +1081,8 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 
                     if ( RegisterToRMM_GatewayCapabilityInfo(gateway_capability, strlen(gateway_capability)) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
-                        JSON_Destory(&json);
-                        return -1;
+                        ret=-1;
+                        goto exit;
                     }
 #endif
                     printf("------------------------------------------------\n");
@@ -1093,7 +1094,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    printf("[%s][%s]\033[33m #Update Gateway Data# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
-                    app_os_mutex_lock(&g_NodeListMutex);
+
                     AddNodeList_SensorHubNodeInfo(message->payload);
 #if 0
                     struct node* n;
@@ -1108,12 +1109,12 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("------------------------------------------------\n");
                     printf("[%s][%s]@@@@@@@@@@@@ OS info type:%d packed info_data=%s\n", __FILE__, __func__, osInfo, info_data);
                     printf("------------------------------------------------\n");
-                    app_os_mutex_unlock(&g_NodeListMutex);
+
 #if 1
                     if ( UpdateToRMM_GatewayUpdateInfo(info_data) < 0){
                         printf("[%s][%s] Update Gateway Data FAIL !!!\n", __FILE__, __func__);
-                        JSON_Destory(&json);
-                        return -1;
+                        ret=-1;
+                        goto exit;
                     }
 #endif
                     printf("------------------------------------------------\n");
@@ -1128,8 +1129,8 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #if 1
                     if ( ConnectToRMM_SensorHub(json) < 0){
                         printf("[%s][%s] SensorHub connect to RMM FAIL !!!\n", __FILE__, __func__);
-                        JSON_Destory(&json);
-                        return -1;
+                        ret=-1;
+                        goto exit;
                     }
 #endif
                     printf("------------------------------------------------\n");
@@ -1144,7 +1145,8 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     char DeviceUID[64]={0};
 		    if ( GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID)) < 0){
 		        printf("[%s][%s] Can't find DeviceUID topic=%s\r\n",__FILE__, __func__, message->topic);
-			return -1;
+                        ret=-1;
+                        goto exit;
 		    }
                     DisconnectToRMM_SensorHub(DeviceUID);
                     printf("------------------------------------------------\n");
@@ -1159,8 +1161,8 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #if 1
                     if(RegisterToRMM_SensorHubCapability(message->topic, json) < 0){
                         printf("[%s][%s] Register SensorHub Capability FAIL !!!\n", __FILE__, __func__);
-                        JSON_Destory(&json);
-                        return -1;
+                        ret=-1;
+                        goto exit;
                     }
 #endif
                     printf("------------------------------------------------\n");
@@ -1173,8 +1175,8 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #if 1
                     if ( UpdateToRMM_SensorHubData(json) < 0){
                         printf("[%s][%s] Update SensorHub Data FAIL !!!\n", __FILE__, __func__);
-                        JSON_Destory(&json);
-                        return -1;
+                        ret=-1;
+                        goto exit;
                     }
 #endif
                     printf("\n------------------------------------------------\n");
@@ -1188,25 +1190,27 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     char DeviceUID[64]={0};
 		    if ( GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID)) < 0){
 		        printf("[%s][%s] Can't find DeviceUID topic=%s\r\n",__FILE__, __func__, message->topic);
-			return -1;
+                        ret=-1;
+                        goto exit;
 		    }
                     printf("DeviceUID = %s\n", DeviceUID);
 #if 1
-                    app_os_mutex_lock(&g_NodeListMutex);
+
                     if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
-                        app_os_mutex_unlock(&g_NodeListMutex);
+
                         printf("found virtual gateway device ID\n");
                         ReplyToRMM_GatewayGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY);
-                        return 0;
+                        ret=0;
+                        goto exit;
                     }
-                    app_os_mutex_unlock(&g_NodeListMutex);
+
 #endif
 
 #if 1
                     if ( ReplyToRMM_SensorHubGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY) < 0){
                         printf("[%s][%s] Reply Get Sensor Request FAIL !!!\n", __FILE__, __func__);
-                        JSON_Destory(&json);
-                        return -1;
+                        ret=-1;
+                        goto exit;
                     }
 #endif
                     printf("------------------------------------------------\n");
@@ -1222,23 +1226,25 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     char DeviceUID[64]={0};
 		    if ( GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID)) < 0){
 		        printf("[%s][%s] Can't find DeviceUID topic=%s\r\n",__FILE__, __func__, message->topic);
-			return -1;
+                        ret=-1;
+                        goto exit;
 		    }
                     printf("DeviceUID = %s\n", DeviceUID);
 #if 1
-                    app_os_mutex_lock(&g_NodeListMutex);
+
                     if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
-                        app_os_mutex_unlock(&g_NodeListMutex);
+
                         ReplyToRMM_GatewayGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY);
-                        return 0;
+                        ret=0;
+                        goto exit;
                     }
-                    app_os_mutex_unlock(&g_NodeListMutex);
+
 #endif
 #if 1
                     if ( ReplyToRMM_SensorHubGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY) < 0){
                         printf("[%s][%s] Reply Set Sensor Request FAIL !!!\n", __FILE__, __func__);
-                        JSON_Destory(&json);
-                        return -1;
+                        ret=-1;
+                        goto exit;
                     }
 #endif
                     printf("------------------------------------------------\n");
@@ -1259,15 +1265,16 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 //mutex protect inside DisconnectToRMM()
                 if ( DisconnectToRMM(DeviceUID) < 0){
                     printf("DisconnectToRMM FAIL !\n");
-                    JSON_Destory(&json);
-                    return -1;
+                    ret=-1;
+                    goto exit;
                 }
                 //
 	}
 	
-	JSON_Destory(&json);
-
-	return 0;
+exit:
+    app_os_mutex_unlock(&g_NodeListMutex);
+    JSON_Destory(&json);
+    return ret;
 }
 
 void MqttHal_Message_Callback(struct mosquitto *mosq, void *obj, const struct mosquitto_message *message)
