@@ -460,7 +460,7 @@ int BuildNodeList_IPBaseGatewayUpdateInfo(char* info_data){
     strcat(info_data,"}");
     //
     strcat(info_data,",");
-    sprintf(tmp,"\"bn\":\"0007%s\"",g_GWInfMAC);
+    sprintf(tmp,"\"bn\":\"%s%s\"",CONNECTIVITY_ID_PREFIX,g_GWInfMAC);
     strcat(info_data,tmp);
     strcat(info_data,",");
     strcat(info_data,"\"ver\":1");
@@ -560,7 +560,7 @@ int BuildData_IPBaseConnectivityCapability(char* info_data){
     strcat(info_data,"}");
     //
     strcat(info_data,",");
-    sprintf(tmp,"\"bn\":\"0007%s\"",g_GWInfMAC);
+    sprintf(tmp,"\"bn\":\"%s%s\"",CONNECTIVITY_ID_PREFIX,g_GWInfMAC);
     strcat(info_data,tmp);
     strcat(info_data,",");
     strcat(info_data,"\"ver\":1");

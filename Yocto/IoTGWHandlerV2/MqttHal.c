@@ -776,7 +776,7 @@ int GetVirtualGatewayUIDOSInfo(char* uid){
 
     char tmp_uid[64]={0};
  
-    sprintf(tmp_uid, "0000%s",g_GWInfMAC );
+    sprintf(tmp_uid, "%s%s",GATEWAY_ID_PREFIX, g_GWInfMAC );
     if ( strcmp(tmp_uid, uid) == 0){
         return OS_IP_BASE;
     }
