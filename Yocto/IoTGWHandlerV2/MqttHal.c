@@ -482,6 +482,10 @@ int ParseAgentactionreqTopic(JSONode *json){
             return REPLY_GET_SENSOR_REQUEST;
         case IOTGW_SET_SENSOR_REPLY:
             return REPLY_SET_SENSOR_REQUEST;
+        case IOTGW_QUERY_HEART_BEAT_VALUE_REPLY:
+            return IOTGW_QUERY_HEART_BEAT_VALUE_REPLY;
+        case IOTGW_CHANGE_HEART_BEAT_VALUE_REPLY:
+            return IOTGW_CHANGE_HEART_BEAT_VALUE_REPLY;
         case IOTGW_OS_INFO:
             {
                 return GATEWAY_OS_INFO;
@@ -1261,6 +1265,24 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         goto exit;
                     }
 #endif
+                    printf("------------------------------------------------\n");
+                    break;
+                }
+            case IOTGW_QUERY_HEART_BEAT_VALUE_REPLY:
+                {
+                    printf("------------------------------------------------\n");
+                    printf("[%s][%s]\033[33m #Query HeartBeat Reply# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    printf("------------------------------------------------\n");
+                    break;
+                }
+            case IOTGW_CHANGE_HEART_BEAT_VALUE_REPLY:
+                {
+                    printf("------------------------------------------------\n");
+                    printf("[%s][%s]\033[33m #Change HeartBeat Reply# \033[0m\n", __FILE__, __func__);
+                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     printf("------------------------------------------------\n");
                     break;
                 }
