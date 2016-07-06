@@ -552,20 +552,6 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 		     g_sendcbf(&g_PluginInfo, IOTGW_GET_CAPABILITY_REPLY, capability, strlen( capability )+1, NULL, NULL);
 		}
 		break;
-#if 0
-        case IOTGW_QUERY_HEART_BEAT_VALUE:
-                {
-                    printf("---------------------------------------------------------------\n");
-                    printf("[%s][%s]\033[34m #Query HeartBeat value# \033[0m\n", __FILE__, __func__);
-                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
-                    if ( OS_NONE_IP_BASE == osInfo){
-                        SendRequestToWiseSnail(VirtualGatewayUID,data);
-                    }
-                    printf("---------------------------------------------------------------\n");
-                    break;
-                }
-#endif
 	case IOTGW_GET_SENSOR_REQUEST:
 		{
                      printf("---------------------------------------------------------------\n");

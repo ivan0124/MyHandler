@@ -957,12 +957,12 @@ int GetRequestCmd(int cmdID, char* out_CmdData){
             strcpy(out_CmdData,"{\"susiCommData\":{\"commCmd\":125,\"handlerName\":\"general\",\"response\":{\"statuscode\":4,\"msg\": \"Reconnect\"}}}");
             return 0; 
         }
-        case IOTGW_QUERY_HEART_BEAT_VALUE:
+        case IOTGW_QUERY_HEART_BEAT_VALUE_REQUEST:
         {
             strcpy(out_CmdData,"{\"susiCommData\":{\"commCmd\":127,\"handlerName\":\"general\",\"sessionID\":\"123465\"}}");
             return 0;
         }
-        case IOTGW_CHANGE_HEART_BEAT_VALUE:
+        case IOTGW_CHANGE_HEART_BEAT_VALUE_REQUEST:
         {
             strcpy(out_CmdData,"{\"susiCommData\": {\"commCmd\":129,\"handlerName\":\"general\",\"heartbeatrate\":20,\"sessionID\":\"123465\"}}");
             return 0;
