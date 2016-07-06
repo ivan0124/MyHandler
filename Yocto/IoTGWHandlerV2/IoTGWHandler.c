@@ -185,7 +185,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
                         {
                             if ( r->last_hb_time != 0){
 		                diff_time=difftime(tv, r->last_hb_time);
-                                printf("[%s][%s]\033[33m #CHECK %s last_hb_time (difftime=%f)# \033[0m\n", __FILE__, __func__, r->virtualGatewayDevID,diff_time);
+                                printf("[%s][%s]\033[33m #CHECK %s HB last time=%f# \033[0m\n", __FILE__, __func__, r->virtualGatewayDevID,diff_time);
 			        if ( diff_time > HEART_BEAT_TIMEOUT ){
 				    r->state = STATUS_DISCONNECTED;
                                     time(&(r->start_connecting_time));
