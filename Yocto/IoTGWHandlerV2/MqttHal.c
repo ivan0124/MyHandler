@@ -974,7 +974,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     if ( UpdateNodeList(gateway_devID, TYPE_GATEWAY, &hb_data) < 0){
 
                         /*Delete all gateway device ID*/
-                        //DeleteNodeList_AllGatewayUIDNode(gateway_devID);
+                        DeleteNodeList_AllGatewayUIDNode(gateway_devID);
 
                         /*Re-connect device*/ 
                         printf("[%s][%s]\033[33m #Re-Connect# \033[0m\n", __FILE__, __func__);
