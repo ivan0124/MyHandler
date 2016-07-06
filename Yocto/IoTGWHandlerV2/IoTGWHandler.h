@@ -31,6 +31,7 @@ typedef enum{
         IOTGW_OS_INFO   = 116,
         IOTGW_RECONNECT = 125,
         IOTGW_QUERY_HEART_BEAT_VALUE = 127,
+        IOTGW_CHANGE_HEART_BEAT_VALUE = 129,
 	//-----------------------------IoTGW  Control Command Define (521--600)-----------------------
 	IOTGW_GET_CAPABILITY_REQUEST     = 521,
 	IOTGW_GET_CAPABILITY_REPLY		    = 522,

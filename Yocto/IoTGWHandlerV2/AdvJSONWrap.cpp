@@ -960,6 +960,11 @@ int GetRequestCmd(int cmdID, char* out_CmdData){
             strcpy(out_CmdData,"{\"susiCommData\":{\"commCmd\":127,\"handlerName\":\"general\",\"sessionID\":\"123465\"}}");
             return 0;
         }
+        case IOTGW_CHANGE_HEART_BEAT_VALUE:
+        {
+            strcpy(out_CmdData,"{\"susiCommData\": {\"commCmd\":129,\"handlerName\":\"general\",\"heartbeatrate\":20,\"sessionID\":\"123465\"}}");
+            return 0;
+        }
         case IOTGW_HANDLER_GET_CAPABILITY_REQUEST:
         {
             strcpy(out_CmdData,"{\"susiCommData\":{\"requestID\":1001,\"catalogID\": 4,\"commCmd\":2051,\"handlerName\":\"general\"}}");
