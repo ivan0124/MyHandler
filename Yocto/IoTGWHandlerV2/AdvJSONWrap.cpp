@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include "AdvJSON.h"
 #include "MqttHal.h"
+#include "IoTGWHandler.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -22,6 +23,7 @@ int BuildNodeList_GatewayUpdateInfo(char* data, char* info_data, int osInfo);
 int GetOSInfoType(char* data);
 int GetAgentID(char* data, char* out_agent_id, int out_agent_id_size);
 int GetConnectivityResponseData(char* data, char* response_data);
+int GetRequestCmd(int cmdID, char* out_CmdData);
 void aTest(const char* mydata);
 void printNodeInfo();
 
@@ -943,4 +945,23 @@ int GetConnectivityResponseData(char* data, char* response_data){
     }
 
     return 0;
+}
+
+int GetRequestCmd(int cmdID, char* out_CmdData){
+
+    switch(cmdID){
+        case IOTGW_RECONNECT:
+        {
+            strcpy(out_CmdData,"{\"susiCommData\":{\"commCmd\":125,\"handlerName\":\"general\",\"response\":{\"statuscode\":4,\"msg\": \"Reconnect\"}}}");
+            return 0; 
+        }
+        case IOTGW_HANDLER_GET_CAPABILITY_REQUEST:
+        {
+            strcpy(out_CmdData,"{\"susiCommData\":{\"requestID\":1001,\"catalogID\": 4,\"commCmd\":2051,\"handlerName\":\"general\"}}");
+            return 0;
+        }
+        default:
+            break;
+    }
+    return -1;
 }

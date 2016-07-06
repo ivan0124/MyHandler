@@ -237,19 +237,21 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
             }
         }
 
-        char mydata[512]={"{\"susiCommData\":{\"commCmd\":125,\"handlerName\":\"general\",\"response\":{\"statuscode\":4,\"msg\": \"Reconnect\"}}}"};
+        //char mydata[512]={"{\"susiCommData\":{\"commCmd\":125,\"handlerName\":\"general\",\"response\":{\"statuscode\":4,\"msg\": \"Reconnect\"}}}"};
         //Send Re-connect
         char data[128]={0};
         char VirtualGatewayUID[128]={0};
 	tmp_node=GW_list_GetHeadNode();
 
+        char request_cmd[512]={0};
+        GetRequestCmd(IOTGW_HANDLER_GET_CAPABILITY_REQUEST, request_cmd);
+
         while ( tmp_node != NULL){
             printf("Re-connect devID=%s\n", tmp_node->virtualGatewayDevID);
-            SendRequestToWiseSnail(tmp_node->virtualGatewayDevID,mydata);
+            SendRequestToWiseSnail(tmp_node->virtualGatewayDevID,request_cmd);
             GW_list_DeleteNode(tmp_node->virtualGatewayDevID);
 	    tmp_node=GW_list_GetHeadNode();
         }
-        printf("@@@@@ Re-connect finish @@@@ head node=%p\n", GW_list_GetHeadNode());
 #endif
         
 #endif

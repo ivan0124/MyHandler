@@ -938,6 +938,7 @@ int DisconnectToRMM(char* DeviceUID){
 int MqttHal_Message_Process(const struct mosquitto_message *message)
 {
 	char topicType[32];
+        char request_cmd[512]={0};
 	JSONode *json;
 	char nodeContent[MAX_JSON_NODE_SIZE];
 	int action = 0;
@@ -978,8 +979,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         /*Re-connect device*/ 
                         printf("[%s][%s]\033[33m #Re-Connect# \033[0m\n", __FILE__, __func__);
                         app_os_mutex_unlock(&g_NodeListMutex);
-                        char mydata[512]={"{\"susiCommData\":{\"commCmd\":125,\"handlerName\":\"general\",\"response\":{\"statuscode\":4,\"msg\": \"Reconnect\"}}}"};
-                        SendRequestToWiseSnail(nodeContent,mydata);
+                        //char mydata[512]={"{\"susiCommData\":{\"commCmd\":125,\"handlerName\":\"general\",\"response\":{\"statuscode\":4,\"msg\": \"Reconnect\"}}}"};
+                        GetRequestCmd(IOTGW_RECONNECT, request_cmd);
+                        SendRequestToWiseSnail(nodeContent,request_cmd);
                         JSON_Destory(&json);
                         return;
                     }
@@ -1009,8 +1011,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #if 1
                         app_os_mutex_unlock(&g_NodeListMutex);
                         //Send "get capability" message to WiseSnail
-                        char mydata[512]={"{\"susiCommData\":{\"requestID\":1001,\"catalogID\": 4,\"commCmd\":2051,\"handlerName\":\"general\"}}"};
-                        SendRequestToWiseSnail(gateway_devID,mydata);
+                        //char mydata[512]={"{\"susiCommData\":{\"requestID\":1001,\"catalogID\": 4,\"commCmd\":2051,\"handlerName\":\"general\"}}"};
+                        GetRequestCmd(IOTGW_HANDLER_GET_CAPABILITY_REQUEST, request_cmd);
+                        SendRequestToWiseSnail(gateway_devID,request_cmd);
                         JSON_Destory(&json);
 #endif
                         return 0;
