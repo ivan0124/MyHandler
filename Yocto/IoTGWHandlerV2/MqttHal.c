@@ -962,8 +962,8 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                      
-                    char nodeContent[MAX_JSON_NODE_SIZE]={0};
-                    if ( GetJSONValue(json, "[hb][devID]", nodeContent) < 0 ){
+                   char gateway_devID[128]={0};
+                    if ( GetJSONValue(json, "[hb][devID]", gateway_devID) < 0 ){
                         ret=-1;
                         goto exit;
                     }
@@ -974,14 +974,14 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     if ( UpdateNodeList(nodeContent, TYPE_GATEWAY, &hb_data) < 0){
 
                         /*Delete all gateway device ID*/
-                        //ToDo:
+                        DeleteNodeList_AllGatewayUIDNode(gateway_devID);
 
                         /*Re-connect device*/ 
                         printf("[%s][%s]\033[33m #Re-Connect# \033[0m\n", __FILE__, __func__);
                         app_os_mutex_unlock(&g_NodeListMutex);
                         //char mydata[512]={"{\"susiCommData\":{\"commCmd\":125,\"handlerName\":\"general\",\"response\":{\"statuscode\":4,\"msg\": \"Reconnect\"}}}"};
                         GetRequestCmd(IOTGW_RECONNECT, request_cmd);
-                        SendRequestToWiseSnail(nodeContent,request_cmd);
+                        SendRequestToWiseSnail(gateway_devID,request_cmd);
                         JSON_Destory(&json);
                         return;
                     }
