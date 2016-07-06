@@ -1274,6 +1274,12 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s]\033[33m #Query HeartBeat Reply# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+		    char hb_rate[128]={0};
+		    if ( GetJSONValue(json, "[susiCommData][heartbeatrate]", hb_rate) < 0 ){
+		        ret=-1;
+                        goto exit;
+		    }
+                    printf("hb_rate=%s\n", hb_rate);
                     printf("------------------------------------------------\n");
                     break;
                 }
@@ -1283,6 +1289,12 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s]\033[33m #Change HeartBeat Reply# \033[0m\n", __FILE__, __func__);
                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+		    char result[128]={0};
+		    if ( GetJSONValue(json, "[susiCommData][result]", result) < 0 ){
+		        ret=-1;
+                        goto exit;
+		    }
+                    printf("result=%s\n", result);
                     printf("------------------------------------------------\n");
                     break;
                 }
