@@ -970,7 +970,19 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     struct node hb_data;
                     memset(&hb_data,0,sizeof(struct node));
                     time(&hb_data.last_hb_time);
-                    UpdateNodeList(nodeContent, TYPE_GATEWAY, &hb_data);
+                    if ( UpdateNodeList(nodeContent, TYPE_GATEWAY, &hb_data) < 0){
+
+                        /*Delete all gateway device ID*/
+                        //ToDo:
+
+                        /*Re-connect device*/ 
+                        printf("[%s][%s]\033[33m #Re-Connect# \033[0m\n", __FILE__, __func__);
+                        app_os_mutex_unlock(&g_NodeListMutex);
+                        char mydata[512]={"{\"susiCommData\":{\"commCmd\":125,\"handlerName\":\"general\",\"response\":{\"statuscode\":4,\"msg\": \"Reconnect\"}}}"};
+                        SendRequestToWiseSnail(nodeContent,mydata);
+                        JSON_Destory(&json);
+                        return;
+                    }
 
                     printf("------------------------------------------------\n");
                     break;
@@ -994,12 +1006,13 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         node_data.state = STATUS_CONNECTED;
                         //time(&node_data.last_hb_time);
                         UpdateNodeList(gateway_devID, TYPE_GATEWAY, &node_data);
-
+#if 1
                         app_os_mutex_unlock(&g_NodeListMutex);
                         //Send "get capability" message to WiseSnail
                         char mydata[512]={"{\"susiCommData\":{\"requestID\":1001,\"catalogID\": 4,\"commCmd\":2051,\"handlerName\":\"general\"}}"};
                         SendRequestToWiseSnail(gateway_devID,mydata);
                         JSON_Destory(&json);
+#endif
                         return 0;
                     }
                     else{

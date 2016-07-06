@@ -231,7 +231,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
 
 #if 1
         if ( tmp_node ){
-
+            printf("[%s][%s] Register Gateway Capability!!!\n", __FILE__, __func__);
             if ( RegisterToRMM_GatewayCapabilityInfo(gateway_capability, strlen(gateway_capability)) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
             }
@@ -451,6 +451,7 @@ void HANDLER_API Handler_OnStatusChange( HANDLER_INFO *pluginfo )
 int HANDLER_API Handler_Start( void )
 {
 	printf("> %s Handler_Start\r\n", strPluginName);
+#if 1
 	if (app_os_thread_create(&g_HandlerContex.threadHandler, ThreadCheckNodeList, &g_HandlerContex) == 0)
         {
             app_os_thread_detach(g_HandlerContex.threadHandler);
@@ -461,7 +462,7 @@ int HANDLER_API Handler_Start( void )
 		printf("[%s][%s] start handler thread failed!\r\n", __FILE__, __func__);	
 		return handler_fail;
         }
-        
+#endif        
 	g_HandlerContex.isThreadRunning = true;
 	//g_status = handler_start;
 	time(&g_monitortime);
