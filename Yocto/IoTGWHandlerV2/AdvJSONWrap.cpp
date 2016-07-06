@@ -521,7 +521,7 @@ int BuildData_IPBaseConnectivityCapability(char* info_data){
                      "{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"}",
                      "{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}"
 #endif
-                    };
+                   };
     char tmp[1024]={0};
     int i=0;
     int max_e_array_size=sizeof(e_array)/sizeof(char*);
@@ -646,13 +646,7 @@ int AddNodeList_ConnectivityNodeInfo(char* data){
                 strcpy(connectivityInfo,json["susiCommData"]["infoSpec"]["IoTGW"][type][device].Value().c_str());
                 //Get connectivity device ID
                 strcpy(connectivityDevID,json["susiCommData"]["infoSpec"]["IoTGW"][type][device]["bn"].Value().c_str());
-#if 1
-		printf("********************************************\n");
-		printf("virtualGateway DevID: "); printf(virtualGatewayDevID); printf("\n");
-		printf("connectivity Info: "); printf(connectivityInfo); printf("\n");
-		printf("connectivity DevID: "); printf(connectivityDevID);
-		printf("\n********************************************\n");
-#endif
+
                 int osInfo=OS_TYPE_UNKNOWN;
                 struct node* temp= GetNode(virtualGatewayDevID,TYPE_GATEWAY);
                 if ( temp != NULL ){
@@ -725,14 +719,6 @@ void AddNodeList_SensorHubNodeInfo(const char* data){
                 strcpy(connectivityInfo,IoTGW_json[type][device].Value().c_str());
                 //Get connectivity device ID
                 strcpy(connectivityDevID,IoTGW_json[type][device]["bn"].Value().c_str());
-#if 1
-		printf("********************************************\n");
-		printf("virtualGateway DevID: "); printf(virtualGatewayDevID); printf("\n");
-                printf("os Info: %d\n", osInfo);
-		printf("connectivity Info: "); printf(connectivityInfo); printf("\n");
-		printf("connectivity DevID: "); printf(connectivityDevID);
-		printf("\n********************************************\n");
-#endif
 		
 #if 1
                 //get connectivity node
@@ -858,13 +844,6 @@ void aTest(const char* mydata){
                 strcpy(connectivityInfo,IoTGW_json[type][device].Value().c_str());
                 //Get connectivity device ID
                 strcpy(connectivityDevID,IoTGW_json[type][device]["bn"].Value().c_str());
-#if 1
-		printf("********************************************\n");
-		printf("virtualGateway DevID: "); printf(virtualGatewayDevID); printf("\n");
-		printf("connectivity Info: "); printf(connectivityInfo); printf("\n");
-		printf("connectivity DevID: "); printf(connectivityDevID);
-		printf("\n********************************************\n");
-#endif
 		//get connectivity node
 #if 1
 		temp=GetNode(connectivityDevID, TYPE_CONNECTIVITY);
