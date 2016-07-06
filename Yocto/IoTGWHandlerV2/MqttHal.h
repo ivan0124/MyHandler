@@ -68,6 +68,7 @@
 #define SENSOR_HUB_CAPABILITY    2
 
 #define HEART_BEAT_TIMEOUT 3*5
+#define IP_BASE_CONNECTIVITY_NAME  "LAN"
 
 
 typedef enum {

@@ -393,9 +393,9 @@ int GetSensorHubList(char* sensorHubList, int osInfo, char* connectivityDevID){
 int BuildNodeList_IPBaseGatewayUpdateInfo(char* info_data){
 
     char* e_array[]={"{\"n\":\"SenHubList\",\"sv\":\"%s\"}",
-                     "{\"n\":\"Neighbor\",\"sv\":\"%s\"}",
-                     "{\"n\":\"Name\",\"sv\":\"Ethernet\"}"
+                     "{\"n\":\"Neighbor\",\"sv\":\"%s\"}"
 #if 0
+                     "{\"n\":\"Name\",\"sv\":\"Ethernet\"}"
                      "{\"n\":\"Health\",\"v\":\"100.000000\"}",
                      "{\"n\":\"sw\",\"sv\":\"1.2.1.12\"}",
                      "{\"n\":\"reset\",\"bv\":\"0\"}"
@@ -412,8 +412,11 @@ int BuildNodeList_IPBaseGatewayUpdateInfo(char* info_data){
     }
 
     //strcat(info_data,"{\"IoTGW\":{\"Ethernet\":{\"Ethernet0\":");
-    strcat(info_data,"{\"IoTGW\":{\"Ethernet\":");
-    strcat(info_data,"{\"Ethernet\":");
+    sprintf(tmp,"{\"IoTGW\":{\"%s\":",IP_BASE_CONNECTIVITY_NAME);
+    strcat(info_data,tmp);
+    //strcat(info_data,"{\"IoTGW\":{\"LAN\":");
+    sprintf(tmp,"{\"%s\":",IP_BASE_CONNECTIVITY_NAME);
+    strcat(info_data,tmp);
     strcat(info_data,"{\"Info\":");
     //
     strcat(info_data,"{");
@@ -463,7 +466,9 @@ int BuildNodeList_IPBaseGatewayUpdateInfo(char* info_data){
     strcat(info_data,"\"ver\":1");
     strcat(info_data,"}");
     strcat(info_data,",");
-    strcat(info_data,"\"bn\":\"Ethernet\"},\"ver\":1}");
+    sprintf(tmp,"\"bn\":\"%s\"},\"ver\":1}",IP_BASE_CONNECTIVITY_NAME);
+    strcat(info_data,tmp);
+    //strcat(info_data,"\"bn\":\"LAN\"},\"ver\":1}");
     strcat(info_data,"}");
 
     return 0;
@@ -509,9 +514,9 @@ int BuildNodeList_GatewayUpdateInfo(char* data, char* info_data, int osInfo){
 int BuildData_IPBaseConnectivityCapability(char* info_data){
 
     char* e_array[]={"{\"n\":\"SenHubList\",\"sv\":\"%s\",\"asm\":\"%s\"}",
-                     "{\"n\":\"Neighbor\",\"sv\":\"%s\",\"asm\":\"%s\"}",
-                     "{\"n\":\"Name\",\"sv\":\"Ethernet\",\"asm\":\"r\"}"//,
+                     "{\"n\":\"Neighbor\",\"sv\":\"%s\",\"asm\":\"%s\"}"
 #if 0
+                     "{\"n\":\"Name\",\"sv\":\"Ethernet\",\"asm\":\"r\"}"//,
                      "{\"n\":\"Health\",\"v\":\"100.000000\",\"asm\":\"r\"}",
                      "{\"n\":\"sw\",\"sv\":\"1.2.1.12\",\"asm\":\"r\"}",
                      "{\"n\":\"reset\",\"bv\":\"0\",\"asm\":\"rw\"}"

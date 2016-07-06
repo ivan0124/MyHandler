@@ -727,7 +727,7 @@ int BuildNodeList_GatewayCapabilityInfo(struct node* head, char* pResult){
                     sprintf(tmp,"\"%s%d\":%s",r->connectivityType, g_ConnectivityInfoNodeList[index].index, r->connectivityInfo);
                     strcat(g_ConnectivityInfoNodeList[index].Info,tmp);
                     strcat(g_ConnectivityInfoNodeList[index].Info,",");
-                    strcpy(g_ConnectivityInfoNodeList[index].type,r->connectivityType);
+                    strcpy(g_ConnectivityInfoNodeList[index].type,IP_BASE_CONNECTIVITY_NAME);
                     g_ConnectivityInfoNodeList[index].index++;
                 }
             }
