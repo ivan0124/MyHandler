@@ -25,7 +25,7 @@ int GetOSInfoType(char* data);
 int GetAgentID(char* data, char* out_agent_id, int out_agent_id_size);
 int GetConnectivityResponseData(char* data, char* response_data);
 int GetRequestCmd(int cmdID, char* out_CmdData);
-int BuildNodeList_IPBaseGatewayUpdateInfoV2(char* info_data);
+int BuildNodeList_IPBaseGatewayInfo(char* info_data);
 void aTest(const char* mydata);
 void printNodeInfo();
 
@@ -431,7 +431,7 @@ int BuildNodeList_IPBaseGatewayUpdateInfo(char* info_data){
     sprintf(tmp,"{\"%s\":",IP_BASE_CONNECTIVITY_NAME);
     strcat(info_data,tmp);
     //
-    if ( BuildNodeList_IPBaseGatewayUpdateInfoV2(tmp) < 0){
+    if ( BuildNodeList_IPBaseGatewayInfo(tmp) < 0){
         return -1;
     }
     strcat(info_data,tmp);
@@ -981,7 +981,7 @@ int UpdateNodeList_ConnectivityNodeInfo(char* data){
     return 0;
 }
 
-int BuildNodeList_IPBaseGatewayUpdateInfoV2(char* info_data){
+int BuildNodeList_IPBaseGatewayInfo(char* info_data){
 
     char* e_array[]={"{\"n\":\"SenHubList\",\"sv\":\"%s\"}",
                      "{\"n\":\"Neighbor\",\"sv\":\"%s\"}"

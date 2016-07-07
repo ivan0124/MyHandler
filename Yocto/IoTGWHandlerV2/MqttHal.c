@@ -1703,7 +1703,7 @@ int BuildNodeList_GatewayCapabilityInfoWithData(struct node* head, char* pResult
     int ip_base_sensor_hub_cnt=0;
     char info_data[1024]={0};
 
-    ip_base_sensor_hub_cnt = BuildNodeList_IPBaseGatewayUpdateInfoV2(info_data);
+    ip_base_sensor_hub_cnt = BuildNodeList_IPBaseGatewayInfo(info_data);
     printf("@@@@@@@info_data=%s\n", info_data);
 #if 1
     if (ip_base_sensor_hub_cnt > 0){
