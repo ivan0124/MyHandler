@@ -1130,13 +1130,6 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s]@@@@@@@@@@@@ OS info type:%d packed info_data=%s\n", __FILE__, __func__, osInfo, info_data);
                     printf("------------------------------------------------\n");
 
-#if 0
-                    BuildNodeList_GatewayCapabilityInfoWithData(g_pNodeListHead, info_data);
-                    printf("------------------------------------------------\n");
-                    printf("[%s][%s]@@@@@@@@@@@@@@@@@@@@@@@@ BuildNodeList_GatewayCapabilityInfoWithData, info_data=%s\n", __FILE__, __func__, info_data);
-                    printf("------------------------------------------------\n");
-#endif
-
 #if 1
                     if ( UpdateToRMM_GatewayUpdateInfo(info_data) < 0){
                         printf("[%s][%s] Update Gateway Data FAIL !!!\n", __FILE__, __func__);
@@ -1704,7 +1697,7 @@ int BuildNodeList_GatewayCapabilityInfoWithData(struct node* head, char* pResult
     char info_data[1024]={0};
 
     ip_base_sensor_hub_cnt = BuildNodeList_IPBaseGatewayInfo(info_data);
-    printf("@@@@@@@info_data=%s\n", info_data);
+    //printf("@@@@@@@info_data=%s\n", info_data);
 #if 1
     if (ip_base_sensor_hub_cnt > 0){
         index=FindConnectivityInfoNodeListIndex(IP_BASE_CONNECTIVITY_NAME);
@@ -1728,6 +1721,7 @@ int BuildNodeList_GatewayCapabilityInfoWithData(struct node* head, char* pResult
     }
     while(r!=NULL)
     {
+#if 0
 	printf("[%s][%s]\n----------------------------------\n", __FILE__, __func__);
         printf("nodeType:%d\n", r->nodeType);
 	printf("virtualGatewayDevID:%s\n",r->virtualGatewayDevID);
@@ -1737,6 +1731,7 @@ int BuildNodeList_GatewayCapabilityInfoWithData(struct node* head, char* pResult
 	printf("connectivityInfoWithData:%s\n",r->connectivityInfoWithData);
         printf("sensorHubDevID:%s",r->sensorHubDevID);
 	printf("\n----------------------------------\n");
+#endif
         //WSN0:{Info...}
         //sprintf(tmp,"\"%s%d\":%s",r->connectivityType, i, r->connectivityInfo);
         index=FindConnectivityInfoNodeListIndex(r->connectivityType);
