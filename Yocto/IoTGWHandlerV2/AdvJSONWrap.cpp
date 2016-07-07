@@ -1001,9 +1001,7 @@ int UpdateNodeList_ConnectivityNodeInfo(char* data){
 
     //Get virtual gateway devID
     strcpy(virtualGatewayDevID,json["susiCommData"]["agentID"].Value().c_str());
-    //printf(virtualGatewayDevID);
-
-    //char a[128]={"susiCommData"};
+ 
     AdvJSON IoTGW_json=json["susiCommData"]["data"]["IoTGW"];
     max=IoTGW_json.Size();
     for(i=0; i < max ;i++){
@@ -1016,7 +1014,7 @@ int UpdateNodeList_ConnectivityNodeInfo(char* data){
         int max_device=IoTGW_json[type].Size();
         for(j=0; j<max_device ; j++){
             strcpy(device,IoTGW_json[type][j].Key().c_str());
-            //int tmp_value[1024]={0};
+
             if ( strcmp("NULL",IoTGW_json[type][device]["Info"].Value().c_str()) != 0){
 
                 //Get connectivity Info
@@ -1024,38 +1022,19 @@ int UpdateNodeList_ConnectivityNodeInfo(char* data){
  
                 //Get connectivity device ID
                 strcpy(connectivityDevID,IoTGW_json[type][device]["bn"].Value().c_str());
-                printf("connectivityDevID = %s\n", connectivityDevID);
-                printf("connectivity Info = %s\n", connectivityInfo);
+                //printf("connectivityDevID = %s\n", connectivityDevID);
+                //printf("connectivity Info = %s\n", connectivityInfo);
 
-#if 0
-                int osInfo=OS_TYPE_UNKNOWN;
-                struct node* temp= GetNode(virtualGatewayDevID,TYPE_GATEWAY);
-                if ( temp != NULL ){
-                    osInfo = temp->virtualGatewayOSInfo;
-                }
-#endif
-                //Add Node
-#if 0
-                if ( osInfo == OS_IP_BASE){
-                    //sprintf(connectivityDevID,"0007%s",g_GWInfMAC);
-                    char info_data[1024]={0};
-                    BuildData_IPBaseConnectivityCapability(info_data);
-                    strcpy(connectivityInfo,info_data); 
-                }
-#endif
-
-#if 1
                 struct node node_data;
                 memset(&node_data,0,sizeof(struct node));
                 node_data.connectivityInfoWithData = connectivityInfo; 
                 if ( UpdateNodeList(connectivityDevID, TYPE_CONNECTIVITY, &node_data) < 0){
                     printf("[%s][%s]\033[31m #UpdateNodeList FAIL(connectivityDevID=%s)  !# \033[0m\n", __FILE__, __func__, connectivityDevID);
                 }
-#endif
+
             }
         }
 
     }
-    
     return 0;
 }
