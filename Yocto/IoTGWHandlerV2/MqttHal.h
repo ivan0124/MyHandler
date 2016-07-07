@@ -149,6 +149,7 @@ struct node
     char connectivitySensorHubList[1024];
     char connectivityNeighborList[1024];
     char* connectivityInfo;
+    char* connectivityInfoWithData;
     char sensorHubDevID[MAX_DEVICE_ID_LEN];
     time_t last_hb_time;
     time_t start_connecting_time;

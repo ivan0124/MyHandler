@@ -148,6 +148,10 @@ int DeleteNodeList(char* devID, int devType)
                 if (temp->connectivityInfo){
                     free(temp->connectivityInfo);
                 }
+                //
+                if (temp->connectivityInfoWithData){
+                    free(temp->connectivityInfoWithData);
+                }
                 free(temp);
                 return 1;
             }
@@ -156,6 +160,10 @@ int DeleteNodeList(char* devID, int devType)
                 prev->next=temp->next;
                 if (temp->connectivityInfo){
                     free(temp->connectivityInfo);
+                }
+                //
+                if (temp->connectivityInfoWithData){
+                    free(temp->connectivityInfoWithData);
                 }
                 free(temp);
                 return 1;
@@ -320,6 +328,25 @@ int UpdateNodeList(char* devID, int devType, struct node* pNode){
             {
                 if (strcmp(r->connectivityDevID, devID) == 0){
                     if ( r->nodeType == TYPE_CONNECTIVITY) {
+                        if ( pNode->connectivityInfoWithData != 0 ){
+                            printf("pNode->connectivityInfoWithData=%s\n", pNode->connectivityInfoWithData);
+                            if ( r->connectivityInfoWithData != 0){
+                                free(r->connectivityInfoWithData);
+                                r->connectivityInfoWithData = 0;
+                            }
+
+                            int len=strlen(pNode->connectivityInfoWithData);
+                            r->connectivityInfoWithData = (char*) malloc(len+1);
+
+                            if ( r->connectivityInfoWithData ){
+                                strcpy(r->connectivityInfoWithData, pNode->connectivityInfoWithData);
+                                printf("r->connectivityInfoWithData=%s\n", r->connectivityInfoWithData);
+                            }
+                            else{
+                                return -1;
+                            }
+
+                        }
                         return 0;
                     }
                 }
@@ -977,42 +1004,38 @@ int UpdateNodeList_ConnectivityNodeInfo(char* data){
     //printf(virtualGatewayDevID);
 
     //char a[128]={"susiCommData"};
-    max=json["susiCommData"]["infoSpec"]["IoTGW"].Size();
+    AdvJSON IoTGW_json=json["susiCommData"]["data"]["IoTGW"];
+    max=IoTGW_json.Size();
     for(i=0; i < max ;i++){
-#if 0
-        printf("json[\"susiCommData\"][\"infoSpec\"][\"IoTGW\"][%d]=%s\n",i,json["susiCommData"]["infoSpec"]["IoTGW"][i].Key().c_str());
-#endif
+
         char type[128]={0};
         char device[128]={0};
 
-        strcpy(type,json["susiCommData"]["infoSpec"]["IoTGW"][i].Key().c_str());
-#if 0
-        printf("json[\"susiCommData\"][\"infoSpec\"][\"IoTGW\"][%s]=%s\n",\
-        type,
-        json["susiCommData"]["infoSpec"]["IoTGW"][type].Value().c_str());
-#endif        
-        int max_device=json["susiCommData"]["infoSpec"]["IoTGW"][type].Size();
-        for(j=0; j<max_device ; j++){
-            strcpy(device,json["susiCommData"]["infoSpec"]["IoTGW"][type][j].Key().c_str());
-            //int tmp_value[1024]={0};
-            if ( strcmp("NULL",json["susiCommData"]["infoSpec"]["IoTGW"][type][device]["Info"].Value().c_str()) != 0){
-#if 0
-                printf("@@@@ json[\"susiCommData\"][\"infoSpec\"][\"IoTGW\"][%s][%s]=%s\n",\
-                type,device, \
-                json["susiCommData"]["infoSpec"]["IoTGW"][type][device].Value().c_str());
-#endif
-                //Get connectivity Info
-                strcpy(connectivityInfo,json["susiCommData"]["infoSpec"]["IoTGW"][type][device].Value().c_str());
-                //Get connectivity device ID
-                strcpy(connectivityDevID,json["susiCommData"]["infoSpec"]["IoTGW"][type][device]["bn"].Value().c_str());
+        strcpy(type,IoTGW_json[i].Key().c_str());
 
+        int max_device=IoTGW_json[type].Size();
+        for(j=0; j<max_device ; j++){
+            strcpy(device,IoTGW_json[type][j].Key().c_str());
+            //int tmp_value[1024]={0};
+            if ( strcmp("NULL",IoTGW_json[type][device]["Info"].Value().c_str()) != 0){
+
+                //Get connectivity Info
+                strcpy(connectivityInfo,IoTGW_json[type][device].Value().c_str());
+ 
+                //Get connectivity device ID
+                strcpy(connectivityDevID,IoTGW_json[type][device]["bn"].Value().c_str());
+                printf("connectivityDevID = %s\n", connectivityDevID);
+                printf("connectivity Info = %s\n", connectivityInfo);
+
+#if 0
                 int osInfo=OS_TYPE_UNKNOWN;
                 struct node* temp= GetNode(virtualGatewayDevID,TYPE_GATEWAY);
                 if ( temp != NULL ){
                     osInfo = temp->virtualGatewayOSInfo;
                 }
+#endif
                 //Add Node
-#if 1
+#if 0
                 if ( osInfo == OS_IP_BASE){
                     //sprintf(connectivityDevID,"0007%s",g_GWInfMAC);
                     char info_data[1024]={0};
@@ -1020,7 +1043,15 @@ int UpdateNodeList_ConnectivityNodeInfo(char* data){
                     strcpy(connectivityInfo,info_data); 
                 }
 #endif
-                AddNodeList(virtualGatewayDevID,type,connectivityDevID,connectivityInfo, strlen(connectivityInfo), TYPE_CONNECTIVITY, osInfo, NULL);
+
+#if 1
+                struct node node_data;
+                memset(&node_data,0,sizeof(struct node));
+                node_data.connectivityInfoWithData = connectivityInfo; 
+                if ( UpdateNodeList(connectivityDevID, TYPE_CONNECTIVITY, &node_data) < 0){
+                    printf("[%s][%s]\033[31m #UpdateNodeList FAIL(connectivityDevID=%s)  !# \033[0m\n", __FILE__, __func__, connectivityDevID);
+                }
+#endif
             }
         }
 

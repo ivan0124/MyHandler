@@ -1113,6 +1113,8 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
                     printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 
+                    UpdateNodeList_ConnectivityNodeInfo(message->payload);
+                    //
                     AddNodeList_SensorHubNodeInfo(message->payload);
 #if 0
                     struct node* n;
