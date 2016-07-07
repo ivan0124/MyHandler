@@ -1130,6 +1130,13 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     printf("[%s][%s]@@@@@@@@@@@@ OS info type:%d packed info_data=%s\n", __FILE__, __func__, osInfo, info_data);
                     printf("------------------------------------------------\n");
 
+#if 0
+                    BuildNodeList_GatewayCapabilityInfoWithData(g_pNodeListHead, info_data);
+                    printf("------------------------------------------------\n");
+                    printf("[%s][%s]@@@@@@@@@@@@@@@@@@@@@@@@ BuildNodeList_GatewayCapabilityInfoWithData, info_data=%s\n", __FILE__, __func__, info_data);
+                    printf("------------------------------------------------\n");
+#endif
+
 #if 1
                     if ( UpdateToRMM_GatewayUpdateInfo(info_data) < 0){
                         printf("[%s][%s] Update Gateway Data FAIL !!!\n", __FILE__, __func__);
@@ -1680,6 +1687,102 @@ int SendRequestToWiseSnail(char *macAddr, const char *pData)
 	rc = mosquitto_publish(g_mosq, &g_mid_sent, topic, msglen, message, g_mosq_cfg.qos, g_mosq_cfg.retain);
 
 	return 0;
+}
+
+int BuildNodeList_GatewayCapabilityInfoWithData(struct node* head, char* pResult){
+  
+    printf("##################################################################\n");
+    memset(&g_ConnectivityInfoNodeList,0,sizeof(g_ConnectivityInfoNodeList));
+    printf("BuildNodeList_GatewayCapabilityInfoWithData-----------------\n");
+    int i=0,index=-1;
+    char tmp[1024]={0};
+    char capability[1024]={0};
+    struct node *r;
+    int IPbaseConnectivityNotAdd=1;
+
+    r=head;
+    if(r==NULL)
+    {
+        printf("[%s][%s] node list is null\n",__FILE__, __func__);
+        strcpy(pResult, "{\"IoTGW\":{\"ver\":1}}");
+        return -1;
+    }
+    while(r!=NULL)
+    {
+	printf("[%s][%s]\n----------------------------------\n", __FILE__, __func__);
+        printf("nodeType:%d\n", r->nodeType);
+	printf("virtualGatewayDevID:%s\n",r->virtualGatewayDevID);
+        printf("osInfo:%d\n",r->virtualGatewayOSInfo);
+	printf("connectivityType:%s\n",r->connectivityType);
+	printf("connectivityDevID:%s\n",r->connectivityDevID);
+	printf("connectivityInfoWithData:%s\n",r->connectivityInfoWithData);
+        printf("sensorHubDevID:%s",r->sensorHubDevID);
+	printf("\n----------------------------------\n");
+        //WSN0:{Info...}
+        //sprintf(tmp,"\"%s%d\":%s",r->connectivityType, i, r->connectivityInfo);
+        index=FindConnectivityInfoNodeListIndex(r->connectivityType);
+        if ( index >= 0 ){
+            if (r->nodeType == TYPE_CONNECTIVITY){
+                if (r->virtualGatewayOSInfo == OS_NONE_IP_BASE){
+                    sprintf(tmp,"\"%s%d\":%s",r->connectivityType, g_ConnectivityInfoNodeList[index].index, r->connectivityInfoWithData);
+                    strcat(g_ConnectivityInfoNodeList[index].Info,tmp);
+                    strcat(g_ConnectivityInfoNodeList[index].Info,",");
+                    strcpy(g_ConnectivityInfoNodeList[index].type,r->connectivityType);
+                    g_ConnectivityInfoNodeList[index].index++;
+                }
+                else if (r->virtualGatewayOSInfo == OS_IP_BASE && IPbaseConnectivityNotAdd){
+
+#if 0
+                    IPbaseConnectivityNotAdd=0;
+
+                    sprintf(tmp,"\"%s%d\":%s",r->connectivityType, g_ConnectivityInfoNodeList[index].index, r->connectivityInfo);
+                    strcat(g_ConnectivityInfoNodeList[index].Info,tmp);
+                    strcat(g_ConnectivityInfoNodeList[index].Info,",");
+                    strcpy(g_ConnectivityInfoNodeList[index].type,IP_BASE_CONNECTIVITY_NAME);
+                    g_ConnectivityInfoNodeList[index].index++;
+#endif
+                }
+            }
+        }
+        else{
+            printf("[%s][%s] can not find Info node list index\n",__FILE__, __func__);
+        }
+        //
+	r=r->next;
+    }
+    printf("\n");
+
+    //Pack all connectivity type capability 
+    int max=sizeof(g_ConnectivityInfoNodeList)/sizeof(struct connectivityInfoNode);
+    for(i=0; i < max ; i++){
+        //index=FindConnectivityInfoNodeListIndex(cType[i]);
+        if (strlen(g_ConnectivityInfoNodeList[i].Info) != 0 ){
+            //sprintf(wsn_capability,"\"WSN\":{%s\"bn\":\"WSN\",\"ver\":1}",g_ConnectivityInfoNodeList[index].Info);
+            sprintf(capability,"\"%s\":{",g_ConnectivityInfoNodeList[i].type);
+            strcat(capability,g_ConnectivityInfoNodeList[i].Info);
+            sprintf(tmp,"\"bn\":\"%s\",",g_ConnectivityInfoNodeList[i].type);
+            strcat(capability,tmp);
+            strcat(capability, "\"ver\":1}");
+            strcpy(g_ConnectivityInfoNodeList[i].Info,capability);
+#if 0
+            printf("---------------%s capability----------------------------\n", g_ConnectivityInfoNodeList[i].type);
+            printf(g_ConnectivityInfoNodeList[i].Info);
+            printf("\n-------------------------------------------\n");
+#endif
+        }
+    }
+    //Pack gateway capability
+    strcpy(pResult,"{\"IoTGW\":{");
+    for(i=0; i < max ; i++){
+        if (strlen(g_ConnectivityInfoNodeList[i].Info) != 0 ){
+            //sprintf(gateway_capability,"{\"IoTGW\":{%s,\"ver\":1}}", g_ConnectivityInfoNodeList[0].Info);
+            strcat(pResult, g_ConnectivityInfoNodeList[i].Info);
+            strcat(pResult, ",");
+        }
+    }
+    strcat(pResult,"\"ver\":1}}");
+    //
+    return 0;
 }
 
 
