@@ -438,17 +438,24 @@ int BuildNodeList_IPBaseGatewayUpdateInfo(char* info_data){
     char sensorHubList[1024]={0};
     char tmp[1024]={0};
 
+#if 0
     if ( GetSensorHubList(sensorHubList, OS_IP_BASE, NULL) < 0 ){
         printf("[%s][%s] get sensor hub list fail\n", __FILE__, __func__);
         return -1;
     }
-
+#endif
+    
     //strcat(info_data,"{\"IoTGW\":{\"Ethernet\":{\"Ethernet0\":");
     sprintf(tmp,"{\"IoTGW\":{\"%s\":",IP_BASE_CONNECTIVITY_NAME);
     strcat(info_data,tmp);
     //strcat(info_data,"{\"IoTGW\":{\"LAN\":");
     sprintf(tmp,"{\"%s\":",IP_BASE_CONNECTIVITY_NAME);
     strcat(info_data,tmp);
+    if ( BuildNodeList_IPBaseGatewayUpdateInfoV2(tmp) < 0){
+        return -1;
+    }
+    strcat(info_data,tmp);
+#if 0
     strcat(info_data,"{\"Info\":");
     //
     strcat(info_data,"{");
@@ -497,6 +504,7 @@ int BuildNodeList_IPBaseGatewayUpdateInfo(char* info_data){
     strcat(info_data,",");
     strcat(info_data,"\"ver\":1");
     strcat(info_data,"}");
+#endif
     strcat(info_data,",");
     sprintf(tmp,"\"bn\":\"%s\"},\"ver\":1}",IP_BASE_CONNECTIVITY_NAME);
     strcat(info_data,tmp);
