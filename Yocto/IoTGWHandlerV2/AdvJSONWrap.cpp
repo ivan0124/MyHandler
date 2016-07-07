@@ -15,7 +15,8 @@ void AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pCon
 int UpdateNodeList(char* devID, int devType, struct node* pNode);
 struct node * GetNode(char* devID, int devType);
 int DeleteNodeList(char* devID, int devType);
-int AddNodeList_ConnectivityNodeInfo(char* data);
+int AddNodeList_ConnectivityNodeCapability(char* data);
+int UpdateNodeList_ConnectivityNodeInfo(char* data);
 void AddNodeList_SensorHubNodeInfo(const char* data);
 void AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo);
 int BuildData_IPBaseConnectivityCapability(char* info_data);
@@ -587,7 +588,7 @@ int GetOSInfoType(char* data){
     return osInfo;
 }
 
-int AddNodeList_ConnectivityNodeInfo(char* data){
+int AddNodeList_ConnectivityNodeCapability(char* data){
 
 #if 0
 //sample message:
@@ -960,4 +961,70 @@ int GetRequestCmd(int cmdID, char* out_CmdData){
             break;
     }
     return -1;
+}
+
+int UpdateNodeList_ConnectivityNodeInfo(char* data){
+
+    AdvJSON json(data);
+    int i=0, j=0;
+    int max=0;
+    char virtualGatewayDevID[MAX_DEVICE_ID_LEN]={0};
+    char connectivityInfo[MAX_JSON_NODE_SIZE]={0};
+    char connectivityDevID[MAX_DEVICE_ID_LEN]={0};
+
+    //Get virtual gateway devID
+    strcpy(virtualGatewayDevID,json["susiCommData"]["agentID"].Value().c_str());
+    //printf(virtualGatewayDevID);
+
+    //char a[128]={"susiCommData"};
+    max=json["susiCommData"]["infoSpec"]["IoTGW"].Size();
+    for(i=0; i < max ;i++){
+#if 0
+        printf("json[\"susiCommData\"][\"infoSpec\"][\"IoTGW\"][%d]=%s\n",i,json["susiCommData"]["infoSpec"]["IoTGW"][i].Key().c_str());
+#endif
+        char type[128]={0};
+        char device[128]={0};
+
+        strcpy(type,json["susiCommData"]["infoSpec"]["IoTGW"][i].Key().c_str());
+#if 0
+        printf("json[\"susiCommData\"][\"infoSpec\"][\"IoTGW\"][%s]=%s\n",\
+        type,
+        json["susiCommData"]["infoSpec"]["IoTGW"][type].Value().c_str());
+#endif        
+        int max_device=json["susiCommData"]["infoSpec"]["IoTGW"][type].Size();
+        for(j=0; j<max_device ; j++){
+            strcpy(device,json["susiCommData"]["infoSpec"]["IoTGW"][type][j].Key().c_str());
+            //int tmp_value[1024]={0};
+            if ( strcmp("NULL",json["susiCommData"]["infoSpec"]["IoTGW"][type][device]["Info"].Value().c_str()) != 0){
+#if 0
+                printf("@@@@ json[\"susiCommData\"][\"infoSpec\"][\"IoTGW\"][%s][%s]=%s\n",\
+                type,device, \
+                json["susiCommData"]["infoSpec"]["IoTGW"][type][device].Value().c_str());
+#endif
+                //Get connectivity Info
+                strcpy(connectivityInfo,json["susiCommData"]["infoSpec"]["IoTGW"][type][device].Value().c_str());
+                //Get connectivity device ID
+                strcpy(connectivityDevID,json["susiCommData"]["infoSpec"]["IoTGW"][type][device]["bn"].Value().c_str());
+
+                int osInfo=OS_TYPE_UNKNOWN;
+                struct node* temp= GetNode(virtualGatewayDevID,TYPE_GATEWAY);
+                if ( temp != NULL ){
+                    osInfo = temp->virtualGatewayOSInfo;
+                }
+                //Add Node
+#if 1
+                if ( osInfo == OS_IP_BASE){
+                    //sprintf(connectivityDevID,"0007%s",g_GWInfMAC);
+                    char info_data[1024]={0};
+                    BuildData_IPBaseConnectivityCapability(info_data);
+                    strcpy(connectivityInfo,info_data); 
+                }
+#endif
+                AddNodeList(virtualGatewayDevID,type,connectivityDevID,connectivityInfo, strlen(connectivityInfo), TYPE_CONNECTIVITY, osInfo, NULL);
+            }
+        }
+
+    }
+    
+    return 0;
 }

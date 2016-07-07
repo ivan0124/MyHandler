@@ -1087,7 +1087,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     //test_link_list();
 #if 1
 
-                    AddNodeList_ConnectivityNodeInfo(message->payload);
+                    AddNodeList_ConnectivityNodeCapability(message->payload);
 
                     char gateway_capability[2048]={0};
                     BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, gateway_capability);
