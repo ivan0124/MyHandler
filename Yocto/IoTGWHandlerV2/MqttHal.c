@@ -724,7 +724,7 @@ int BuildNodeList_GatewayCapabilityInfo(struct node* head, char* pResult){
 
                     IPbaseConnectivityNotAdd=0;
 
-                    sprintf(tmp,"\"%s%d\":%s",r->connectivityType, g_ConnectivityInfoNodeList[index].index, r->connectivityInfo);
+                    sprintf(tmp,"\"%s%d\":%s",IP_BASE_CONNECTIVITY_NAME, g_ConnectivityInfoNodeList[index].index, r->connectivityInfo);
                     strcat(g_ConnectivityInfoNodeList[index].Info,tmp);
                     strcat(g_ConnectivityInfoNodeList[index].Info,",");
                     strcpy(g_ConnectivityInfoNodeList[index].type,IP_BASE_CONNECTIVITY_NAME);
@@ -1700,8 +1700,27 @@ int BuildNodeList_GatewayCapabilityInfoWithData(struct node* head, char* pResult
     struct node *r;
     int IPbaseConnectivityNotAdd=1;
 
+    int ip_base_sensor_hub_cnt=0;
+    char info_data[1024]={0};
+
+    ip_base_sensor_hub_cnt = BuildNodeList_IPBaseGatewayUpdateInfoV2(info_data);
+    printf("@@@@@@@info_data=%s\n", info_data);
+#if 1
+    if (ip_base_sensor_hub_cnt > 0){
+        index=FindConnectivityInfoNodeListIndex(IP_BASE_CONNECTIVITY_NAME);
+        if ( index >= 0 ){
+            sprintf(tmp,"\"%s%d\":%s",IP_BASE_CONNECTIVITY_NAME, g_ConnectivityInfoNodeList[index].index, info_data);
+            strcat(g_ConnectivityInfoNodeList[index].Info,tmp);
+            strcat(g_ConnectivityInfoNodeList[index].Info,",");
+            strcpy(g_ConnectivityInfoNodeList[index].type,IP_BASE_CONNECTIVITY_NAME);
+            g_ConnectivityInfoNodeList[index].index++;
+        }
+    }
+#endif
+
+    //
     r=head;
-    if(r==NULL)
+    if(r==NULL && ip_base_sensor_hub_cnt <= 0)
     {
         printf("[%s][%s] node list is null\n",__FILE__, __func__);
         strcpy(pResult, "{\"IoTGW\":{\"ver\":1}}");
@@ -1730,18 +1749,6 @@ int BuildNodeList_GatewayCapabilityInfoWithData(struct node* head, char* pResult
                     strcpy(g_ConnectivityInfoNodeList[index].type,r->connectivityType);
                     g_ConnectivityInfoNodeList[index].index++;
                 }
-                else if (r->virtualGatewayOSInfo == OS_IP_BASE && IPbaseConnectivityNotAdd){
-
-#if 0
-                    IPbaseConnectivityNotAdd=0;
-
-                    sprintf(tmp,"\"%s%d\":%s",r->connectivityType, g_ConnectivityInfoNodeList[index].index, r->connectivityInfo);
-                    strcat(g_ConnectivityInfoNodeList[index].Info,tmp);
-                    strcat(g_ConnectivityInfoNodeList[index].Info,",");
-                    strcpy(g_ConnectivityInfoNodeList[index].type,IP_BASE_CONNECTIVITY_NAME);
-                    g_ConnectivityInfoNodeList[index].index++;
-#endif
-                }
             }
         }
         else{
@@ -1764,11 +1771,7 @@ int BuildNodeList_GatewayCapabilityInfoWithData(struct node* head, char* pResult
             strcat(capability,tmp);
             strcat(capability, "\"ver\":1}");
             strcpy(g_ConnectivityInfoNodeList[i].Info,capability);
-#if 0
-            printf("---------------%s capability----------------------------\n", g_ConnectivityInfoNodeList[i].type);
-            printf(g_ConnectivityInfoNodeList[i].Info);
-            printf("\n-------------------------------------------\n");
-#endif
+
         }
     }
     //Pack gateway capability
