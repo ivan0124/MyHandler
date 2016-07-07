@@ -547,9 +547,20 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
                      printf("---------------------------------------------------------------\n");
                      char capability[MAX_DATA_SIZE]={0};
 			
-		     BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, capability);
+		     if ( BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, capability) < 0){
+                         g_sendcbf(&g_PluginInfo, IOTGW_ERROR_REPLY, g_szErrorCapability, strlen( g_szErrorCapability )+1, NULL, NULL);
+                     }
+                     else{
+                         //send gateway capability
+		         g_sendcbf(&g_PluginInfo, IOTGW_GET_CAPABILITY_REPLY, capability, strlen( capability )+1, NULL, NULL);
 
-		     g_sendcbf(&g_PluginInfo, IOTGW_GET_CAPABILITY_REPLY, capability, strlen( capability )+1, NULL, NULL);
+		         void* threadHandler;
+			 if (app_os_thread_create(&threadHandler, ThreadSendSenHubConnect, NULL) == 0)
+			 {
+			     app_os_thread_detach(threadHandler);
+			 }
+
+                     }
 		}
 		break;
 	case IOTGW_GET_SENSOR_REQUEST:
