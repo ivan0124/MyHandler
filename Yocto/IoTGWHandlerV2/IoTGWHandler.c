@@ -273,6 +273,15 @@ static CAGENT_PTHREAD_ENTRY(ThreadSendSenHubConnect, args)
 	char buffer[MAX_BUFFER_SIZE]={0};
 	//cagent_agent_info_body_t *pSenAgentInfo = NULL;
 
+        char info_data[1024]={0};
+        BuildNodeList_GatewayCapabilityInfoWithData(g_pNodeListHead, info_data);
+#if 0
+        printf("------------------------------------------------\n");
+        printf("[%s][%s]@@@@@@@@@@@@@@@@@@@@@@@@ BuildNodeList_GatewayCapabilityInfoWithData, info_data=%s\n", __FILE__, __func__, info_data);
+        printf("------------------------------------------------\n");
+#endif
+        UpdateToRMM_GatewayUpdateInfo(info_data);
+
 #if 1
 	PRINTF("[%s][%s] Start send SenHub connect message\r\n", __FILE__, __func__);
 	for( i = 0; i< MAX_SENNODES ; i ++ ) {
@@ -813,14 +822,7 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
                      printf("[%s][%s]\033[34m #Get Sensor Request:%s# \033[0m\n", __FILE__, __func__, SenHubUID);
                      printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
                      printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
-            
-#if 0
-                    char info_data[1024]={0};
-                    BuildNodeList_GatewayCapabilityInfoWithData(g_pNodeListHead, info_data);
-                    printf("------------------------------------------------\n");
-                    printf("[%s][%s]@@@@@@@@@@@@@@@@@@@@@@@@ BuildNodeList_GatewayCapabilityInfoWithData, info_data=%s\n", __FILE__, __func__, info_data);
-                    printf("------------------------------------------------\n");
-#endif
+
                      SendRequestToWiseSnail(SenHubUID,data);
                      printf("---------------------------------------------------------------\n");		
 		}
