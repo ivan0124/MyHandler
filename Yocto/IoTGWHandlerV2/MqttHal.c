@@ -1043,7 +1043,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     char DeviceUID[64]={0};
                     GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID));
                     printf("DeviceUID = %s\n", DeviceUID);
-                    //mutex protect inside DisconnectToRMM()
+
 		    if ( DisconnectToRMM(DeviceUID) < 0){
 		        printf("DisconnectToRMM FAIL !\n");
                         ret=-1;
@@ -1319,7 +1319,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 char DeviceUID[64]={0};
                 GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID));
                 printf("DeviceUID = %s\n", DeviceUID);
-                //mutex protect inside DisconnectToRMM()
+
                 if ( DisconnectToRMM(DeviceUID) < 0){
                     printf("DisconnectToRMM FAIL !\n");
                     ret=-1;
