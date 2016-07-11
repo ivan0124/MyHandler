@@ -186,7 +186,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
                         {
                             if ( r->last_hb_time != 0){
 		                diff_time=difftime(tv, r->last_hb_time);
-                                printf("[%s][%s]\033[33m #CHECK %s HB last time=%f# \033[0m\n", __FILE__, __func__, r->virtualGatewayDevID,diff_time);
+                                ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #CHECK %s HB last time=%f# \033[0m\n", __FILE__, __func__, r->virtualGatewayDevID,diff_time);
 			        if ( diff_time > HEART_BEAT_TIMEOUT ){
 				    r->state = STATUS_DISCONNECTED;
                                     time(&(r->start_connecting_time));
@@ -233,9 +233,10 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
 
 #if 1
         if ( tmp_node ){
-            printf("[%s][%s] Register Gateway Capability!!!\n", __FILE__, __func__);
+            ADV_DEBUG("[%s][%s] Register Gateway Capability!!!\n", __FILE__, __func__);
+            memset(gateway_capability,0,sizeof(gateway_capability));
             if ( RegisterToRMM_GatewayCapabilityInfo(gateway_capability, strlen(gateway_capability)) < 0){
-                        printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
+                        ADV_C_ERROR(COLOR_RED, "[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
             }
         }
 
