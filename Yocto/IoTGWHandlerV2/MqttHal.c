@@ -966,10 +966,10 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
         switch(action){
             case GATEWAY_HEART_BEAT:
                 {
-                    printf("------------------------------------------------\n");
-                    printf("[%s][%s]\033[33m #HeartBeat# \033[0m\n", __FILE__, __func__);
-                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    ADV_DEBUG("------------------------------------------------\n");
+                    ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #HeartBeat# \033[0m\n", __FILE__, __func__);
+                    ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                      
                    char gateway_devID[128]={0};
                     if ( GetJSONValue(json, "[hb][devID]", gateway_devID) < 0 ){
@@ -986,7 +986,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         DeleteNodeList_AllGatewayUIDNode(gateway_devID);
 
                         /*Re-connect device*/ 
-                        printf("[%s][%s]\033[33m #Re-Connect# \033[0m\n", __FILE__, __func__);
+                         ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #Re-Connect# \033[0m\n", __FILE__, __func__);
                         app_os_mutex_unlock(&g_NodeListMutex);
                         //char mydata[512]={"{\"susiCommData\":{\"commCmd\":125,\"handlerName\":\"general\",\"response\":{\"statuscode\":4,\"msg\": \"Reconnect\"}}}"};
                         GetRequestCmd(IOTGW_RECONNECT, request_cmd);
@@ -995,15 +995,15 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         return;
                     }
 
-                    printf("------------------------------------------------\n");
+                    ADV_DEBUG("------------------------------------------------\n");
                     break;
                 }
             case GATEWAY_CONNECT:
                 {
-                    printf("------------------------------------------------\n");
-                    printf("[%s][%s]\033[33m #Gateway Connect# \033[0m\n", __FILE__, __func__);
-                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    ADV_DEBUG("------------------------------------------------\n");
+                    ADV_C_DEBUG(COLOR_YELLOW, "[%s][%s][%d]\033[33m #Gateway Connect# \033[0m\n", __FILE__, __func__, __LINE__);
+                    ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 
 
                     AddNodeList_VirtualGatewayNodeInfo(message->payload, OS_TYPE_UNKNOWN);
@@ -1028,36 +1028,36 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         return 0;
                     }
                     else{
-                        printf("[%s][%s] case %d: GetAgentID() FAIL!\n",__FILE__, __func__, GATEWAY_CONNECT);
+                        ADV_C_ERROR(COLOR_RED, "[%s][%s] case %d: GetAgentID() FAIL!\n",__FILE__, __func__, GATEWAY_CONNECT);
                     }
 #endif
-                    printf("------------------------------------------------\n");
+                    ADV_DEBUG("------------------------------------------------\n");
                     break;
                 }
             case GATEWAY_DISCONNECT:
                 {
-                    printf("------------------------------------------------\n");
-                    printf("[%s][%s]\033[33m #Gateway Disconnect# \033[0m\n", __FILE__, __func__);
-                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    ADV_DEBUG("------------------------------------------------\n");
+                    ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #Gateway Disconnect# \033[0m\n", __FILE__, __func__);
+                    ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     char DeviceUID[64]={0};
                     GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID));
-                    printf("DeviceUID = %s\n", DeviceUID);
+                    //printf("DeviceUID = %s\n", DeviceUID);
 
 		    if ( DisconnectToRMM(DeviceUID) < 0){
-		        printf("DisconnectToRMM FAIL !\n");
+		        ADV_C_ERROR(COLOR_RED, "[%s][%s]Gateway Disconnect: DisconnectToRMM FAIL !\n", __FILE__, __func__);
                         ret=-1;
                         goto exit;
 		    }
-                    printf("------------------------------------------------\n");
+                    ADV_DEBUG("------------------------------------------------\n");
                     break;
                 }
             case GATEWAY_OS_INFO:
                 {
-                    printf("------------------------------------------------\n");
-		    printf("[%s][%s]\033[33m #Gateway OS Info# \033[0m\n", __FILE__, __func__);
-                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    ADV_DEBUG("------------------------------------------------\n");
+		    ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #Gateway OS Info# \033[0m\n", __FILE__, __func__);
+                    ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     int OSInfo=OS_NONE_IP_BASE;
 
                     if ( isOSIPbase(json) < 0 ){
@@ -1080,15 +1080,15 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         printf("[%s][%s] case %d: GetAgentID() FAIL!\n",__FILE__, __func__, GATEWAY_OS_INFO);
                     }
 
-                    printf("------------------------------------------------\n");
+                    ADV_DEBUG("------------------------------------------------\n");
                     break;
                 }
             case REGISTER_GATEWAY_CAPABILITY:
                 {
-                    printf("------------------------------------------------\n");
-		    printf("[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n", __FILE__, __func__);
-                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    ADV_DEBUG("------------------------------------------------\n");
+		    ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #Register Gateway Capability# \033[0m\n", __FILE__, __func__);
+                    ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     //test_link_list();
 #if 1
 
@@ -1098,9 +1098,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, gateway_capability);
 
 
-		    printf("---------------Gateway capability----------------------------\n");
-		    printf(gateway_capability);
-		    printf("\n-------------------------------------------\n");
+		    ADV_DEBUG("---------------Gateway capability----------------------------\n");
+		    ADV_DEBUG(gateway_capability);
+		    ADV_DEBUG("\n-------------------------------------------\n");
 
                     if ( RegisterToRMM_GatewayCapabilityInfo(gateway_capability, strlen(gateway_capability)) < 0){
                         printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
@@ -1108,15 +1108,15 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         goto exit;
                     }
 #endif
-                    printf("------------------------------------------------\n");
+                    ADV_DEBUG("------------------------------------------------\n");
                     break;
                 }
             case UPDATE_GATEWAY_DATA:
                 {
-                    printf("------------------------------------------------\n");
-		    printf("[%s][%s]\033[33m #Update Gateway Data# \033[0m\n", __FILE__, __func__);
-                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    ADV_DEBUG("------------------------------------------------\n");
+		    ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #Update Gateway Data# \033[0m\n", __FILE__, __func__);
+                    ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 
                     UpdateNodeList_ConnectivityNodeInfo(message->payload);
                     //
@@ -1131,10 +1131,10 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 
                     //Build gateway update info
                     BuildNodeList_GatewayUpdateInfo(message->payload, info_data, osInfo);
-#if 0
-                    printf("------------------------------------------------\n");
-                    printf("[%s][%s]@@@@@@@@@@@@ OS info type:%d packed info_data=%s\n", __FILE__, __func__, osInfo, info_data);
-                    printf("------------------------------------------------\n");
+#if 1
+                    ADV_DEBUG("------------------------------------------------\n");
+                    ADV_DEBUG("[%s][%s]@@@@@@@@@@@@ OS info type:%d packed info_data=%s\n", __FILE__, __func__, osInfo, info_data);
+                    ADV_DEBUG("------------------------------------------------\n");
 #endif
 
 #if 1
@@ -1144,15 +1144,15 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         goto exit;
                     }
 #endif
-                    printf("------------------------------------------------\n");
+                    ADV_DEBUG("------------------------------------------------\n");
                     break;
                 }
             case SENSOR_HUB_CONNECT:
                 {
-                    printf("------------------------------------------------\n");
-                    printf("[%s][%s]\033[33m #SensorHub Connect# \033[0m\n", __FILE__, __func__);
-                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    ADV_DEBUG("------------------------------------------------\n");
+                    ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #SensorHub Connect# \033[0m\n", __FILE__, __func__);
+                    ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 #if 1
                     if ( ConnectToRMM_SensorHub(json) < 0){
                         printf("[%s][%s] SensorHub connect to RMM FAIL !!!\n", __FILE__, __func__);
@@ -1160,15 +1160,15 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         goto exit;
                     }
 #endif
-                    printf("------------------------------------------------\n");
+                    ADV_DEBUG("------------------------------------------------\n");
                     break;
                 }
             case SENSOR_HUB_DISCONNECT:
                 {
-                    printf("------------------------------------------------\n");
-                    printf("[%s][%s]\033[33m #SensorHub Disconnect# \033[0m\n", __FILE__, __func__);
-                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    ADV_DEBUG("------------------------------------------------\n");
+                    ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #SensorHub Disconnect# \033[0m\n", __FILE__, __func__);
+                    ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     char DeviceUID[64]={0};
 		    if ( GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID)) < 0){
 		        printf("[%s][%s] Can't find DeviceUID topic=%s\r\n",__FILE__, __func__, message->topic);
@@ -1176,15 +1176,15 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         goto exit;
 		    }
                     DisconnectToRMM_SensorHub(DeviceUID);
-                    printf("------------------------------------------------\n");
+                    ADV_DEBUG("------------------------------------------------\n");
                     break;
                 }
             case REGISTER_SENSOR_HUB_CAPABILITY:
                 {
-                    printf("------------------------------------------------\n");
-		    printf("[%s][%s]\033[33m #Register SensorHub Capability# \033[0m\n", __FILE__, __func__);
-                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    ADV_DEBUG("------------------------------------------------\n");
+		    ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #Register SensorHub Capability# \033[0m\n", __FILE__, __func__);
+                    ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 #if 1
                     if(RegisterToRMM_SensorHubCapability(message->topic, json) < 0){
                         printf("[%s][%s] Register SensorHub Capability FAIL !!!\n", __FILE__, __func__);
@@ -1192,13 +1192,13 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         goto exit;
                     }
 #endif
-                    printf("------------------------------------------------\n");
+                    ADV_DEBUG("------------------------------------------------\n");
                     break;
                 }
             case UPDATE_SENSOR_HUB_DATA:
                 {
-                    printf("------------------------------------------------\n");
-		    printf("[%s][%s]\033[33m #Update SensorHub Data# \033[0m\n", __FILE__, __func__);
+                    ADV_DEBUG("------------------------------------------------\n");
+		   ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #Update SensorHub Data# \033[0m\n", __FILE__, __func__);
 #if 1
                     if ( UpdateToRMM_SensorHubData(json) < 0){
                         printf("[%s][%s] Update SensorHub Data FAIL !!!\n", __FILE__, __func__);
@@ -1206,21 +1206,21 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         goto exit;
                     }
 #endif
-                    printf("\n------------------------------------------------\n");
+                    ADV_DEBUG("\n------------------------------------------------\n");
                 }
             case REPLY_GET_SENSOR_REQUEST:
                 {
-                    printf("------------------------------------------------\n");
-                    printf("[%s][%s]\033[33m #Reply Get Sensor Request# \033[0m\n", __FILE__, __func__);
-                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    ADV_DEBUG("------------------------------------------------\n");
+                    ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #Reply Get Sensor Request# \033[0m\n", __FILE__, __func__);
+                    ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     char DeviceUID[64]={0};
 		    if ( GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID)) < 0){
 		        printf("[%s][%s] Can't find DeviceUID topic=%s\r\n",__FILE__, __func__, message->topic);
                         ret=-1;
                         goto exit;
 		    }
-                    printf("DeviceUID = %s\n", DeviceUID);
+                    //ADV_DEBUG("DeviceUID = %s\n", DeviceUID);
 #if 1
 
                     if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
@@ -1240,15 +1240,15 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         goto exit;
                     }
 #endif
-                    printf("------------------------------------------------\n");
+                    ADV_DEBUG("------------------------------------------------\n");
                     break;
                 }
             case REPLY_SET_SENSOR_REQUEST:
                 {
-                    printf("------------------------------------------------\n");
-                    printf("[%s][%s]\033[33m #Reply Set Sensor Request# \033[0m\n", __FILE__, __func__);
-                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    ADV_DEBUG("------------------------------------------------\n");
+                    ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #Reply Set Sensor Request# \033[0m\n", __FILE__, __func__);
+                    ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 
                     char DeviceUID[64]={0};
 		    if ( GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID)) < 0){
@@ -1256,7 +1256,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         ret=-1;
                         goto exit;
 		    }
-                    printf("DeviceUID = %s\n", DeviceUID);
+                    //printf("DeviceUID = %s\n", DeviceUID);
 #if 1
 
                     if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
@@ -1274,37 +1274,37 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         goto exit;
                     }
 #endif
-                    printf("------------------------------------------------\n");
+                    ADV_DEBUG("------------------------------------------------\n");
                     break;
                 }
             case IOTGW_QUERY_HEART_BEAT_VALUE_REPLY:
                 {
-                    printf("------------------------------------------------\n");
-                    printf("[%s][%s]\033[33m #Query HeartBeat Reply# \033[0m\n", __FILE__, __func__);
-                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    ADV_DEBUG("------------------------------------------------\n");
+                    ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #Query HeartBeat Reply# \033[0m\n", __FILE__, __func__);
+                    ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 		    char hb_rate[128]={0};
 		    if ( GetJSONValue(json, "[susiCommData][heartbeatrate]", hb_rate) < 0 ){
 		        ret=-1;
                         goto exit;
 		    }
-                    printf("hb_rate=%s\n", hb_rate);
-                    printf("------------------------------------------------\n");
+                    ADV_DEBUG("hb_rate=%s\n", hb_rate);
+                    ADV_DEBUG("------------------------------------------------\n");
                     break;
                 }
             case IOTGW_CHANGE_HEART_BEAT_VALUE_REPLY:
                 {
-                    printf("------------------------------------------------\n");
-                    printf("[%s][%s]\033[33m #Change HeartBeat Reply# \033[0m\n", __FILE__, __func__);
-                    printf("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
-                    printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+                    ADV_DEBUG("------------------------------------------------\n");
+                    ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #Change HeartBeat Reply# \033[0m\n", __FILE__, __func__);
+                    ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, message->topic);
+                    ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 		    char result[128]={0};
 		    if ( GetJSONValue(json, "[susiCommData][result]", result) < 0 ){
 		        ret=-1;
                         goto exit;
 		    }
-                    printf("result=%s\n", result);
-                    printf("------------------------------------------------\n");
+                    ADV_DEBUG("result=%s\n", result);
+                    ADV_DEBUG("------------------------------------------------\n");
                     break;
                 }
             default:
@@ -1313,12 +1313,12 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 
         if(strcmp(topicType, WA_PUB_WILL_TOPIC) == 0) {
 		// CmdID=2003
-		printf("[%s][%s] Receive messages from will topic!!\n", __FILE__, __func__);
-                printf("topic = %s\n", message->topic);
-                printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
+		ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s] Receive messages from will topic!!\n", __FILE__, __func__);
+                ADV_DEBUG("topic = %s\n", message->topic);
+                ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                 char DeviceUID[64]={0};
                 GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID));
-                printf("DeviceUID = %s\n", DeviceUID);
+                //printf("DeviceUID = %s\n", DeviceUID);
 
                 if ( DisconnectToRMM(DeviceUID) < 0){
                     printf("DisconnectToRMM FAIL !\n");
