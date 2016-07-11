@@ -1127,9 +1127,11 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 
                     //Build gateway update info
                     BuildNodeList_GatewayUpdateInfo(message->payload, info_data, osInfo);
+#if 0
                     printf("------------------------------------------------\n");
                     printf("[%s][%s]@@@@@@@@@@@@ OS info type:%d packed info_data=%s\n", __FILE__, __func__, osInfo, info_data);
                     printf("------------------------------------------------\n");
+#endif
 
 #if 1
                     if ( UpdateToRMM_GatewayUpdateInfo(info_data) < 0){
