@@ -274,19 +274,10 @@ void AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pCon
 }
 
 int UpdateNodeList(char* devID, int devType, struct node* pNode){
+
 #if 0
-    int nodeType;
-    char virtualGatewayDevID[MAX_DEVICE_ID_LEN];
-    int virtualGatewayOSInfo;
-    char connectivityType[MAX_CONNECTIVITY_TYPE_LEN];
-    char connectivityDevID[MAX_DEVICE_ID_LEN];
-    char connectivitySensorHubList[1024];
-    char connectivityNeighborList[1024];
-    char* connectivityInfo;
-    char sensorHubDevID[MAX_DEVICE_ID_LEN];
-    time_t last_hb_time;
-#endif
     printf("@@@@@@@@@@@@ UpdateNodeList @@@@@@@@@@@@@\n");
+#endif
     struct node * r;
     r=g_pNodeListHead;
 
@@ -690,7 +681,7 @@ void AddNodeList_SensorHubNodeInfo(const char* data){
                 //Get connectivity device ID
                 strcpy(connectivityDevID,IoTGW_json[type][device]["bn"].Value().c_str());
 		
-#if 1
+#if 0
                 //get connectivity node
                 if( OS_NONE_IP_BASE == osInfo){
 		    temp=GetNode(connectivityDevID, TYPE_CONNECTIVITY);
@@ -752,6 +743,7 @@ void AddNodeList_SensorHubNodeInfo(const char* data){
                                  printf("[%s][%s]Unknown OS Info: %d\n", __FILE__, __func__, osInfo);
                              }
                         }
+#if 0
                         //Get Neighbor value
                         if ( strcmp("n",IoTGW_device_info[k][l].Key().c_str()) == 0 &&
                              strcmp("Neighbor",IoTGW_device_info[k][l].Value().c_str()) == 0 && 
@@ -770,6 +762,7 @@ void AddNodeList_SensorHubNodeInfo(const char* data){
                                  printf("[%s][%s]Unknown OS Info\n", __FILE__, __func__);
                              }                             
                         }
+#endif
                     }
                 }
 
@@ -841,6 +834,7 @@ void aTest(const char* mydata){
                              printf("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l+1].Key().c_str(), IoTGW_device_info[k][l+1].Value().c_str());
                              strcpy(temp->connectivitySensorHubList, IoTGW_device_info[k][l+1].Value().c_str());
                         }
+#if 0
                         //Get Neighbor value
                         if ( strcmp("n",IoTGW_device_info[k][l].Key().c_str()) == 0 &&
                              strcmp("Neighbor",IoTGW_device_info[k][l].Value().c_str()) == 0 && 
@@ -850,6 +844,7 @@ void aTest(const char* mydata){
                              printf("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l+1].Key().c_str(), IoTGW_device_info[k][l+1].Value().c_str());
                              strcpy(temp->connectivityNeighborList, IoTGW_device_info[k][l+1].Value().c_str());
                         }
+#endif
                     }
                 }
 

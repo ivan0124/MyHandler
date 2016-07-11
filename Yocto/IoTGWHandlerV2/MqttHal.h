@@ -148,7 +148,7 @@ struct node
     char connectivityType[MAX_CONNECTIVITY_TYPE_LEN];
     char connectivityDevID[MAX_DEVICE_ID_LEN];
     char connectivitySensorHubList[1024];
-    char connectivityNeighborList[1024];
+    //char connectivityNeighborList[1024];
     char* connectivityInfo;
     char* connectivityInfoWithData;
     char sensorHubDevID[MAX_DEVICE_ID_LEN];
