@@ -532,7 +532,7 @@ int HANDLER_API Handler_Stop( void )
  * ***************************************************************************************/
 void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t datalen, void *pRev1, void* pRev2  )
 {
-        printf("+++++++++++++++ Handler_Recv ++++++++++++++++++++++++++++>\n");
+        ADV_DEBUG("[%s][%s] Handler_Recv Enter\n", __FILE__, __func__);
 	int cmdID = 0;
 	int len = 0;
         int osInfo;
