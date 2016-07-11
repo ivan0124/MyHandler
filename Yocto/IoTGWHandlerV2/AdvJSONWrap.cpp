@@ -419,15 +419,21 @@ int BuildNodeList_IPBaseGatewayUpdateInfo(char* info_data){
 
     sprintf(tmp,"{\"IoTGW\":{\"%s\":",IP_BASE_CONNECTIVITY_NAME);
     strcat(info_data,tmp);
+   
+    memset(tmp,0,sizeof(tmp));
     sprintf(tmp,"{\"%s\":",IP_BASE_CONNECTIVITY_NAME);
     strcat(info_data,tmp);
     //
+    memset(tmp,0,sizeof(tmp));
     if ( BuildNodeList_IPBaseGatewayInfo(tmp) < 0){
         return -1;
     }
+
     strcat(info_data,tmp);
     //
     strcat(info_data,",");
+
+    memset(tmp,0,sizeof(tmp));
     sprintf(tmp,"\"bn\":\"%s\"},\"ver\":1}",IP_BASE_CONNECTIVITY_NAME);
     strcat(info_data,tmp);
     strcat(info_data,"}");
@@ -913,7 +919,7 @@ int GetRequestCmd(int cmdID, char* out_CmdData){
         }
         case IOTGW_CHANGE_HEART_BEAT_VALUE_REQUEST:
         {
-            strcpy(out_CmdData,"{\"susiCommData\": {\"commCmd\":129,\"handlerName\":\"general\",\"heartbeatrate\":20,\"sessionID\":\"123465\"}}");
+            strcpy(out_CmdData,"{\"susiCommData\": {\"commCmd\":129,\"handlerName\":\"general\",\"heartbeatrate\":5,\"sessionID\":\"123465\"}}");
             return 0;
         }
         case IOTGW_HANDLER_GET_CAPABILITY_REQUEST:
