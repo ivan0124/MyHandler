@@ -1000,7 +1000,7 @@ int BuildNodeList_IPBaseGatewayInfo(char* info_data){
      
     sensor_hub_cnt = GetSensorHubList(sensorHubList, OS_IP_BASE, NULL);
     if ( sensor_hub_cnt <= 0 ){
-        printf("[%s][%s] get sensor hub list fail\n", __FILE__, __func__);
+        printf("[%s][%s] sensor hub list is null\n", __FILE__, __func__);
         return -1;
     }
 

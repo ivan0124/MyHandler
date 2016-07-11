@@ -680,10 +680,9 @@ int FindConnectivityInfoNodeListIndex(char* pType){
 
 
 int BuildNodeList_GatewayCapabilityInfo(struct node* head, char* pResult){
-  
-    printf("##################################################################\n");
+
     memset(&g_ConnectivityInfoNodeList,0,sizeof(g_ConnectivityInfoNodeList));
-    printf("BuildGatewayCapabilityInfo-----------------\n");
+
     int i=0,index=-1;
     char tmp[1024]={0};
     char capability[1024]={0};
@@ -699,6 +698,7 @@ int BuildNodeList_GatewayCapabilityInfo(struct node* head, char* pResult){
     }
     while(r!=NULL)
     {
+#if 0
 	printf("[%s][%s]\n----------------------------------\n", __FILE__, __func__);
         printf("nodeType:%d\n", r->nodeType);
 	printf("virtualGatewayDevID:%s\n",r->virtualGatewayDevID);
@@ -708,6 +708,7 @@ int BuildNodeList_GatewayCapabilityInfo(struct node* head, char* pResult){
 	printf("connectivityInfo:%s\n",r->connectivityInfo);
         printf("sensorHubDevID:%s",r->sensorHubDevID);
 	printf("\n----------------------------------\n");
+#endif
         //WSN0:{Info...}
         //sprintf(tmp,"\"%s%d\":%s",r->connectivityType, i, r->connectivityInfo);
         index=FindConnectivityInfoNodeListIndex(r->connectivityType);
@@ -1677,9 +1678,9 @@ int SendRequestToWiseSnail(char *macAddr, const char *pData)
 
 int BuildNodeList_GatewayCapabilityInfoWithData(struct node* head, char* pResult){
   
-    printf("##################################################################\n");
+    //printf("##################################################################\n");
     memset(&g_ConnectivityInfoNodeList,0,sizeof(g_ConnectivityInfoNodeList));
-    printf("BuildNodeList_GatewayCapabilityInfoWithData-----------------\n");
+    //printf("BuildNodeList_GatewayCapabilityInfoWithData-----------------\n");
     int i=0,index=-1;
     char tmp[1024]={0};
     char capability[1024]={0};
