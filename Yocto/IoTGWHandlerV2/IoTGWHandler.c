@@ -276,27 +276,27 @@ static CAGENT_PTHREAD_ENTRY(ThreadSendSenHubConnect, args)
 #if 1
         char info_data[1024]={0};
         BuildNodeList_GatewayCapabilityInfoWithData(g_pNodeListHead, info_data);
-#if 0
-        printf("------------------------------------------------\n");
-        printf("[%s][%s]@@@@@@@@@@@@@@@@@@@@@@@@ BuildNodeList_GatewayCapabilityInfoWithData, info_data=%s\n", __FILE__, __func__, info_data);
-        printf("------------------------------------------------\n");
+#if 1
+        ADV_DEBUG("------------------------------------------------\n");
+        ADV_DEBUG("[%s][%s]@@@@@@@@@@@@@@@@@@@@@@@@ BuildNodeList_GatewayCapabilityInfoWithData, info_data=%s\n", __FILE__, __func__, info_data);
+        ADV_DEBUG("------------------------------------------------\n");
 #endif
         UpdateToRMM_GatewayUpdateInfo(info_data);
 #endif
 
 #if 1
-	PRINTF("[%s][%s] Start send SenHub connect message\r\n", __FILE__, __func__);
+	ADV_DEBUG("[%s][%s] Start send SenHub connect message\r\n", __FILE__, __func__);
 	for( i = 0; i< MAX_SENNODES ; i ++ ) {
 		if(g_SenHubAgentInfo[i].status == 1)
 		{
 			pSenHander = &g_SenPluginInfo[i];
 
 			// 1. Register to WISECloud
-			PRINTF("Send SenHub %s\r\n", pSenHander->agentInfo->hostname);
+			ADV_DEBUG("Send SenHub %s\r\n", pSenHander->agentInfo->hostname);
 			SenHubConnectToWISECloud( pSenHander );
 		}
 	}
-	PRINTF("[%s][%s] Finish send SenHub connect message\r\n", __FILE__, __func__);
+	ADV_DEBUG("[%s][%s] Finish send SenHub connect message\r\n", __FILE__, __func__);
 #endif
 	app_os_thread_exit(0);
 	return 0;
@@ -1098,7 +1098,7 @@ char ConnectivityInfo4[1024]={"{\"IoTGW\":{\"BLE\":{\"BLE0\":{\"Info\":{\"e\":[{
     return 0;
 
 #else
-    //printf(nodeContent);
+    //printf(data);
     return UpdateInterfaceData(data, strlen(data));
 #endif
 
