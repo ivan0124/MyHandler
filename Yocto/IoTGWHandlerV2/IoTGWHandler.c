@@ -152,6 +152,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
 
     handler_context_t * pHandlerCtx = ( handler_context_t * )args;
     char gateway_capability[2048]={0};
+    char info_data[2048]={0};
 
     while( pHandlerCtx->isThreadRunning )
     {
@@ -226,18 +227,26 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
             //Delete all disconnected dvice id node
             DeleteNodeList_AllDisconnectedGatewayUIDNode();
             //Rebuild gateway capability and send to RMM
+            memset(gateway_capability,0,sizeof(gateway_capability));
             BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, gateway_capability);
+
+            memset(info_data, 0, sizeof(info_data));
+            BuildNodeList_GatewayCapabilityInfoWithData(g_pNodeListHead, info_data);
         }
 
 	app_os_mutex_unlock(&g_NodeListMutex);
 
 #if 1
         if ( tmp_node ){
-            ADV_DEBUG("[%s][%s] Register Gateway Capability!!!\n", __FILE__, __func__);
-            memset(gateway_capability,0,sizeof(gateway_capability));
+            ADV_C_DEBUG(COLOR_YELLOW, "[%s][%s] Register Gateway Capability!!!\n", __FILE__, __func__);
+            ADV_DEBUG("[%s][%s] gateway_capability=%s\n", __FILE__, __func__, gateway_capability);
             if ( RegisterToRMM_GatewayCapabilityInfo(gateway_capability, strlen(gateway_capability)) < 0){
                         ADV_C_ERROR(COLOR_RED, "[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
             }
+
+            ADV_C_DEBUG(COLOR_YELLOW, "[%s][%s] Update Gateway Info!!!\n", __FILE__, __func__);
+            ADV_DEBUG("[%s][%s] info_data=%s\n", __FILE__, __func__, info_data);
+            UpdateToRMM_GatewayUpdateInfo(info_data);
         }
 
         //char mydata[512]={"{\"susiCommData\":{\"commCmd\":125,\"handlerName\":\"general\",\"response\":{\"statuscode\":4,\"msg\": \"Reconnect\"}}}"};
@@ -250,7 +259,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
         GetRequestCmd(IOTGW_HANDLER_GET_CAPABILITY_REQUEST, request_cmd);
 
         while ( tmp_node != NULL){
-            printf("Re-connect devID=%s\n", tmp_node->virtualGatewayDevID);
+            ADV_DEBUG("[%s][%s] Re-connect devID=%s\n", tmp_node->virtualGatewayDevID, __FILE__, __func__);
             SendRequestToWiseSnail(tmp_node->virtualGatewayDevID,request_cmd);
             GW_list_DeleteNode(tmp_node->virtualGatewayDevID);
 	    tmp_node=GW_list_GetHeadNode();
@@ -260,7 +269,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
 #endif
     }
     
-    printf("[%s][%s] thread exit\n", __FILE__, __func__);
+    ADV_DEBUG("[%s][%s] thread exit\n", __FILE__, __func__);
     app_os_thread_exit(0);
 
     return 0;
