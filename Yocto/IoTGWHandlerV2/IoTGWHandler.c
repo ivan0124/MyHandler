@@ -191,7 +191,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
 			        if ( diff_time > HEART_BEAT_TIMEOUT ){
 				    r->state = STATUS_DISCONNECTED;
                                     time(&(r->start_connecting_time));
-                                    //add to connecting list
+                                    ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #Set %s as disconnect # \033[0m\n", __FILE__, __func__, r->virtualGatewayDevID);
 				    GW_list_AddNode(r->virtualGatewayDevID);
 			        }
                             }
