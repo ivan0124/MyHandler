@@ -157,13 +157,13 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
         struct gw_node* tmp_node=NULL;
 #if 1
         time(&g_monitortime);
-        app_os_sleep(5000);
+        app_os_sleep(CHECK_NODE_LIST_TIME);
 #if 1	
         time_t tv;
 	time(&tv);
 	float diff_time=difftime(tv, g_monitortime);
         //printf("[%s][%s] wake up...(difftime=%f)\n", __FILE__, __func__, diff_time);
-        printf("[%s][%s]\033[33m #wake up...(difftime=%f)# \033[0m\n", __FILE__, __func__, diff_time);
+        printf("[%s][%s]\033[33m #wake up to check...(difftime=%f)# \033[0m\n", __FILE__, __func__, diff_time);
 #endif
 	
 
