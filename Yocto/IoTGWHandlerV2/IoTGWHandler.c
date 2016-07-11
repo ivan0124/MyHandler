@@ -22,6 +22,7 @@
 // include lib Header Files
 #include "BasicFun_Tool.h"
 #include "MqttHal.h"
+#include "AdvLog.h"
 
 // include AdvApiMux
 #include "inc/AdvApiMux/AdvAPIMuxServer.h"
@@ -163,7 +164,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadCheckNodeList, args)
 	time(&tv);
 	float diff_time=difftime(tv, g_monitortime);
         //printf("[%s][%s] wake up...(difftime=%f)\n", __FILE__, __func__, diff_time);
-        printf("[%s][%s]\033[33m #wake up to check...(difftime=%f)# \033[0m\n", __FILE__, __func__, diff_time);
+        ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #wake up to check...(difftime=%f)# \033[0m\n", __FILE__, __func__, diff_time);
 #endif
 	
 
@@ -272,7 +273,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadSendSenHubConnect, args)
 	Handler_info  *pSenHander = NULL;
 	char buffer[MAX_BUFFER_SIZE]={0};
 	//cagent_agent_info_body_t *pSenAgentInfo = NULL;
-
+#if 1
         char info_data[1024]={0};
         BuildNodeList_GatewayCapabilityInfoWithData(g_pNodeListHead, info_data);
 #if 0
@@ -281,6 +282,7 @@ static CAGENT_PTHREAD_ENTRY(ThreadSendSenHubConnect, args)
         printf("------------------------------------------------\n");
 #endif
         UpdateToRMM_GatewayUpdateInfo(info_data);
+#endif
 
 #if 1
 	PRINTF("[%s][%s] Start send SenHub connect message\r\n", __FILE__, __func__);
