@@ -551,7 +551,7 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 
         app_os_mutex_lock(&g_NodeListMutex);
         if ( GetVirtualGatewayUIDfromData(g_pNodeListHead, data, VirtualGatewayUID, sizeof(VirtualGatewayUID)) < 0){
-            printf("[%s][%s] Can't find VirtualGatewayUID Topic=%s\r\n",__FILE__, __func__, topic );
+            ADV_C_ERROR(COLOR_RED, "[%s][%s] Can't find VirtualGatewayUID Topic=%s\r\n",__FILE__, __func__, topic );
             goto exit;
         }
         //printf("VirtualGatewayUID = %s\n", VirtualGatewayUID);
@@ -561,11 +561,11 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 	{
 	case IOTGW_GET_CAPABILITY_REQUEST:
 		{
-                     printf("---------------------------------------------------------------\n");
-                     printf("[%s][%s]\033[34m #Get Gateway Capability:%s# \033[0m\n", __FILE__, __func__);
-                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
-                     printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
-                     printf("---------------------------------------------------------------\n");
+                     ADV_DEBUG("---------------------------------------------------------------\n");
+                     ADV_C_DEBUG(COLOR_GREEN, "[%s][%s]#Get Gateway Capability:%s# \n", __FILE__, __func__);
+                     ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
+                     ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, data);
+                     ADV_DEBUG("---------------------------------------------------------------\n");
                      char capability[MAX_DATA_SIZE]={0};
 			
 		     if ( BuildNodeList_GatewayCapabilityInfo(g_pNodeListHead, capability) < 0){
@@ -586,10 +586,10 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 		break;
 	case IOTGW_GET_SENSOR_REQUEST:
 		{
-                     printf("---------------------------------------------------------------\n");
-                     printf("[%s][%s]\033[34m #Get Gateway Request# \033[0m\n", __FILE__, __func__);
-                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
-                     printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
+                     ADV_DEBUG("---------------------------------------------------------------\n");
+                     ADV_C_DEBUG(COLOR_GREEN,"[%s][%s]#Get Gateway Request# \n", __FILE__, __func__);
+                     ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
+                     ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, data);
                     if ( OS_NONE_IP_BASE == osInfo){
                         app_os_mutex_unlock(&g_NodeListMutex);
                         SendRequestToWiseSnail(VirtualGatewayUID,data);
@@ -601,7 +601,7 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 
                         GetConnectivityResponseData(data, response_data);
 
-                        printf("response_data=%s\n", response_data);
+                        ADV_DEBUG("response_data=%s\n", response_data);
 
 		        g_sendcbf(&g_PluginInfo, IOTGW_GET_SENSOR_REPLY, response_data, strlen( response_data )+1, NULL, NULL);
                     } 
@@ -610,10 +610,10 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 		break;
 	case IOTGW_SET_SENSOR_REQUEST:
 		{
-                     printf("---------------------------------------------------------------\n");
-                     printf("[%s][%s]\033[34m #Set Gateway Request:%s# \033[0m\n", __FILE__, __func__);
-                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
-                     printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
+                     ADV_DEBUG("---------------------------------------------------------------\n");
+                     ADV_C_DEBUG(COLOR_GREEN,"[%s][%s]#Set Gateway Request:%s# \n", __FILE__, __func__);
+                     ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
+                     ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, data);
                     if ( OS_NONE_IP_BASE == osInfo){
                         app_os_mutex_unlock(&g_NodeListMutex);
                         SendRequestToWiseSnail(VirtualGatewayUID,data);
@@ -626,7 +626,7 @@ void HANDLER_API Handler_Recv(char * const topic, void* const data, const size_t
 	default:
 		{
 #if 1
-			PRINTF("Unknow CMD ID=%d\r\n", cmdID );
+			ADV_DEBUG("Unknow CMD ID=%d\r\n", cmdID );
 			/*  {"sessionID":"1234","errorRep":"Unknown cmd!"}  */
 			if(strlen(szSessionId)>0)
 				snprintf(buffer, sizeof(buffer), "{\"%s\":\"%s\",\"sessionID\":\"%s\"}", SN_ERROR_REP, "Unknown cmd!", szSessionId);
