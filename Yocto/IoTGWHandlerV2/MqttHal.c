@@ -932,6 +932,10 @@ int DisconnectToRMM(char* DeviceUID){
                         //JSON_Destory(&json);
                         return -1;
                     }
+
+                    char info_data[1024]={0};
+                    BuildNodeList_GatewayCapabilityInfoWithData(g_pNodeListHead, info_data);
+                    UpdateToRMM_GatewayUpdateInfo(info_data);
 #endif
                 }
                 else{
