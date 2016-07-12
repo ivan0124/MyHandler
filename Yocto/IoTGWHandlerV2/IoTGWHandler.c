@@ -1368,8 +1368,8 @@ int StopSNGWHandler()
 void UnInitSNGWHandler()
 {
 	// 1. Send Disconnect Msg
-	if(pSNManagerAPI)
-		pSNManagerAPI->SN_Manager_Uninitialize( );
+	//if(pSNManagerAPI)
+		//pSNManagerAPI->SN_Manager_Uninitialize( );
 #ifdef LINUX
 	UnInitAdvAPIMux_Server();
 #endif
