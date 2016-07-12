@@ -806,12 +806,12 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 	{
 	case IOTGW_HANDLER_GET_CAPABILITY_REQUEST:
 		{
-                     printf("---------------------------------------------------------------\n");
-                     printf("[%s][%s]\033[34m #Get Sensor Capability:%s# \033[0m\n", __FILE__, __func__, SenHubUID);
-                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
-                     printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
+                     ADV_DEBUG("---------------------------------------------------------------\n");
+                     ADV_C_DEBUG(COLOR_GREEN,"[%s][%s]#Get Sensor Capability:%s#\n", __FILE__, __func__, SenHubUID);
+                     ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
+                     ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, data);
                      SendRequestToWiseSnail(SenHubUID,data);
-                     printf("---------------------------------------------------------------\n");
+                     ADV_DEBUG("---------------------------------------------------------------\n");
 		}
                 break;
 #if 0
@@ -830,28 +830,28 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 #endif
 	case IOTGW_GET_SENSOR_REQUEST:
 		{
-                     printf("---------------------------------------------------------------\n");
-                     printf("[%s][%s]\033[34m #Get Sensor Request:%s# \033[0m\n", __FILE__, __func__, SenHubUID);
-                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
-                     printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
+                     ADV_DEBUG("---------------------------------------------------------------\n");
+                     ADV_C_DEBUG(COLOR_GREEN, "[%s][%s]#Get Sensor Request:%s#\n", __FILE__, __func__, SenHubUID);
+                     ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
+                     ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, data);
 
                      SendRequestToWiseSnail(SenHubUID,data);
-                     printf("---------------------------------------------------------------\n");		
+                     ADV_DEBUG("---------------------------------------------------------------\n");		
 		}
 		break;
 	case IOTGW_SET_SENSOR_REQUEST:
 		{
-                     printf("---------------------------------------------------------------\n");
-                     printf("[%s][%s]\033[34m #Set Sensor Request:%s# \033[0m\n", __FILE__, __func__, SenHubUID);
-                     printf("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
-                     printf("[%s][%s] message=%s\n",__FILE__, __func__, data);
+                     ADV_DEBUG("---------------------------------------------------------------\n");
+                     ADV_C_DEBUG(COLOR_GREEN, "[%s][%s]#Set Sensor Request:%s#\n", __FILE__, __func__, SenHubUID);
+                     ADV_DEBUG("[%s][%s] topic = %s\n", __FILE__, __func__, topic);
+                     ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, data);
                      SendRequestToWiseSnail(SenHubUID,data);
-                     printf("---------------------------------------------------------------\n");
+                     ADV_DEBUG("---------------------------------------------------------------\n");
 		}
 		break;
 	default:
 		{
-			printf("[%s][%s]Unknow CMD ID=%d\r\n", __FILE__, __func__, cmdID );
+			ADV_DEBUG("[%s][%s]Unknow CMD ID=%d\r\n", __FILE__, __func__, cmdID );
 
 			/*  {"sessionID":"1234","errorRep":"Unknown cmd!"}  */
 			if(strlen(szSessionId)>0)
