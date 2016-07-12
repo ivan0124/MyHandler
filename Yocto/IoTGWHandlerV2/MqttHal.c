@@ -1553,18 +1553,7 @@ int MqttHal_Init()
     mosquitto_disconnect_callback_set(g_mosq, MqttHal_Disconnect_Callback);
     mosquitto_publish_callback_set(g_mosq, MqttHal_Publish_Callback);
 
-/*ivan del*/
-#if 0
-	// Create senhub root
-	pshinfo = malloc(sizeof(senhub_info_t));
-	memset(pshinfo, 0, sizeof(senhub_info_t));
-	sprintf(pshinfo->macAddress, "0000%s" , g_GWInfMAC);
-	pshinfo->jsonNode = NULL;
-	pshinfo->id = senhub_list_newId(g_SensorHubList);
-	//printf("%s: list add id=%d\n", __func__, pshinfo->id);
-	g_SensorHubList = SENHUB_LIST_ADD(g_SensorHubList, pshinfo);
-#endif 
-	return rc;
+    return rc;
 }
 
 int MqttHal_Uninit()
