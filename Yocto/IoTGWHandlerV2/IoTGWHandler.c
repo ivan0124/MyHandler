@@ -486,13 +486,13 @@ int HANDLER_API Handler_Start( void )
 		printf("[%s][%s] start handler thread failed!\r\n", __FILE__, __func__);	
 		return handler_fail;
         }
-#endif        
+#endif
 	g_HandlerContex.isThreadRunning = true;
 	//g_status = handler_start;
 	time(&g_monitortime);
 
 	// <Eric>
-	StartSNGWHandler();
+	//StartSNGWHandler();
 	return handler_success;
 }
 
@@ -516,7 +516,7 @@ int HANDLER_API Handler_Stop( void )
 	//g_status = handler_stop;
 
 	// <Eric>
-	StopSNGWHandler();
+	//StopSNGWHandler();
 	return handler_success;
 }
 
@@ -771,17 +771,17 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 	PRINTF("[%s][%s]%s>Recv Cust Topic [%s] Data %s\r\n", __FILE__, __func__, strPluginName, topic, (char*) data );
 
 	if(!ParseReceivedData(data, datalen, &cmdID,szSessionId,sizeof(szSessionId))) {
-		PRINTF("[%s][%s] Can't find cmdID\r\n", __FILE__, __func__ );
+		ADV_C_ERROR(COLOR_RED, "[%s][%s] Can't find cmdID\r\n", __FILE__, __func__ );
 		return;
 	}
 
 	if( GetSenHubUIDfromTopic( topic, SenHubUID, sizeof(SenHubUID) ) == 0 ) {
-		PRINTF("[%s][%s] Can't find SenHubID Topic=%s\r\n",__FILE__, __func__, topic );
+		ADV_C_ERROR(COLOR_RED, "[%s][%s] Can't find SenHubID Topic=%s\r\n",__FILE__, __func__, topic );
 		return;
 	}
 
 	if( ( index = GetSenHubAgentInfobyUID(&g_SenHubAgentInfo, MAX_SENNODES, SenHubUID) ) == -1 ) {
-		PRINTF("[%s][%s] Can't find SenHub UID in Table =%s\r\n",__FILE__, __func__, SenHubUID );
+		ADV_C_ERROR(COLOR_RED, "[%s][%s] Can't find SenHub UID in Table =%s\r\n",__FILE__, __func__, SenHubUID );
 		return;
 	}
 
@@ -798,7 +798,7 @@ void HandlerCustMessageRecv(char * const topic, void* const data, const size_t d
 	memset(Topic,0,sizeof(Topic));
 	snprintf(Topic,sizeof(Topic), SENHUB_CALLBACKREQ_TOPIC, SenHubUID );
 		
-	PRINTF("[%s][%s] HandlerCustMessageRecv Cmd =%d\r\n",__FILE__, __func__, cmdID);
+	ADV_DEBUG("[%s][%s] HandlerCustMessageRecv Cmd =%d\r\n",__FILE__, __func__, cmdID);
 
 
 #if 1
