@@ -53,7 +53,7 @@ static char g_sessionID[34];
 
 //static senhub_list_t   *g_SensorHubList;
 char            g_GWInfMAC[MAX_MACADDRESS_LEN];
-char g_connectivity_capability[1024]={0};
+//char g_connectivity_capability[1024]={0};
 
 #define SET_SENHUB_V_JSON "{\"susiCommData\":{\"sensorIDList\":{\"e\":[{\"v\":%s,\"n\":\"SenHub/%s/%s\"}]},\"handlerName\":\"SenHub\",\"commCmd\":525,\"sessionID\":\"%s\"}}"
 #define SET_SENHUB_BV_JSON "{\"susiCommData\":{\"sensorIDList\":{\"e\":[{\"bv\":%s,\"n\":\"SenHub/%s/%s\"}]},\"handlerName\":\"SenHub\",\"commCmd\":525,\"sessionID\":\"%s\"}}"

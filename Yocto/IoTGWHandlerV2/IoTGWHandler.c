@@ -76,7 +76,7 @@ static cagent_agent_info_body_t g_gw;
 int runing = 0;
 
 extern struct node* g_pNodeListHead;
-extern char g_connectivity_capability[1024];
+//extern char g_connectivity_capability[1024];
 
 //-----------------------------------------------------------------------------
 // Function:
