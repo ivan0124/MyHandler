@@ -954,11 +954,11 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
         int ret=0;
         //printf("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 	if((json = JSON_Parser(message->payload)) == NULL) {
-		printf("json parse err!\n");
+		ADV_C_ERROR(COLOR_RED, "[%s][%s] json parse err!\n", __FILE__, __func__);
 		return -1;
 	}
 	sscanf(message->topic, "/%*[^/]/%*[^/]/%*[^/]/%s", topicType);
-	ADV_TRACE("Topic type: %s \n", topicType);
+	ADV_DEBUG("Topic type: %s \n", topicType);
 
         action = ParseMQTTMessage(topicType,json);
 
@@ -974,6 +974,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                    char gateway_devID[128]={0};
                     if ( GetJSONValue(json, "[hb][devID]", gateway_devID) < 0 ){
                         ret=-1;
+                        ADV_C_ERROR(COLOR_RED,"[%s][%s] get heart beat devID FAIL!\n", __FILE__, __func__);
                         goto exit;
                     }
 
@@ -1045,7 +1046,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     //printf("DeviceUID = %s\n", DeviceUID);
 
 		    if ( DisconnectToRMM(DeviceUID) < 0){
-		        ADV_C_ERROR(COLOR_RED, "[%s][%s]Gateway Disconnect: DisconnectToRMM FAIL !\n", __FILE__, __func__);
+		        ADV_C_ERROR(COLOR_RED, "[%s][%s]GATEWAY_DISCONNECT: DisconnectToRMM FAIL !\n", __FILE__, __func__);
                         ret=-1;
                         goto exit;
 		    }
@@ -1061,10 +1062,10 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     int OSInfo=OS_NONE_IP_BASE;
 
                     if ( isOSIPbase(json) < 0 ){
-                        printf("[%s][%s]OS Info: none-IP base\n", __FILE__, __func__);
+                        ADV_DEBUG("[%s][%s]OS Info: none-IP base\n", __FILE__, __func__);
                     }
                     else{
-                        printf("[%s][%s]OS Info: IP base\n", __FILE__, __func__);
+                        ADV_DEBUG("[%s][%s]OS Info: IP base\n", __FILE__, __func__);
                         OSInfo=OS_IP_BASE;
                     }
                     //test_link_list();
@@ -1077,7 +1078,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         UpdateNodeList(gateway_devID, TYPE_GATEWAY, &node_data);
                     }
                     else{
-                        printf("[%s][%s] case %d: GetAgentID() FAIL!\n",__FILE__, __func__, GATEWAY_OS_INFO);
+                        ADV_C_ERROR(COLOR_RED, "[%s][%s] case %d: GetAgentID() FAIL!\n",__FILE__, __func__, GATEWAY_OS_INFO);
                     }
 
                     ADV_DEBUG("------------------------------------------------\n");
@@ -1103,7 +1104,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    ADV_DEBUG("\n-------------------------------------------\n");
 
                     if ( RegisterToRMM_GatewayCapabilityInfo(gateway_capability, strlen(gateway_capability)) < 0){
-                        printf("[%s][%s] Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
+                        ADV_C_ERROR(COLOR_RED, "[%s][%s]REGISTER_GATEWAY_CAPABILITY: Register Gateway Capability FAIL !!!\n", __FILE__, __func__);
                         ret=-1;
                         goto exit;
                     }
@@ -1139,7 +1140,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 
 #if 1
                     if ( UpdateToRMM_GatewayUpdateInfo(info_data) < 0){
-                        printf("[%s][%s] Update Gateway Data FAIL !!!\n", __FILE__, __func__);
+                        ADV_C_ERROR(COLOR_RED, "[%s][%s]UPDATE_GATEWAY_DATA: Update Gateway Data FAIL !!!\n", __FILE__, __func__);
                         ret=-1;
                         goto exit;
                     }
@@ -1155,7 +1156,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 #if 1
                     if ( ConnectToRMM_SensorHub(json) < 0){
-                        printf("[%s][%s] SensorHub connect to RMM FAIL !!!\n", __FILE__, __func__);
+                        ADV_C_ERROR(COLOR_RED, "[%s][%s]SENSOR_HUB_CONNECT: SensorHub connect to RMM FAIL !!!\n", __FILE__, __func__);
                         ret=-1;
                         goto exit;
                     }
@@ -1171,7 +1172,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     char DeviceUID[64]={0};
 		    if ( GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID)) < 0){
-		        printf("[%s][%s] Can't find DeviceUID topic=%s\r\n",__FILE__, __func__, message->topic);
+		        ADV_C_ERROR(COLOR_RED, "[%s][%s]SENSOR_HUB_DISCONNECT: Can't find DeviceUID topic=%s\r\n",__FILE__, __func__, message->topic);
                         ret=-1;
                         goto exit;
 		    }
@@ -1187,7 +1188,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
 #if 1
                     if(RegisterToRMM_SensorHubCapability(message->topic, json) < 0){
-                        printf("[%s][%s] Register SensorHub Capability FAIL !!!\n", __FILE__, __func__);
+                        ADV_C_ERROR(COLOR_RED, "[%s][%s]REGISTER_SENSOR_HUB_CAPABILITY: Register SensorHub Capability FAIL !!!\n", __FILE__, __func__);
                         ret=-1;
                         goto exit;
                     }
@@ -1201,7 +1202,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		   ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #Update SensorHub Data# \033[0m\n", __FILE__, __func__);
 #if 1
                     if ( UpdateToRMM_SensorHubData(json) < 0){
-                        printf("[%s][%s] Update SensorHub Data FAIL !!!\n", __FILE__, __func__);
+                        ADV_C_ERROR(COLOR_RED, "[%s][%s]UPDATE_SENSOR_HUB_DATA: Update SensorHub Data FAIL !!!\n", __FILE__, __func__);
                         ret=-1;
                         goto exit;
                     }
@@ -1216,7 +1217,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                     ADV_DEBUG("[%s][%s] message=%s\n",__FILE__, __func__, message->payload);
                     char DeviceUID[64]={0};
 		    if ( GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID)) < 0){
-		        printf("[%s][%s] Can't find DeviceUID topic=%s\r\n",__FILE__, __func__, message->topic);
+		        ADV_C_ERROR(COLOR_RED, "[%s][%s]REPLY_GET_SENSOR_REQUEST: Can't find DeviceUID topic=%s\r\n",__FILE__, __func__, message->topic);
                         ret=-1;
                         goto exit;
 		    }
@@ -1225,7 +1226,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 
                     if ( CheckUIDType(g_pNodeListHead, DeviceUID) == TYPE_VIRTUAL_GATEWAY ){
 
-                        printf("found virtual gateway device ID\n");
+                        ADV_C_ERROR(COLOR_RED, "[%s][%s]REPLY_GET_SENSOR_REQUEST: found virtual gateway device ID\n", __FILE__, __func__);
                         ReplyToRMM_GatewayGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY);
                         ret=0;
                         goto exit;
@@ -1235,7 +1236,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 
 #if 1
                     if ( ReplyToRMM_SensorHubGetSetRequest(message->topic,json, IOTGW_GET_SENSOR_REPLY) < 0){
-                        printf("[%s][%s] Reply Get Sensor Request FAIL !!!\n", __FILE__, __func__);
+                        ADV_C_ERROR(COLOR_RED, "[%s][%s]REPLY_GET_SENSOR_REQUEST: Reply Get Sensor Request FAIL !!!\n", __FILE__, __func__);
                         ret=-1;
                         goto exit;
                     }
@@ -1252,7 +1253,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 
                     char DeviceUID[64]={0};
 		    if ( GetUIDfromTopic(message->topic, DeviceUID, sizeof(DeviceUID)) < 0){
-		        printf("[%s][%s] Can't find DeviceUID topic=%s\r\n",__FILE__, __func__, message->topic);
+		        ADV_C_ERROR(COLOR_RED, "[%s][%s]REPLY_SET_SENSOR_REQUEST: Can't find DeviceUID topic=%s\r\n",__FILE__, __func__, message->topic);
                         ret=-1;
                         goto exit;
 		    }
@@ -1269,7 +1270,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 #endif
 #if 1
                     if ( ReplyToRMM_SensorHubGetSetRequest(message->topic,json, IOTGW_SET_SENSOR_REPLY) < 0){
-                        printf("[%s][%s] Reply Set Sensor Request FAIL !!!\n", __FILE__, __func__);
+                        ADV_C_ERROR(COLOR_RED, "[%s][%s]REPLY_SET_SENSOR_REQUEST: Reply Set Sensor Request FAIL !!!\n", __FILE__, __func__);
                         ret=-1;
                         goto exit;
                     }
@@ -1286,6 +1287,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    char hb_rate[128]={0};
 		    if ( GetJSONValue(json, "[susiCommData][heartbeatrate]", hb_rate) < 0 ){
 		        ret=-1;
+                        ADV_C_ERROR(COLOR_RED, "[%s][%s]IOTGW_QUERY_HEART_BEAT_VALUE_REPLY: Reply Query HeartBeat FAIL !!!\n", __FILE__, __func__);
                         goto exit;
 		    }
                     ADV_DEBUG("hb_rate=%s\n", hb_rate);
@@ -1301,6 +1303,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 		    char result[128]={0};
 		    if ( GetJSONValue(json, "[susiCommData][result]", result) < 0 ){
 		        ret=-1;
+                        ADV_C_ERROR(COLOR_RED, "[%s][%s]IOTGW_CHANGE_HEART_BEAT_VALUE_REPLY: Change HeartBeat Value FAIL !!!\n", __FILE__, __func__);
                         goto exit;
 		    }
                     ADV_DEBUG("result=%s\n", result);
@@ -1321,7 +1324,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                 //printf("DeviceUID = %s\n", DeviceUID);
 
                 if ( DisconnectToRMM(DeviceUID) < 0){
-                    printf("DisconnectToRMM FAIL !\n");
+                    ADV_C_ERROR(COLOR_RED, "[%s][%s]WA_PUB_WILL_TOPIC: DisconnectToRMM FAIL !\n", __FILE__, __func__);
                     ret=-1;
                     goto exit;
                 }
