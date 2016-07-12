@@ -1682,6 +1682,10 @@ int SendRequestToWiseSnail(char *macAddr, const char *pData)
 	msglen = strlen(message);
 	rc = mosquitto_publish(g_mosq, &g_mid_sent, topic, msglen, message, g_mosq_cfg.qos, g_mosq_cfg.retain);
 
+        if ( rc != MOSQ_ERR_SUCCESS ){
+            ADV_C_ERROR(COLOR_RED, "[%s][%s] mosquitto_publish error code=%d\n", __FILE__, __func__, rc);
+        }
+
 	return 0;
 }
 
