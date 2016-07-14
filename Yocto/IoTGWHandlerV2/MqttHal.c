@@ -991,8 +991,12 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                          ADV_C_DEBUG(COLOR_YELLOW,"[%s][%s]\033[33m #Re-Connect# \033[0m\n", __FILE__, __func__);
                         app_os_mutex_unlock(&g_NodeListMutex);
                         //char mydata[512]={"{\"susiCommData\":{\"commCmd\":125,\"handlerName\":\"general\",\"response\":{\"statuscode\":4,\"msg\": \"Reconnect\"}}}"};
-                        GetRequestCmd(IOTGW_RECONNECT, request_cmd);
-                        SendRequestToWiseSnail(gateway_devID,request_cmd);
+                        if ( GetRequestCmd(IOTGW_RECONNECT, request_cmd) < 0){
+                            ADV_C_ERROR(COLOR_RED, "[%s][%s]GATEWAY_HEART_BEAT: GetRequestCmd FAIL.\n",__FILE__,__func__);
+                        }
+                        else{
+                            SendRequestToWiseSnail(gateway_devID,request_cmd);
+                        }
                         JSON_Destory(&json);
                         return;
                     }
