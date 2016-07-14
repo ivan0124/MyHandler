@@ -965,7 +965,6 @@ static int Register_SenHub( const char *pJSON, const int nLen, void **pOutParam,
 
 static int Disconnect_SenHub( void *pInParam )
 {
-        printf("[ivan] Disconnect_SenHub ==================>\n");
 	int rc = 0;
 #if 0
 	Handler_info *pHandler_info = (Handler_info*)pInParam;
