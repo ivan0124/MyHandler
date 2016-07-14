@@ -169,6 +169,7 @@ void  DisplayAllVirtualGatewayDataListNode(struct node* head, struct node *r)
         printf("[%s][%s]\n----------------------------------\n", __FILE__, __func__);
         printf("nodeType:%d\n", r->nodeType);
         printf("virtualGatewayDevID:%s\n",r->virtualGatewayDevID);
+        printf("virtualGatewayOSInfo:%d\n", r->virtualGatewayOSInfo);
         printf("connectivityType:%s\n",r->connectivityType);
         printf("connectivityDevID:%s\n",r->connectivityDevID);
         printf("connectivityInfo:%s\n",r->connectivityInfo);
