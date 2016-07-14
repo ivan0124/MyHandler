@@ -1128,18 +1128,17 @@ int ConnectToRMM_SensorHub(JSONode *json)
             return -1;
         }
 
-        PRINTF("[ivan][%s][%s] ---------------------------------=====>\n", __FILE__, __func__ );
 	pSenHubInfo = &shinfo;
 
 	if( pSenHubInfo == NULL ) {
-		PRINTF("[%s][%s] SensorHub is NULL\r\n", __FILE__, __func__);
+		ADV_C_ERROR(COLOR_RED,"[%s][%s] SensorHub is NULL\r\n", __FILE__, __func__);
 		return rc;
 	}
 ;
 	// 1. Find empty SenHub Array
 	if(  (index = GetUsableIndex(&g_SenHubAgentInfo, MAX_SENNODES ) )  == -1 ) 
 	{
-		PRINTF("GW Handler is Full \r\n");
+		ADV_C_ERROR(COLOR_RED,"GW Handler is Full \r\n");
 		return rc;
 	}
         
