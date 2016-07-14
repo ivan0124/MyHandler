@@ -4,6 +4,7 @@
 #include "AdvJSON.h"
 #include "MqttHal.h"
 #include "IoTGWHandler.h"
+#include "AdvLog.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -228,11 +229,17 @@ void AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pCon
     temp=GetNode(tmp_devID, devType);
     //
     if (temp != NULL){
+        ADV_C_DEBUG(COLOR_PURPLE,"[%s][%s] Node exist, delete node in list(devID:%s,devType=%d.\n", __FILE__, __func__, tmp_devID, devType);
         DeleteNodeList(tmp_devID, devType);
         temp=NULL;
     }
     //
     temp=(struct node *)malloc(sizeof(struct node));
+    if ( temp == NULL){
+        ADV_C_ERROR(COLOR_RED,"[%s][%s] memory allocate FAIL.\n", __FILE__, __func__);
+        return;
+    }
+    
     memset(temp,0,sizeof(struct node));
  
     temp->nodeType = devType;
