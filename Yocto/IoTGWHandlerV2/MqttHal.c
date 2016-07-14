@@ -1036,7 +1036,9 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
                         return 0;
                     }
                     else{
-                        ADV_C_ERROR(COLOR_RED, "[%s][%s] case %d: GetAgentID() FAIL!\n",__FILE__, __func__, GATEWAY_CONNECT);
+                        ADV_C_ERROR(COLOR_RED, "[%s][%s]GATEWAY_CONNECT: GetAgentID() FAIL!\n",__FILE__, __func__);
+                        ret=-1;
+                        goto exit;
                     }
 #endif
                     ADV_DEBUG("------------------------------------------------\n");
