@@ -1015,7 +1015,7 @@ int MqttHal_Message_Process(const struct mosquitto_message *message)
 
 
                     if ( AddNodeList_VirtualGatewayNodeInfo(message->payload, OS_TYPE_UNKNOWN) < 0){
-                        ADV_C_ERROR(COLOR_RED,"[%s][%s]GATEWAY_CONNECT Add Node FAIL.\n", __FILE__, __func__);
+                        ADV_C_ERROR(COLOR_RED,"[%s][%s]GATEWAY_CONNECT: Add Node FAIL.\n", __FILE__, __func__);
                         ret=-1;
                         goto exit;
                     }
