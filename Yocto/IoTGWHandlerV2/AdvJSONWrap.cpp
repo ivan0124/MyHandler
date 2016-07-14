@@ -12,14 +12,14 @@ extern "C" {
 extern char            g_GWInfMAC[MAX_MACADDRESS_LEN];
 struct node* g_pNodeListHead=NULL;
 
-void AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType, int iOSInfo, char* pSensorHubDevID);
+int AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType, int iOSInfo, char* pSensorHubDevID);
 int UpdateNodeList(char* devID, int devType, struct node* pNode);
 struct node * GetNode(char* devID, int devType);
 int DeleteNodeList(char* devID, int devType);
 int AddNodeList_ConnectivityNodeCapability(char* data);
 int UpdateNodeList_ConnectivityNodeInfo(char* data);
 void AddNodeList_SensorHubNodeInfo(const char* data);
-void AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo);
+int AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo);
 int BuildData_IPBaseConnectivityCapability(char* info_data);
 int BuildNodeList_GatewayUpdateInfo(char* data, char* info_data, int osInfo);
 int GetOSInfoType(char* data);
@@ -179,7 +179,7 @@ int DeleteNodeList(char* devID, int devType)
 
     return 0;
 }
-void AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo){
+int AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo){
 
     struct node *temp=NULL;
     char virtualGatewayDevID[MAX_DEVICE_ID_LEN]={0};
@@ -189,11 +189,11 @@ void AddNodeList_VirtualGatewayNodeInfo(char* data, int iOSInfo){
     //Get virtual gateway devID
     strcpy(virtualGatewayDevID,json["susiCommData"]["agentID"].Value().c_str());
 
-    AddNodeList(virtualGatewayDevID,NULL,NULL,NULL, 0, TYPE_GATEWAY, iOSInfo, NULL);
+    return AddNodeList(virtualGatewayDevID,NULL,NULL,NULL, 0, TYPE_GATEWAY, iOSInfo, NULL);
 
 }
 
-void AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType, int iOSInfo, char* pSensorHubDevID)
+int AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pConnectivityDevID, char* pConnectivityInfo, int iConnectivityInfoSize, int devType, int iOSInfo, char* pSensorHubDevID)
 {
     struct node *temp=NULL;
     char tmp_devID[32]={0};
@@ -237,7 +237,7 @@ void AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pCon
     temp=(struct node *)malloc(sizeof(struct node));
     if ( temp == NULL){
         ADV_C_ERROR(COLOR_RED,"[%s][%s] memory allocate FAIL.\n", __FILE__, __func__);
-        return;
+        return -1;
     }
     
     memset(temp,0,sizeof(struct node));
@@ -278,6 +278,7 @@ void AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pCon
         g_pNodeListHead=temp;
     }
 
+    return 0;
 }
 
 int UpdateNodeList(char* devID, int devType, struct node* pNode){
