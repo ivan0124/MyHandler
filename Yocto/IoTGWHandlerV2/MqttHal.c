@@ -408,7 +408,7 @@ int PrepareInfoToRegisterSensorHub(JSONode *json, senhub_info_t* pshinfo){
     if(strcmp(nodeContent, "NULL") == 0){
         return -1;
     }
-    printf("%s: DevID=%s\n", __func__, nodeContent);
+    ADV_DEBUG("%s: DevID=%s\n", __func__, nodeContent);
     strcpy(pshinfo->devID, nodeContent);
 
     /*Get MAC*/
@@ -417,7 +417,7 @@ int PrepareInfoToRegisterSensorHub(JSONode *json, senhub_info_t* pshinfo){
     if(strcmp(nodeContent, "NULL") == 0){
         return -1;
     }
-    printf("%s: mac=%s\n", __func__, nodeContent);
+    ADV_DEBUG("%s: mac=%s\n", __func__, nodeContent);
     strcpy(pshinfo->macAddress, nodeContent);
 
     /*Get SN*/
@@ -426,7 +426,7 @@ int PrepareInfoToRegisterSensorHub(JSONode *json, senhub_info_t* pshinfo){
     if(strcmp(nodeContent, "NULL") == 0){
         return -1;
     }
-    printf("%s: sn=%s\n", __func__, nodeContent);
+    ADV_DEBUG("%s: sn=%s\n", __func__, nodeContent);
     strcpy(pshinfo->sn, nodeContent);
 
     /*Get hostname*/
@@ -435,7 +435,7 @@ int PrepareInfoToRegisterSensorHub(JSONode *json, senhub_info_t* pshinfo){
     if(strcmp(nodeContent, "NULL") == 0){
         return -1;
     }
-    printf("%s: hostName=%s\n", __func__, nodeContent);
+    ADV_DEBUG("%s: hostName=%s\n", __func__, nodeContent);
     strcpy(pshinfo->hostName, nodeContent);
 
     //Get productName
@@ -444,7 +444,7 @@ int PrepareInfoToRegisterSensorHub(JSONode *json, senhub_info_t* pshinfo){
     if(strcmp(nodeContent, "NULL") == 0){
         return -1;
     }
-    printf("%s: productName=%s\n", __func__, nodeContent);
+    ADV_DEBUG("%s: productName=%s\n", __func__, nodeContent);
     strcpy(pshinfo->productName, nodeContent);
 
     //Get version
@@ -453,7 +453,7 @@ int PrepareInfoToRegisterSensorHub(JSONode *json, senhub_info_t* pshinfo){
     if(strcmp(nodeContent, "NULL") == 0){
         return -1;
     }
-    printf("%s: version=%s\n", __func__, nodeContent);
+    ADV_DEBUG("%s: version=%s\n", __func__, nodeContent);
     strcpy(pshinfo->version, nodeContent);
 
     return 0;
