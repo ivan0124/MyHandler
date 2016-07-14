@@ -222,7 +222,7 @@ void AddNodeList(char* pVirtualGatewayDevID, char* pConnectivityType, char* pCon
             break;
         }
         default:
-            printf("[%s][%s]Unknown device type\n", __FILE__, __func__);
+            ADV_DEBUG("[%s][%s]Unknown device type\n", __FILE__, __func__);
             break;
     }
     //
