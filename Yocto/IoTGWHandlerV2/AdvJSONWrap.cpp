@@ -53,12 +53,12 @@ int GetAgentID(char* data, char* out_agent_id, int out_agent_id_size){
 
 void printNodeInfo(struct node * r){
 
-    printf("-------------------node info------------------------------\n");
-    printf("[%s][%s] node type=%d, os info=%d\n", __FILE__, __func__, r->nodeType, r->virtualGatewayOSInfo);
-    printf("[%s][%s] virtualGatewayDevID=%s\n", __FILE__, __func__, r->virtualGatewayDevID);
-    printf("[%s][%s] connectivityDevID=%s\n", __FILE__, __func__, r->connectivityDevID);
-    printf("[%s][%s] sensorHubDevID=%s\n", __FILE__, __func__, r->sensorHubDevID);
-     printf("-------------------------------------------------\n");
+    ADV_DEBUG("-------------------node info------------------------------\n");
+    ADV_DEBUG("[%s][%s] node type=%d, os info=%d\n", __FILE__, __func__, r->nodeType, r->virtualGatewayOSInfo);
+    ADV_DEBUG("[%s][%s] virtualGatewayDevID=%s\n", __FILE__, __func__, r->virtualGatewayDevID);
+    ADV_DEBUG("[%s][%s] connectivityDevID=%s\n", __FILE__, __func__, r->connectivityDevID);
+    ADV_DEBUG("[%s][%s] sensorHubDevID=%s\n", __FILE__, __func__, r->sensorHubDevID);
+    ADV_DEBUG("-------------------------------------------------\n");
 }
 
 struct node * GetNode(char* devID, int devType)
@@ -103,7 +103,7 @@ struct node * GetNode(char* devID, int devType)
                 break;
             }
             default:
-                printf("[%s][%s]Unknown device type\n", __FILE__, __func__);
+                ADV_DEBUG("[%s][%s]Unknown device type\n", __FILE__, __func__);
                 break;
         }
         r=r->next;
@@ -138,7 +138,7 @@ int DeleteNodeList(char* devID, int devType)
                 break;
             }
             default:
-                printf("[%s][%s]Unknown device type\n", __FILE__, __func__);
+                ADV_DEBUG("[%s][%s]Unknown device type\n", __FILE__, __func__);
                 break;
         }
         //
@@ -302,20 +302,20 @@ int UpdateNodeList(char* devID, int devType, struct node* pNode){
                     if ( r->nodeType == TYPE_GATEWAY) {
                         if ( pNode->state != 0 ){ 
                             r->state = pNode->state;
-                            printf("[%s][%s] update state = %d\n", __FILE__, __func__, r->state);
+                            ADV_DEBUG("[%s][%s] update state = %d\n", __FILE__, __func__, r->state);
                         }
                         if ( pNode->virtualGatewayOSInfo != 0 ){ 
                             r->virtualGatewayOSInfo = pNode->virtualGatewayOSInfo;
-                            printf("[%s][%s] update virtualGatewayOSInfo\n", __FILE__, __func__);
+                            ADV_DEBUG("[%s][%s] update virtualGatewayOSInfo\n", __FILE__, __func__);
                         }
                         if ( pNode->connectivityInfo != 0 ){ 
-                            printf("[%s][%s] update connectivityInfo\n", __FILE__, __func__);
+                            ADV_DEBUG("[%s][%s] update connectivityInfo\n", __FILE__, __func__);
                         }
-                        printf("[%s][%s] last_hb_time=%ld\n", __FILE__, __func__, pNode->last_hb_time);
+                        ADV_DEBUG("[%s][%s] last_hb_time=%ld\n", __FILE__, __func__, pNode->last_hb_time);
                         if ( pNode->last_hb_time != 0 ){ 
                             r->last_hb_time = pNode->last_hb_time;
-                            printf("[%s][%s] update last_hb_time\n", __FILE__, __func__);
-                            printf("[%s][%s] r->last_hb_time=%ld\n", __FILE__, __func__, r->last_hb_time);
+                            ADV_DEBUG("[%s][%s] update last_hb_time\n", __FILE__, __func__);
+                            ADV_DEBUG("[%s][%s] r->last_hb_time=%ld\n", __FILE__, __func__, r->last_hb_time);
                         }
                         return 0;
                     }
@@ -328,7 +328,7 @@ int UpdateNodeList(char* devID, int devType, struct node* pNode){
                 if (strcmp(r->connectivityDevID, devID) == 0){
                     if ( r->nodeType == TYPE_CONNECTIVITY) {
                         if ( pNode->connectivityInfoWithData != 0 ){
-                            printf("pNode->connectivityInfoWithData=%s\n", pNode->connectivityInfoWithData);
+                            ADV_DEBUG("pNode->connectivityInfoWithData=%s\n", pNode->connectivityInfoWithData);
                             if ( r->connectivityInfoWithData != 0){
                                 free(r->connectivityInfoWithData);
                                 r->connectivityInfoWithData = 0;
@@ -339,7 +339,7 @@ int UpdateNodeList(char* devID, int devType, struct node* pNode){
 
                             if ( r->connectivityInfoWithData ){
                                 strcpy(r->connectivityInfoWithData, pNode->connectivityInfoWithData);
-                                printf("r->connectivityInfoWithData=%s\n", r->connectivityInfoWithData);
+                                ADV_DEBUG("r->connectivityInfoWithData=%s\n", r->connectivityInfoWithData);
                             }
                             else{
                                 return -1;
@@ -361,7 +361,7 @@ int UpdateNodeList(char* devID, int devType, struct node* pNode){
                 break;
             }
             default:
-                printf("[%s][%s]Unknown device type\n", __FILE__, __func__);
+                ADV_DEBUG("[%s][%s]Unknown device type\n", __FILE__, __func__);
                 break;
         }
         r=r->next;
@@ -411,7 +411,7 @@ int GetSensorHubList(char* sensorHubList, int osInfo, char* connectivityDevID){
                 break;
             }
             default:
-                printf("[%s][%s] Unknown os info\n",__FILE__, __func__);
+                ADV_DEBUG("[%s][%s] Unknown os info\n",__FILE__, __func__);
                 break;
         } 
         r=r->next;
@@ -477,7 +477,7 @@ int BuildNodeList_GatewayUpdateInfo(char* data, char* info_data, int osInfo){
         }
         default:
         {
-            printf("[%s][%s] unknown os info type:%d\n", __FILE__, __func__, osInfo);
+            ADV_DEBUG("[%s][%s] unknown os info type:%d\n", __FILE__, __func__, osInfo);
             return -1;
         }
     }
@@ -557,7 +557,7 @@ int GetOSInfoType(char* data){
         osInfo=temp->virtualGatewayOSInfo;
     }
       
-    printf("[%s][%s] virtualGatewayDevID=%s, os info type:%d\n", __FILE__, __func__, virtualGatewayDevID, osInfo);
+    ADV_DEBUG("[%s][%s] virtualGatewayDevID=%s, os info type:%d\n", __FILE__, __func__, virtualGatewayDevID, osInfo);
     return osInfo;
 }
 
@@ -719,8 +719,8 @@ void AddNodeList_SensorHubNodeInfo(const char* data){
                              strcmp("SenHubList",IoTGW_device_info[k][l].Value().c_str()) == 0 && 
                              strcmp("sv",IoTGW_device_info[k][l+1].Key().c_str()) == 0){
 
-                             printf("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l].Key().c_str(), IoTGW_device_info[k][l].Value().c_str()); 
-                             printf("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l+1].Key().c_str(), IoTGW_device_info[k][l+1].Value().c_str());
+                             ADV_DEBUG("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l].Key().c_str(), IoTGW_device_info[k][l].Value().c_str()); 
+                             ADV_DEBUG("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l+1].Key().c_str(), IoTGW_device_info[k][l+1].Value().c_str());
 
                              char sensorHubDevID[MAX_DEVICE_ID_LEN]={0};
                              if( OS_TYPE_UNKNOWN != osInfo){
@@ -753,7 +753,7 @@ void AddNodeList_SensorHubNodeInfo(const char* data){
 
                              }
                              else{
-                                 printf("[%s][%s]Unknown OS Info: %d\n", __FILE__, __func__, osInfo);
+                                 ADV_DEBUG("[%s][%s]Unknown OS Info: %d\n", __FILE__, __func__, osInfo);
                              }
                         }
 #if 0
@@ -843,8 +843,8 @@ void aTest(const char* mydata){
                              strcmp("SenHubList",IoTGW_device_info[k][l].Value().c_str()) == 0 && 
                              strcmp("sv",IoTGW_device_info[k][l+1].Key().c_str()) == 0){
 
-                             printf("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l].Key().c_str(), IoTGW_device_info[k][l].Value().c_str()); 
-                             printf("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l+1].Key().c_str(), IoTGW_device_info[k][l+1].Value().c_str());
+                             ADV_DEBUG("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l].Key().c_str(), IoTGW_device_info[k][l].Value().c_str()); 
+                             ADV_DEBUG("@@@@@@@@@@@ Key=%s, Value=%s\n", IoTGW_device_info[k][l+1].Key().c_str(), IoTGW_device_info[k][l+1].Value().c_str());
                              strcpy(temp->connectivitySensorHubList, IoTGW_device_info[k][l+1].Value().c_str());
                         }
 #if 0
@@ -879,17 +879,17 @@ int GetConnectivityResponseData(char* data, char* response_data){
 
     //Get session ID
     strcpy(sessionID,json["susiCommData"]["sessionID"].Value().c_str());
-    printf("session ID = %s\n", sessionID);
+    ADV_DEBUG("session ID = %s\n", sessionID);
     //Get sensorIDList
     strcpy(sensorIDList,json["susiCommData"]["sensorIDList"]["e"][0]["n"].Value().c_str());
-    printf("sensorIDList=%s\n", sensorIDList);
+    ADV_DEBUG("sensorIDList=%s\n", sensorIDList);
 
     sscanf(sensorIDList, "%*[^/]/%*[^/]/%*[^/]/%s", infoName);
-    printf("infoName=%s\n", infoName);
+    ADV_DEBUG("infoName=%s\n", infoName);
     if ( strcmp(infoName, "Info/SenHubList") == 0 ){
 
         if ( GetSensorHubList(sensorHubList, OS_IP_BASE, NULL) < 0 ){
-            printf("[%s][%s] get sensor hub list fail\n", __FILE__, __func__);
+            ADV_C_ERROR(COLOR_RED, "[%s][%s] get sensor hub list fail\n", __FILE__, __func__);
             return -1;
         }
         printf("sensorHubList=%s\n", sensorHubList);
@@ -898,7 +898,7 @@ int GetConnectivityResponseData(char* data, char* response_data){
     else if ( strcmp(infoName, "Info/Neighbor") == 0 ){
 
         if ( GetSensorHubList(sensorHubList, OS_IP_BASE, NULL) < 0 ){
-            printf("[%s][%s] get sensor hub list fail\n", __FILE__, __func__);
+            ADV_C_ERROR(COLOR_RED,"[%s][%s] get sensor hub list fail\n", __FILE__, __func__);
             return -1;
         }
         printf("sensorHubList=%s\n", sensorHubList);
@@ -979,7 +979,7 @@ int UpdateNodeList_ConnectivityNodeInfo(char* data){
                 memset(&node_data,0,sizeof(struct node));
                 node_data.connectivityInfoWithData = connectivityInfo; 
                 if ( UpdateNodeList(connectivityDevID, TYPE_CONNECTIVITY, &node_data) < 0){
-                    printf("[%s][%s]\033[31m #UpdateNodeList FAIL(connectivityDevID=%s)  !# \033[0m\n", __FILE__, __func__, connectivityDevID);
+                    ADV_C_DEBUG(COLOR_RED,"[%s][%s] #UpdateNodeList FAIL(connectivityDevID=%s)!#\n", __FILE__, __func__, connectivityDevID);
                 }
 
             }
@@ -1008,7 +1008,7 @@ int BuildNodeList_IPBaseGatewayInfo(char* info_data){
      
     sensor_hub_cnt = GetSensorHubList(sensorHubList, OS_IP_BASE, NULL);
     if ( sensor_hub_cnt <= 0 ){
-        printf("[%s][%s] sensor hub list is null\n", __FILE__, __func__);
+        ADV_DEBUG("[%s][%s] sensor hub list is null\n", __FILE__, __func__);
         return -1;
     }
 
