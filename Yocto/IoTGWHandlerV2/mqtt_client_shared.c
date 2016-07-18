@@ -32,7 +32,7 @@ Contributors:
 #include "mqtt_client_shared.h"
 
 #ifndef WIN32
-#define MQTT_CONFIG_DIR "/usr/lib/Advantech/iotgw"
+#define MQTT_CONFIG_DIR "."
 #else
 #define MQTT_CONFIG_DIR "C:\\Windows\\System32\\"
 #endif
