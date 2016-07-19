@@ -24,8 +24,6 @@ else
     fi
 fi
 
-cp -rf ./module_config.xml ~ivan/CAgentIoT/Release/AgentService/module/
-cp -rf ./agent_config.xml ~ivan/CAgentIoT/Release/AgentService/
 
 if [ "$2" == "3310" ] ; then
     cp -rf ./IoTGWHandlerV2 ~ivan/CAgentIoT/Modules/
@@ -34,4 +32,10 @@ if [ "$2" == "3310" ] ; then
     cd /mnt/MyHandler/Yocto/
     cp -rf ~ivan/CAgentIoT/Release/AgentService /var/nfsshare
     echo "copy AgentService to /var/nfsshare done."
+fi
+
+cp -rf ./module_config.xml ~ivan/CAgentIoT/Release/AgentService/module/
+cp -rf ./agent_config.xml ~ivan/CAgentIoT/Release/AgentService/
+if [ "$2" == "3310" ] ; then
+    cp -rf ~ivan/CAgentIoT/Release/AgentService /var/nfsshare
 fi
