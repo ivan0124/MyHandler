@@ -1,5 +1,12 @@
 #/bin/bash
 #
+
+if [ "$1" == "-h" ] ; then
+    echo "(1)build x86+ IoTGWHandlerV2. command: ./mk.sh"
+    echo "(2)build wise-3310 + IoTGWHanlderV2. command: ./mk.sh v2 3310"
+    exit 0;
+fi
+
 if [ "$1" == "v1" ] ; then
     echo "build IoTGWHandler version"
     rm -rf ~ivan/CAgentIoT/Modules/IoTGWHandler/
