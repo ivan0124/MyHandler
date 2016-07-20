@@ -19,7 +19,7 @@ make
 echo "build myTest module done"
 #list build myTest result
 echo "List build myTest module result..."
-ls ~ivan/CAgentIoT3.2/Modules/myTest/.libs/
+ls -al ~ivan/CAgentIoT3.2/Modules/myTest/.libs/
 
 #cd /mnt/MyHandler/CAgentIoT3.2
 
