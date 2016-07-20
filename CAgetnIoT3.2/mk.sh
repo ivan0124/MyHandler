@@ -7,9 +7,9 @@ rm -rf ~ivan/CAgentIoT3.2/Modules/myTest/
 cp -rf ./myTest ~ivan/CAgentIoT3.2/Modules/
 cd ~ivan/CAgentIoT3.2/
 
-#generating Makefile.in
+#generating ./myTest/Makefile.in
 automake
-#generating configure
+#generating ./CAgentIoT3.2/configure
 autoconf
 
 #build myTest module
