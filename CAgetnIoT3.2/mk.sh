@@ -3,6 +3,7 @@
     
 echo "build myTest module"
 cp Makefile.am configure.ac ~ivan/CAgentIoT3.2
+rm -rf ~ivan/CAgentIoT3.2/Modules/myTest/
 cp -rf ./myTest ~ivan/CAgentIoT3.2/Modules/
 cd ~ivan/CAgentIoT3.2/
 
