@@ -1,11 +1,24 @@
 #/bin/bash
 #
     
-echo "build IoTGWHandlerV2 version"
+echo "build myTest module"
 cp Makefile.am configure.ac ~ivan/CAgentIoT3.2
 cp -rf ./myTest ~ivan/CAgentIoT3.2/Modules/
-#make clean
-#make
-echo "build IoTGWHandlerV2 version done"
+cd ~ivan/CAgentIoT3.2/
 
+#generating Makefile.in
+automake
+#generating configure
+autoconf
+
+#build myTest module
+make clean
+make
+
+echo "build myTest module done"
+#list build myTest result
+echo "List build myTest module result..."
+ls ~ivan/CAgentIoT3.2/Modules/myTest/.libs/
+
+#cd /mnt/MyHandler/CAgentIoT3.2
 
