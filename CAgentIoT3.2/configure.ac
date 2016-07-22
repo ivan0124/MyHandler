@@ -124,7 +124,7 @@ AC_FUNC_STRERROR_R
 AC_CHECK_FUNCS([alarm clock_gettime dup2 fdatasync floor ftime ftruncate gethostbyaddr gethostbyname gethostname gethrtime getpagesize gettimeofday inet_ntoa isascii localtime_r memchr memmove memset mkdir pow select socket strcasecmp strchr strdup strerror strncasecmp strndup strpbrk strrchr strspn strstr strtol strtoul sysinfo uname utime])
 
 AC_CONFIG_FILES([Makefile
-                 Modules/myTest/Makefile
+                 Modules/IoTGWHandlerV2/Makefile
 		])
 
 AC_SUBST([PACKAGE_VERSION_MAJOR],[VERSION_MAJOR])
